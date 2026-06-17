@@ -2,6 +2,20 @@
 
 Todos los cambios notables de EasyDoliInstaller.
 
+## [1.6.0] - 2026-06-17 — Endurecimiento de seguridad
+
+Tras una auditoría de seguridad adversarial (13 hallazgos confirmados):
+
+### Seguridad
+- **Descarga verificada (era el único hallazgo ALTO — RCE por MITM)**: TLS estricto (`VERIFYPEER`/`VERIFYHOST`) y redirecciones solo HTTPS en la descarga del paquete y en la API de GitHub; **verificación SHA‑256** del ZIP descargado contra hashes empotrados (versiones conocidas).
+- **Ciclo de vida de secretos**: `install.forced.php` se borra tras `step5` (éxito o fallo); las contraseñas (BD/root/admin) se **purgan de `config.php`** al completar; `cookies.txt`/`install.log` se eliminan; al caducar el TTL se **borra físicamente** el temporal. TTL reducido de 6 h a 2 h.
+- **`ajax=limpiar` solo por POST** (corta CSRF por `<img>`/navegación) + validación de que las rutas a borrar están dentro del directorio del instalador.
+- **Anti Host‑header poisoning**: `HTTP_HOST` se valida (allowlist de caracteres) antes de usarse como `baseurl`/`dolibarr_main_url_root`.
+- **Autodestrucción robusta**: se sobrescribe el archivo con un stub inerte (HTTP 410) antes de `unlink`, por si el borrado falla (owner SFTP ≠ PHP).
+- `conf.php` con permisos `0644` (antes `0666`) + re‑endurecido a `0640` tras `step1`; cookie de idioma con `HttpOnly`/`SameSite`/`Secure`.
+
+> Nota: sigue siendo una herramienta **de un solo uso sin autenticación**; bórrala del servidor en cuanto termine (se autodestruye al finalizar).
+
 ## [1.5.0] - 2026-06-17
 
 ### Añadido

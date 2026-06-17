@@ -43,13 +43,13 @@
 @ignore_user_abort(true);
 error_reporting(E_ALL & ~E_DEPRECATED & ~E_NOTICE & ~E_WARNING);
 
-define('DI_VERSION', '1.5.0');
+define('DI_VERSION', '1.6.0');
 define('DI_DIR', __DIR__);
 define('DI_SELF', basename(__FILE__));
 define('DI_TMPDIR', DI_DIR . '/__doli_installer_tmp__');
 define('DI_CONFIG', DI_TMPDIR . '/config.php');     // .php con guardia: no servible como datos
 define('DI_CONFIG_MARK', '###EDI-JSON###');         // separador cabecera-PHP / JSON
-define('DI_CONFIG_TTL', 21600);                     // caduca la config a las 6h (instalador olvidado)
+define('DI_CONFIG_TTL', 7200);                      // caduca la config a las 2h (instalador olvidado)
 define('DI_COOKIES', DI_TMPDIR . '/cookies.txt');
 define('DI_LOG', DI_TMPDIR . '/install.log');
 
@@ -77,7 +77,12 @@ function di_ui_lang()
     if (isset($_GET['ui']) && in_array($_GET['ui'], $sup, true)) {
         $l = $_GET['ui'];
         if (!headers_sent()) {
-            @setcookie('edi_ui', $l, time() + 86400, '/');
+            $secure = (!empty($_SERVER['HTTPS']) && strtolower($_SERVER['HTTPS']) !== 'off')
+                || (($_SERVER['SERVER_PORT'] ?? '') == 443);
+            @setcookie('edi_ui', $l, array(
+                'expires' => time() + 86400, 'path' => '/',
+                'httponly' => true, 'samesite' => 'Lax', 'secure' => $secure,
+            ));
         }
         $_COOKIE['edi_ui'] = $l;
         return $l;
@@ -208,6 +213,7 @@ function di_dict()
         'e_needcurl' => 'Automatic download requires the cURL extension.', 'e_cantwrite' => 'Cannot write the download file: {s}',
         'e_dlfail' => 'Download failed: {s}', 'e_unexpected' => 'Unexpected response from the download server (HTTP {code}).',
         'e_noversion' => 'No version selected to download.', 'e_corrupt' => 'The downloaded ZIP is not a valid Dolibarr package (corrupt download). Try again.',
+        'e_badhash' => 'Integrity check failed for the downloaded package (version {s}): the SHA-256 does not match. Possible MITM or corrupt mirror. Try again or upload the ZIP manually.',
         'e_noconfig' => 'No saved configuration.', 'e_unknownajax' => 'unknown AJAX action',
     ),
     'es' => array(
@@ -312,6 +318,7 @@ function di_dict()
         'e_needcurl' => 'La descarga automática requiere la extensión cURL.', 'e_cantwrite' => 'No se puede escribir el archivo de descarga: {s}',
         'e_dlfail' => 'Descarga fallida: {s}', 'e_unexpected' => 'Respuesta inesperada del servidor de descargas (HTTP {code}).',
         'e_noversion' => 'No hay versión seleccionada para descargar.', 'e_corrupt' => 'El ZIP descargado no es un paquete Dolibarr válido (descarga corrupta). Reinténtalo.',
+        'e_badhash' => 'Falló la verificación de integridad del paquete descargado (versión {s}): el SHA-256 no coincide. Posible MITM o mirror corrupto. Reinténtalo o sube el ZIP a mano.',
         'e_noconfig' => 'No hay configuración guardada.', 'e_unknownajax' => 'acción AJAX desconocida',
     ),
     'de' => array(
@@ -416,6 +423,7 @@ function di_dict()
         'e_needcurl' => 'Der automatische Download erfordert die cURL-Erweiterung.', 'e_cantwrite' => 'Download-Datei nicht beschreibbar: {s}',
         'e_dlfail' => 'Download fehlgeschlagen: {s}', 'e_unexpected' => 'Unerwartete Antwort vom Download-Server (HTTP {code}).',
         'e_noversion' => 'Keine Version zum Download ausgewählt.', 'e_corrupt' => 'Das heruntergeladene ZIP ist kein gültiges Dolibarr-Paket (beschädigter Download). Erneut versuchen.',
+        'e_badhash' => 'Integritätsprüfung des heruntergeladenen Pakets fehlgeschlagen (Version {s}): SHA-256 stimmt nicht überein. Möglicher MITM oder beschädigter Mirror. Erneut versuchen oder ZIP manuell hochladen.',
         'e_noconfig' => 'Keine gespeicherte Konfiguration.', 'e_unknownajax' => 'unbekannte AJAX-Aktion',
     ),
     'fr' => array(
@@ -520,6 +528,7 @@ function di_dict()
         'e_needcurl' => 'Le téléchargement automatique nécessite l\'extension cURL.', 'e_cantwrite' => 'Impossible d\'écrire le fichier de téléchargement : {s}',
         'e_dlfail' => 'Échec du téléchargement : {s}', 'e_unexpected' => 'Réponse inattendue du serveur de téléchargement (HTTP {code}).',
         'e_noversion' => 'Aucune version sélectionnée à télécharger.', 'e_corrupt' => 'Le ZIP téléchargé n\'est pas un paquet Dolibarr valide (téléchargement corrompu). Réessayez.',
+        'e_badhash' => 'Échec de la vérification d\'intégrité du paquet téléchargé (version {s}) : le SHA-256 ne correspond pas. MITM possible ou miroir corrompu. Réessayez ou téléversez le ZIP manuellement.',
         'e_noconfig' => 'Aucune configuration enregistrée.', 'e_unknownajax' => 'action AJAX inconnue',
     ),
     'it' => array(
@@ -624,6 +633,7 @@ function di_dict()
         'e_needcurl' => 'Il download automatico richiede l\'estensione cURL.', 'e_cantwrite' => 'Impossibile scrivere il file di download: {s}',
         'e_dlfail' => 'Download non riuscito: {s}', 'e_unexpected' => 'Risposta inattesa dal server di download (HTTP {code}).',
         'e_noversion' => 'Nessuna versione selezionata da scaricare.', 'e_corrupt' => 'Lo ZIP scaricato non è un pacchetto Dolibarr valido (download corrotto). Riprova.',
+        'e_badhash' => 'Verifica di integrità fallita per il pacchetto scaricato (versione {s}): lo SHA-256 non corrisponde. Possibile MITM o mirror corrotto. Riprova o carica lo ZIP manualmente.',
         'e_noconfig' => 'Nessuna configurazione salvata.', 'e_unknownajax' => 'azione AJAX sconosciuta',
     ),
     );
@@ -798,10 +808,13 @@ function di_remote_get($url, $timeout = 8)
 {
     if (function_exists('curl_init')) {
         $ch = curl_init($url);
+        // TLS estricto: estas son descargas EXTERNAS (GitHub/SourceForge), no la
+        // autollamada local. Verificamos certificado y limitamos redirecciones a HTTPS.
         curl_setopt_array($ch, array(
             CURLOPT_RETURNTRANSFER => true, CURLOPT_FOLLOWLOCATION => true, CURLOPT_MAXREDIRS => 8,
             CURLOPT_TIMEOUT => $timeout, CURLOPT_CONNECTTIMEOUT => 6,
-            CURLOPT_SSL_VERIFYPEER => false, CURLOPT_SSL_VERIFYHOST => 0,
+            CURLOPT_SSL_VERIFYPEER => true, CURLOPT_SSL_VERIFYHOST => 2,
+            CURLOPT_PROTOCOLS => CURLPROTO_HTTPS, CURLOPT_REDIR_PROTOCOLS => CURLPROTO_HTTPS,
             CURLOPT_USERAGENT => 'EasyDoliInstaller/' . DI_VERSION,
         ));
         $b = curl_exec($ch);
@@ -812,12 +825,24 @@ function di_remote_get($url, $timeout = 8)
     if (filter_var(ini_get('allow_url_fopen'), FILTER_VALIDATE_BOOLEAN)) {
         $ctx = stream_context_create(array(
             'http' => array('timeout' => $timeout, 'header' => "User-Agent: EasyDoliInstaller\r\n"),
-            'ssl' => array('verify_peer' => false, 'verify_peer_name' => false),
+            'ssl' => array('verify_peer' => true, 'verify_peer_name' => true),
         ));
         $b = @file_get_contents($url, false, $ctx);
         return $b === false ? null : $b;
     }
     return null;
+}
+
+/**
+ * SHA-256 conocidos de paquetes oficiales (verificación de integridad de la descarga).
+ * Si la versión está aquí, la descarga debe coincidir o se rechaza. Versiones no
+ * listadas se aceptan solo con TLS verificado + ZIP válido. Ampliable.
+ */
+function di_known_hashes()
+{
+    return array(
+        '23.0.3' => '40c1c36133aeec69a6c1ca0c00edbed988b1655cc0a2a3fe34d51da1cd8f24e6',
+    );
 }
 
 /** Lista de versiones estables (desc). Fuente: GitHub releases, con caché 1h y fallback. */
@@ -910,7 +935,10 @@ function di_download_chunk($cfg, $offset)
         CURLOPT_RANGE => $offset . '-' . $end,
         CURLOPT_FILE => $fp,
         CURLOPT_CONNECTTIMEOUT => 20, CURLOPT_TIMEOUT => 300,
-        CURLOPT_SSL_VERIFYPEER => false, CURLOPT_SSL_VERIFYHOST => 0,
+        // TLS estricto (descarga externa) + redirecciones solo HTTPS: evita que un
+        // MITM/mirror sustituya el paquete (lo que sería ejecución de código en el server).
+        CURLOPT_SSL_VERIFYPEER => true, CURLOPT_SSL_VERIFYHOST => 2,
+        CURLOPT_PROTOCOLS => CURLPROTO_HTTPS, CURLOPT_REDIR_PROTOCOLS => CURLPROTO_HTTPS,
         CURLOPT_USERAGENT => 'EasyDoliInstaller/' . DI_VERSION,
         CURLOPT_HEADERFUNCTION => function ($c, $h) use (&$total) {
             if (stripos($h, 'Content-Range:') === 0 && preg_match('#/(\d+)#', $h, $m)) {
@@ -953,7 +981,16 @@ function di_self_base_url()
         || (!empty($_SERVER['HTTP_X_FORWARDED_PROTO']) && strtolower($_SERVER['HTTP_X_FORWARDED_PROTO']) === 'https')
         || (!empty($_SERVER['SERVER_PORT']) && $_SERVER['SERVER_PORT'] == 443);
     $scheme = $https ? 'https' : 'http';
-    $host = isset($_SERVER['HTTP_HOST']) ? $_SERVER['HTTP_HOST'] : 'localhost';
+    // Anti Host-header poisoning: el host acaba grabado en conf.php (dolibarr_main_url_root)
+    // y guía las autollamadas. Solo aceptamos un host con forma válida; si HTTP_HOST llega
+    // manipulado, caemos a SERVER_NAME y, en último término, a localhost.
+    $host = (string) ($_SERVER['HTTP_HOST'] ?? '');
+    if ($host === '' || !preg_match('/^[A-Za-z0-9._\-]+(:[0-9]{1,5})?$/', $host)) {
+        $host = (string) ($_SERVER['SERVER_NAME'] ?? '');
+        if ($host === '' || !preg_match('/^[A-Za-z0-9._\-]+(:[0-9]{1,5})?$/', $host)) {
+            $host = 'localhost';
+        }
+    }
     $dir = isset($_SERVER['SCRIPT_NAME']) ? str_replace('\\', '/', dirname($_SERVER['SCRIPT_NAME'])) : '/';
     $dir = rtrim($dir, '/');
     return $scheme . '://' . $host . $dir;
@@ -997,7 +1034,13 @@ function di_load_config()
         return null;
     }
     // Caducidad: una config olvidada (instalador abandonado) deja de ser válida.
+    // Además del null lógico, BORRAMOS físicamente los artefactos con secretos para que
+    // no sobrevivan en disco más allá del TTL.
     if (!empty($data['ts']) && (time() - (int) $data['ts']) > DI_CONFIG_TTL) {
+        if (!empty($data['target'])) {
+            @unlink($data['target'] . '/install/install.forced.php');
+        }
+        di_rrmdir(DI_TMPDIR);
         return null;
     }
     return $data;
@@ -1325,7 +1368,7 @@ function di_write_install_files($cfg)
     // conf.php vacío y escribible: el instalador nativo lo rellenará.
     $confFile = $confDir . '/conf.php';
     @file_put_contents($confFile, "<?php\n");
-    @chmod($confFile, 0666);
+    @chmod($confFile, 0644); // el propietario (PHP) conserva escritura; sin escritura para grupo/otros
 
     if (!is_dir($installDir)) {
         return array(false, di_t('e_noinstall'));
@@ -1631,12 +1674,17 @@ function di_fix_main_url($cfg, $conf, $c)
     if ($want === '' || !filter_var($want, FILTER_VALIDATE_URL)) {
         return;
     }
+    // Defensa en profundidad anti Host-poisoning: no escribir un host con forma rara.
+    $wh = (string) parse_url($want, PHP_URL_HOST);
+    if ($wh === '' || !preg_match('/^[A-Za-z0-9._\-]+$/', $wh)) {
+        return;
+    }
     if (!preg_match('/(\$dolibarr_main_url_root\s*=\s*)([\'"])(.*?)\2(\s*;)/', $c, $mm)) {
         return;
     }
     $got = $mm[3];
     $gotHost = strtolower((string) parse_url($got, PHP_URL_HOST));
-    $wantHost = strtolower((string) parse_url($want, PHP_URL_HOST));
+    $wantHost = strtolower($wh);
     $loop = in_array($gotHost, array('127.0.0.1', 'localhost', '::1'), true);
     $pub = !in_array($wantHost, array('127.0.0.1', 'localhost', '::1'), true);
     if (rtrim($got, '/') !== $want && (($loop && $pub) || $got === '')) {
@@ -1670,6 +1718,7 @@ function di_run_substep($cfg, $sub)
         $c = @file_get_contents($conf);
         if ($c && preg_match('/dolibarr_main_db_name\s*=\s*[\'"]' . preg_quote($cfg['db']['name'], '/') . '/', $c)) {
             di_fix_main_url($cfg, $conf, $c);
+            @chmod($conf, 0640); // conf.php ya tiene credenciales: cerrar lectura a grupo/otros (efectivo en Linux)
             return array('ok' => true, 'msg' => di_t('ss_s1ok'));
         }
         return array('ok' => false, 'msg' => di_t('ss_s1fail') . di_blocked_hint($cfg, $res));
@@ -1725,9 +1774,14 @@ function di_run_substep($cfg, $sub)
         $lock = di_find_lock($cfg);
         $lockFresh = ($lock && @filemtime($lock) >= $t0 - 5);
 
+        // Borramos el forced (contiene la contraseña root del SGBD) PASE LO QUE PASE:
+        // ya no se necesita tras intentar step5, ni en éxito ni en fallo.
+        @unlink($cfg['target'] . '/install/install.forced.php');
         if ($adminOk || $lockFresh || (!$ok && $lock)) {
-            // Éxito: borramos YA el archivo con secretos (contraseña root de la BD).
-            @unlink($cfg['target'] . '/install/install.forced.php');
+            // Éxito: retiramos cookies/log del instalador nativo (la purga de secretos
+            // de config.php se hace en el handler AJAX, que es quien posee $cfg).
+            @unlink(DI_COOKIES);
+            @unlink(DI_LOG);
             $warn = $lock ? '' : di_t('ss_s5warn');
             return array('ok' => true, 'msg' => di_t('ss_s5ok', array('{s}' => $login)) . $warn);
         }
@@ -1812,8 +1866,19 @@ if (isset($_GET['ajax'])) {
             exit;
         }
         if ($r['done']) {
-            // El ZIP ya está local: validamos y fijamos zip + prefix en la config.
+            // El ZIP ya está local: verificamos integridad (SHA-256 si la versión es conocida),
+            // validamos estructura y fijamos zip + prefix en la config.
             $file = di_download_target($cfg);
+            $known = di_known_hashes();
+            $ver = $cfg['download_version'];
+            if (isset($known[$ver])) {
+                $got = @hash_file('sha256', $file);
+                if (!$got || !hash_equals($known[$ver], $got)) {
+                    @unlink($file);
+                    echo json_encode(array('error' => di_t('e_badhash', array('{s}' => $ver))));
+                    exit;
+                }
+            }
             $prefix = di_detect_prefix($file);
             if ($prefix === null) {
                 @unlink($file);
@@ -1865,6 +1930,10 @@ if (isset($_GET['ajax'])) {
         if (!empty($r['ok'])) {
             // Persistimos el progreso para poder reanudar tras un F5.
             $cfg['progress'] = $sub;
+            // Tras step5 los secretos ya no hacen falta: los purgamos de config.php.
+            if ($sub === 'step5') {
+                unset($cfg['db']['pass'], $cfg['db']['rootpass'], $cfg['admin']['pass']);
+            }
             di_save_config($cfg);
         }
         echo json_encode($r);
@@ -1872,24 +1941,41 @@ if (isset($_GET['ajax'])) {
     }
 
     if ($ajax === 'limpiar') {
+        // Solo POST: una limpieza es destructiva; rechazar GET corta el CSRF por <img>/navegación.
+        if (($_SERVER['REQUEST_METHOD'] ?? 'GET') !== 'POST') {
+            http_response_code(405);
+            echo json_encode(array('error' => 'method'));
+            exit;
+        }
         $cfg = di_load_config();
         $target = $cfg && !empty($cfg['target']) ? $cfg['target'] : DI_DIR;
         $base = $cfg && !empty($cfg['baseurl']) ? rtrim($cfg['baseurl'], '/') : rtrim(di_self_base_url(), '/');
         $mode = $cfg['mode'] ?? 'full';
+
+        // Defensa en profundidad: solo borrar dentro de DI_DIR (nunca rutas externas).
+        $rt = realpath($target);
+        $bdir = realpath(DI_DIR);
+        $inside = ($rt !== false && $bdir !== false && strncmp($rt . DIRECTORY_SEPARATOR, $bdir . DIRECTORY_SEPARATOR, strlen($bdir) + 1) === 0);
 
         if ($mode === 'simple') {
             // Conservamos install/ y conf.php: el usuario terminará con el asistente nativo.
             $appurl = $base . '/install/index.php';
         } else {
             // Modo automático: install/ ya no hace falta y contiene secretos (forced).
-            @di_rrmdir($target . '/install');
+            if ($inside) {
+                @di_rrmdir($target . '/install');
+            }
             $appurl = $base . '/';
         }
-        // En ambos casos borramos el ZIP, los temporales y el propio instalador.
-        if ($cfg && !empty($cfg['zip']) && is_file($cfg['zip'])) {
+        // En ambos casos borramos el ZIP (siempre dentro de DI_DIR por construcción),
+        // los temporales y el propio instalador.
+        if ($cfg && !empty($cfg['zip']) && is_file($cfg['zip']) && dirname((string) realpath($cfg['zip'])) === $bdir) {
             @unlink($cfg['zip']);
         }
         @di_rrmdir(DI_TMPDIR);
+        // Degradar a inerte ANTES de borrar: si @unlink falla (owner SFTP != PHP), el
+        // script ya no opera ni expone nada.
+        @file_put_contents(__FILE__, "<?php http_response_code(410); die('EasyDoliInstaller removed'); ");
         @unlink(__FILE__);
         echo json_encode(array('ok' => true, 'appurl' => $appurl, 'selfdeleted' => !file_exists(__FILE__)));
         exit;
@@ -2808,7 +2894,7 @@ if ($paso === 'redir') {
   function put(s){ if(cur){cur.remove();cur=null;} log.insertAdjacentText('beforeend',s+'\n'); cur=document.createElement('span'); cur.className='cursor'; log.appendChild(cur); log.scrollTop=log.scrollHeight; }
   put(ts()+'  '+T.dep);
   put(ts()+'  '+T.rem);
-  fetch('<?php echo DI_SELF; ?>?ajax=limpiar',{cache:'no-store'})
+  fetch('<?php echo DI_SELF; ?>?ajax=limpiar',{method:'POST',cache:'no-store'})
     .then(function(r){return r.json();})
     .then(function(d){ if(d&&d.appurl){target=d.appurl;} put(ts()+'  '+T.redir); setTimeout(function(){location.href=target;},1300); })
     .catch(function(e){ put(ts()+'  '+T.man); setTimeout(function(){location.href=target;},1500); });
@@ -2848,7 +2934,7 @@ if ($paso === 'finalizar') {
   function limpiar(){
     var b=document.getElementById('clean');b.disabled=true;b.textContent=T.cleaning;
     put(ts()+'  '+T.del);
-    fetch('<?php echo DI_SELF; ?>?ajax=limpiar',{cache:'no-store'})
+    fetch('<?php echo DI_SELF; ?>?ajax=limpiar',{method:'POST',cache:'no-store'})
       .then(function(r){return r.json();})
       .then(function(d){ if(d&&d.appurl){appurl=d.appurl;} put(ts()+'  '+T.removed); setTimeout(function(){location.href=appurl;},1300); })
       .catch(function(e){ put(ts()+'  '+T.man+' '+e); });

@@ -7,7 +7,7 @@
 
 <p align="center">
   <a href="https://github.com/EasySoft-Tech-SL/easydoliinstaller/releases/latest"><img src="https://img.shields.io/github/v/release/EasySoft-Tech-SL/easydoliinstaller?sort=semver&display_name=tag&style=for-the-badge&color=43ff7d&label=release" alt="Release"></a>
-  <a href="LICENSE"><img src="https://img.shields.io/badge/License-GPL--3.0-blue?style=for-the-badge" alt="License: GPL-3.0"></a>
+  <a href="LICENSE"><img src="https://img.shields.io/badge/License-MIT-green?style=for-the-badge" alt="License: MIT"></a>
   <img src="https://img.shields.io/badge/PHP-7.4%20%E2%86%92%208.3-777BB4?style=for-the-badge&logo=php&logoColor=white" alt="PHP 7.4 to 8.3">
   <img src="https://img.shields.io/badge/DB-MySQL%20%7C%20MariaDB%20%7C%20PostgreSQL-F29111?style=for-the-badge" alt="Databases">
   <img src="https://img.shields.io/badge/i18n-EN%20ES%20DE%20FR%20IT-43ff7d?style=for-the-badge" alt="Languages">
@@ -110,4 +110,6 @@ Issues and pull requests are welcome. The whole tool is one auditable PHP file �
 
 ## 📄 License
 
-[GPL-3.0-or-later](LICENSE), same as Dolibarr. © [Easysoft Tech S.L.](https://github.com/easySoft-Tech-SL)
+[MIT](LICENSE) © [Alberto Luque Rivas](mailto:aluquerivasdev@gmail.com) / [Easysoft Tech S.L.](https://github.com/easySoft-Tech-SL)
+
+> EasyDoliInstaller is an independent tool, MIT-licensed. Dolibarr itself is distributed separately under GPL-3.0; this installer downloads/installs it but does not bundle its source.

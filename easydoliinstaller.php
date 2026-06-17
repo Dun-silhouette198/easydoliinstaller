@@ -35,7 +35,7 @@
  *  IDIOMAS: interfaz autocontenida en EN/ES/DE/FR/IT con selector (cookie); detecta
  *  el idioma del navegador. COMPATIBILIDAD: probado en PHP 7.4 hasta 8.3.
  *
- *  Licencia: GPL-3.0-or-later (igual que Dolibarr).
+ *  Licencia: MIT (ver LICENSE). Dolibarr se distribuye bajo GPL-3.0 por separado.
  * ============================================================================
  */
 

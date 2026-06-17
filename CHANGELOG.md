@@ -4,6 +4,9 @@ Todos los cambios notables de EasyDoliInstaller.
 
 ## [1.6.1] - 2026-06-17
 
+### Licencia
+- **Relicenciado a MIT** (antes GPL-3.0). EasyDoliInstaller es una herramienta independiente: no incorpora código de Dolibarr, por lo que no está sujeto a su copyleft. Dolibarr se sigue distribuyendo aparte bajo GPL-3.0.
+
 ### Seguridad
 - **Token de instalación (anti-CSRF + anti-secuestro)**: al arrancar se genera un token aleatorio, se guarda en la config y se emite en una cookie `HttpOnly`/`SameSite=Lax`. Las acciones mutantes (`extraer`/`instalar`/`descargar`/`limpiar` y el POST de configuración) exigen ese token → un tercero que no inició la instalación recibe **403**. Cierra el último hallazgo MEDIO de la auditoría (ausencia de autenticación durante la ventana de instalación). El flujo de un solo navegador no cambia (la cookie viaja sola en las peticiones del propio asistente).
 

@@ -50,7 +50,7 @@
 @ignore_user_abort(true);
 error_reporting(E_ALL & ~E_DEPRECATED & ~E_NOTICE & ~E_WARNING);
 
-define('DI_VERSION', '1.7.0');
+define('DI_VERSION', '1.7.1');
 define('DI_DIR', __DIR__);
 define('DI_SELF', basename(__FILE__));
 define('DI_TMPDIR', DI_DIR . '/__doli_installer_tmp__');
@@ -252,6 +252,7 @@ function di_dict()
         'ss_blocked' => 'The server replied HTTP {code} to the native installer (possible mod_security/WAF block or server error). Add an exception for /install/ or finish manually at {url}/install/.',
         'ss_emptyresp' => 'Empty response from the server.', 'ss_reported' => 'Dolibarr reported: {s}',
         'ss_checklog' => 'Check the log or run /install/ manually.',
+        'ss_phpfatal' => 'PHP fatal: {s}. This Dolibarr version is likely incompatible with your PHP ({php}); choose a newer Dolibarr version.',
         'e_noinstall' => 'The install/ directory does not exist after extraction.',
         'e_cantopen' => 'Could not open the ZIP: {s}', 'e_blockfail' => 'Failed to extract the block (offset {s}). Disk space or permissions?',
         'e_notfound' => 'Extracted content not found in {s}', 'e_cantread' => 'Could not read the temporary extraction directory.',
@@ -397,6 +398,7 @@ function di_dict()
         'ss_blocked' => 'El servidor respondió HTTP {code} al instalador nativo (posible bloqueo de mod_security/WAF o error del servidor). Añade una excepción para /install/ o termina manualmente en {url}/install/.',
         'ss_emptyresp' => 'Respuesta vacía del servidor.', 'ss_reported' => 'Dolibarr informó: {s}',
         'ss_checklog' => 'Revisa el log o ejecuta /install/ manualmente.',
+        'ss_phpfatal' => 'Error fatal de PHP: {s}. Esta versión de Dolibarr probablemente no es compatible con tu PHP ({php}); elige una versión de Dolibarr más reciente.',
         'e_noinstall' => 'No existe el directorio install/ tras la extracción.',
         'e_cantopen' => 'No se pudo abrir el ZIP: {s}', 'e_blockfail' => 'Fallo al extraer el bloque (offset {s}). ¿Espacio en disco o permisos?',
         'e_notfound' => 'No se encontró el contenido extraído en {s}', 'e_cantread' => 'No se pudo leer el directorio temporal de extracción.',
@@ -542,6 +544,7 @@ function di_dict()
         'ss_blocked' => 'Der Server antwortete HTTP {code} an den nativen Installer (mögliche mod_security/WAF-Sperre oder Serverfehler). Fügen Sie eine Ausnahme für /install/ hinzu oder beenden Sie manuell unter {url}/install/.',
         'ss_emptyresp' => 'Leere Antwort vom Server.', 'ss_reported' => 'Dolibarr meldete: {s}',
         'ss_checklog' => 'Prüfen Sie das Log oder führen Sie /install/ manuell aus.',
+        'ss_phpfatal' => 'PHP-Fatal: {s}. Diese Dolibarr-Version ist wahrscheinlich nicht mit Ihrem PHP ({php}) kompatibel; wählen Sie eine neuere Dolibarr-Version.',
         'e_noinstall' => 'Das install/-Verzeichnis existiert nach dem Entpacken nicht.',
         'e_cantopen' => 'ZIP konnte nicht geöffnet werden: {s}', 'e_blockfail' => 'Block konnte nicht entpackt werden (Offset {s}). Speicherplatz oder Rechte?',
         'e_notfound' => 'Entpackter Inhalt nicht gefunden in {s}', 'e_cantread' => 'Temporäres Entpackverzeichnis konnte nicht gelesen werden.',
@@ -687,6 +690,7 @@ function di_dict()
         'ss_blocked' => 'Le serveur a répondu HTTP {code} à l\'installateur natif (blocage mod_security/WAF possible ou erreur serveur). Ajoutez une exception pour /install/ ou terminez manuellement sur {url}/install/.',
         'ss_emptyresp' => 'Réponse vide du serveur.', 'ss_reported' => 'Dolibarr a signalé : {s}',
         'ss_checklog' => 'Consultez le log ou exécutez /install/ manuellement.',
+        'ss_phpfatal' => 'Erreur fatale PHP : {s}. Cette version de Dolibarr est probablement incompatible avec votre PHP ({php}) ; choisissez une version plus récente.',
         'e_noinstall' => 'Le répertoire install/ n\'existe pas après l\'extraction.',
         'e_cantopen' => 'Impossible d\'ouvrir le ZIP : {s}', 'e_blockfail' => 'Échec d\'extraction du bloc (offset {s}). Espace disque ou permissions ?',
         'e_notfound' => 'Contenu extrait introuvable dans {s}', 'e_cantread' => 'Impossible de lire le répertoire temporaire d\'extraction.',
@@ -832,6 +836,7 @@ function di_dict()
         'ss_blocked' => 'Il server ha risposto HTTP {code} all\'installer nativo (possibile blocco mod_security/WAF o errore del server). Aggiungi un\'eccezione per /install/ o termina manualmente su {url}/install/.',
         'ss_emptyresp' => 'Risposta vuota dal server.', 'ss_reported' => 'Dolibarr ha segnalato: {s}',
         'ss_checklog' => 'Controlla il log o esegui /install/ manualmente.',
+        'ss_phpfatal' => 'Errore fatale PHP: {s}. Questa versione di Dolibarr probabilmente non è compatibile con il tuo PHP ({php}); scegli una versione di Dolibarr più recente.',
         'e_noinstall' => 'La directory install/ non esiste dopo l\'estrazione.',
         'e_cantopen' => 'Impossibile aprire lo ZIP: {s}', 'e_blockfail' => 'Estrazione del blocco non riuscita (offset {s}). Spazio su disco o permessi?',
         'e_notfound' => 'Contenuto estratto non trovato in {s}', 'e_cantread' => 'Impossibile leggere la directory temporanea di estrazione.',
@@ -1995,6 +2000,25 @@ function di_install_url($cfg, $script)
     return rtrim($cfg['baseurl'], '/') . '/install/' . $script;
 }
 
+/**
+ * Resuelve el nombre real del script de instalación nativo. Dolibarr renombró los
+ * pasos de "etapeN.php" (francés, <= 3.6) a "stepN.php" (>= 3.7/3.9). Detecta cuál
+ * existe en el destino para soportar también paquetes muy antiguos.
+ * $logical: 'step1' | 'step2' | 'step4' | 'step5'
+ */
+function di_install_script($cfg, $logical)
+{
+    $dir = $cfg['target'] . '/install/';
+    if (is_file($dir . $logical . '.php')) {
+        return $logical . '.php';
+    }
+    $fr = str_replace('step', 'etape', $logical);
+    if (is_file($dir . $fr . '.php')) {
+        return $fr . '.php';
+    }
+    return $logical . '.php';
+}
+
 /** Escapa una cadena como literal SQL (portable MySQL/PostgreSQL: duplica la comilla). */
 function di_sql_str($s)
 {
@@ -2067,8 +2091,33 @@ function di_run_substep($cfg, $sub)
     $lang = !empty($cfg['lang']) ? $cfg['lang'] : 'auto';
 
     if ($sub === 'step1') {
-        $url = di_install_url($cfg, 'step1.php');
-        $res = di_http($url, array('action' => 'set', 'selectlang' => $lang), 600);
+        $db = $cfg['db'];
+        // Crear usuario de BD solo si creamos la base Y hay contraseña (igual que en el forced).
+        $createUser = (!empty($db['create']) && isset($db['pass']) && $db['pass'] !== '');
+        // Enviamos el conjunto COMPLETO de campos. Las versiones ANTIGUAS de Dolibarr
+        // (p. ej. 3.x–4.x) leen los datos de conexión SOLO del POST: su install.forced.php
+        // únicamente PRE-RELLENA el formulario, no aplica valores server-side. Las versiones
+        // modernas leen el POST y, si falta, recurren al forced; el filtro 'alpha' conserva
+        // puntos/dígitos (db_host=127.0.0.1 es seguro). Así el paso funciona en ambas.
+        $post = array(
+            'action' => 'set',
+            'selectlang' => $lang,
+            'main_dir' => $cfg['target'],
+            'main_url' => rtrim($cfg['baseurl'], '/'),
+            'db_type' => isset($db['type']) ? $db['type'] : 'mysqli',
+            'db_host' => $db['host'],
+            'db_port' => (string) $db['port'],
+            'db_name' => $db['name'],
+            'db_prefix' => $db['prefix'],
+            'db_user' => $db['user'],
+            'db_pass' => isset($db['pass']) ? $db['pass'] : '',
+            'db_create_database' => !empty($db['create']) ? '1' : '',
+            'db_create_user' => $createUser ? '1' : '',
+            'db_user_root' => isset($db['rootuser']) ? $db['rootuser'] : '',
+            'db_pass_root' => isset($db['rootpass']) ? $db['rootpass'] : '',
+        );
+        $url = di_install_url($cfg, di_install_script($cfg, 'step1'));
+        $res = di_http($url, $post, 600);
         di_log("step1 http=" . $res['code'] . " err=" . $res['error']);
         if ($res['code'] === 0) {
             return array('ok' => false, 'msg' => di_t('ss_nocontact', array('{url}' => $url, '{s}' => $res['error']))
@@ -2086,7 +2135,7 @@ function di_run_substep($cfg, $sub)
     }
 
     if ($sub === 'step2') {
-        $url = di_install_url($cfg, 'step2.php');
+        $url = di_install_url($cfg, di_install_script($cfg, 'step2'));
         $res = di_http($url, array('action' => 'set', 'selectlang' => $lang), 600);
         di_log("step2 http=" . $res['code'] . " err=" . $res['error']);
         if ($res['code'] === 0) {
@@ -2102,7 +2151,7 @@ function di_run_substep($cfg, $sub)
         }
         if ($core === null) {
             // Sin driver para verificar: confiamos en la señal del HTML.
-            if (stripos($res['body'], 'step4') !== false || stripos($res['body'], 'CreateDatabaseObjects') !== false) {
+            if (stripos($res['body'], 'step4') !== false || stripos($res['body'], 'etape4') !== false || stripos($res['body'], 'CreateDatabaseObjects') !== false) {
                 return array('ok' => true, 'msg' => di_t('ss_s2nodrv'));
             }
         }
@@ -2111,7 +2160,7 @@ function di_run_substep($cfg, $sub)
 
     if ($sub === 'step5') {
         $t0 = time();
-        $url = di_install_url($cfg, 'step5.php');
+        $url = di_install_url($cfg, di_install_script($cfg, 'step5'));
         $login = $cfg['admin']['login'];
         $res = di_http($url, array(
             'action' => 'set',
@@ -2477,8 +2526,12 @@ function di_extract_error($html)
             return di_t('ss_reported', array('{s}' => implode(' | ', array_slice(array_unique($msgs), 0, 3))));
         }
     }
-    if (preg_match('#(Fatal error|Parse error|Uncaught)[^<\n]{0,200}#i', $html, $m)) {
-        return 'PHP: ' . trim($m[0]);
+    // Fatal de PHP: limpiamos etiquetas para capturar el mensaje completo (fichero:línea).
+    $plain = trim(preg_replace('/\s+/', ' ', strip_tags($html)));
+    if (preg_match('/(Fatal error|Parse error|Uncaught[^:]*)\s*:?\s*(.{0,200})/i', $plain, $m)) {
+        $detail = trim($m[1] . (isset($m[2]) && $m[2] !== '' ? ': ' . $m[2] : ''));
+        // Síntoma típico de paquete demasiado antiguo para el PHP del servidor.
+        return di_t('ss_phpfatal', array('{s}' => $detail, '{php}' => PHP_VERSION));
     }
     return di_t('ss_checklog');
 }

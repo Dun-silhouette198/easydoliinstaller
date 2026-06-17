@@ -2,6 +2,18 @@
 
 Todos los cambios notables de EasyDoliInstaller.
 
+## [1.7.1] - 2026-06-17
+
+### Corregido — instalación de versiones antiguas de Dolibarr
+- **`step1` con campos completos**: el paso 1 ahora envía todos los datos de conexión por POST (`db_type/host/port/name/prefix/user/pass`, `main_dir/main_url`, root y creación de BD). Las versiones **antiguas** (p. ej. 3.9) leen la conexión **solo del POST** — su `install.forced.php` únicamente pre-rellena el formulario, no aplica valores server-side —, así que con `action=set` "a secas" fallaban con *"Field 'Database type/Server/Database name' is required"*. Las versiones modernas leen el POST y, si falta, el forced (el filtro `alpha` conserva puntos/dígitos, p. ej. `127.0.0.1`), por lo que **no hay regresión**.
+- **Nombres de script de instalación antiguos**: Dolibarr renombró los pasos de `etapeN.php` (≤ 3.6) a `stepN.php`. El instalador ahora **detecta cuál existe** y usa el correcto (antes daba 404 en paquetes muy antiguos).
+- **Mensaje claro de incompatibilidad PHP**: si el paquete elegido es demasiado antiguo para el PHP del servidor (p. ej. Dolibarr 3.6 en PHP 7.x → *"'break' not in the 'loop' or 'switch' context"* en su `adodb-time`), se muestra el fatal real y la pista *"esta versión de Dolibarr probablemente no es compatible con tu PHP X.Y; elige una versión más reciente"* en vez de un críptico "no escribió conf.php".
+
+### Probado (e2e contra Dolibarr real)
+- **3.9.0**: instala correctamente en PHP 7.4 (225 tablas, admin, lock).
+- **3.6.0**: incompatible con PHP 7.x (fatal en su librería incluida) → ahora con mensaje claro.
+- **23.0.3**: sin regresión (272 tablas).
+
 ## [1.7.0] - 2026-06-17
 
 ### Añadido

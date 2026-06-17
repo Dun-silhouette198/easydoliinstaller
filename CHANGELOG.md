@@ -2,6 +2,16 @@
 
 Todos los cambios notables de EasyDoliInstaller.
 
+## [1.7.2] - 2026-06-17
+
+### Añadido — requisitos según la versión elegida
+- El paso **"Requisitos" ahora es consciente de la versión** seleccionada: lee los requisitos de PHP que el **propio paquete** declara en `install/check.php` (mínimo y, en versiones modernas, máximo) y los compara con el PHP del servidor:
+  - **Bloquea** si el PHP del servidor es inferior al mínimo que exige esa versión de Dolibarr.
+  - **Avisa** si el PHP es más nuevo que el máximo probado por esa versión.
+  - **Avisa** para paquetes muy antiguos (era PHP 5, sin máximo declarado) sobre PHP 7/8 (p. ej. Dolibarr 3.x), anticipando incompatibilidades **antes** de instalar.
+  - Muestra la versión detectada y su PHP requerido (p. ej. *"PHP para Dolibarr 23.0.3 (requiere ≥ 7.1.0)"*).
+- **Rango soportado Dolibarr v3 – v23** para instalar y actualizar. La instalabilidad real de cada versión depende de que su código sea compatible con el PHP del servidor (p. ej. Dolibarr 3.6 no funciona en PHP 7.x); el paso de requisitos lo anticipa y, si falla, el instalador muestra el motivo exacto.
+
 ## [1.7.1] - 2026-06-17
 
 ### Corregido — instalación de versiones antiguas de Dolibarr

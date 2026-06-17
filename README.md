@@ -107,7 +107,9 @@ Interface available in **English · Español · Deutsch · Français · Italiano
 
 ## 🗄️ Compatibility
 
-- **PHP:** 7.4 → 8.3 (lint-verified on 7.4, 8.1, 8.3).
+- **The installer (this PHP file):** runs on PHP 7.4 → 8.3 (lint-verified on 7.4, 8.1, 8.3).
+- **Dolibarr versions:** installs and upgrades the **v3 – v23** range. The installer adapts to each version's contract (old `etapeN.php` vs `stepN.php`, POST-only vs forced install). Whether a given version actually runs depends on its own PHP requirement, so…
+- **Version-aware requirements step:** before installing, the wizard reads the **chosen package's own** `install/check.php` and checks your PHP against that version's declared minimum/maximum — blocking if it's below the minimum and warning if your PHP is newer than tested or the package is from the PHP-5 era (e.g. Dolibarr 3.6 won't run on PHP 7+). No surprises mid-install.
 - **Databases:** MySQL / MariaDB and PostgreSQL.
 - **Packages:** the official Dolibarr ZIP (`dolibarr-x.y.z/htdocs/...`), a ZIP whose root is `htdocs/`, or a ZIP that already *is* the `htdocs` content.
 

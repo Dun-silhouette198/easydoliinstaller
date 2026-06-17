@@ -50,7 +50,7 @@
 @ignore_user_abort(true);
 error_reporting(E_ALL & ~E_DEPRECATED & ~E_NOTICE & ~E_WARNING);
 
-define('DI_VERSION', '1.7.1');
+define('DI_VERSION', '1.7.2');
 define('DI_DIR', __DIR__);
 define('DI_SELF', basename(__FILE__));
 define('DI_TMPDIR', DI_DIR . '/__doli_installer_tmp__');
@@ -138,6 +138,7 @@ function di_dict()
         'w_simple_d' => 'Choose the package (local or download), unpack htdocs and redirect you to the native install/ wizard so you configure it yourself.',
         'req_title' => 'SYSTEM CHECK', 'req_block' => 'Mandatory requirements are missing. Fix them (ask your host) and retry.',
         'req_php' => 'PHP version ≥ {s}', 'req_ext' => 'PHP extension: {s}', 'req_required' => '(required)', 'req_recommended' => '(recommended)',
+        'req_phpver' => 'PHP for Dolibarr {v} (requires ≥ {s})', 'req_phpmax' => 'Dolibarr {v} is tested only up to PHP {s}; your PHP is newer (may have issues)', 'req_phpold' => 'Dolibarr {v} is very old (PHP 5 era); it may be incompatible with this PHP — prefer a newer version',
         'req_dbdrv' => 'Database driver (MySQL and/or PostgreSQL)', 'req_http' => 'cURL or allow_url_fopen (to run the installer)',
         'req_writable' => 'Installation directory writable', 'req_parent' => 'Parent directory writable (for ../documents)',
         'req_zip' => 'Dolibarr ZIP package present', 'req_yes' => 'yes', 'req_no' => 'no', 'req_none' => 'not found',
@@ -284,6 +285,7 @@ function di_dict()
         'w_simple_d' => 'Elige el paquete (local o descargar), descomprime htdocs y te redirige al asistente nativo install/ de Dolibarr para que lo configures tú.',
         'req_title' => 'COMPROBACIÓN DEL SISTEMA', 'req_block' => 'Faltan requisitos obligatorios. Corrígelos (consulta a tu hosting) y reintenta.',
         'req_php' => 'Versión de PHP ≥ {s}', 'req_ext' => 'Extensión PHP: {s}', 'req_required' => '(obligatoria)', 'req_recommended' => '(recomendada)',
+        'req_phpver' => 'PHP para Dolibarr {v} (requiere ≥ {s})', 'req_phpmax' => 'Dolibarr {v} solo está probado hasta PHP {s}; tu PHP es más nuevo (puede dar problemas)', 'req_phpold' => 'Dolibarr {v} es muy antiguo (era PHP 5); puede ser incompatible con este PHP — usa una versión más reciente',
         'req_dbdrv' => 'Driver de base de datos (MySQL y/o PostgreSQL)', 'req_http' => 'cURL o allow_url_fopen (para ejecutar el instalador)',
         'req_writable' => 'Directorio de instalación escribible', 'req_parent' => 'Directorio padre escribible (para ../documents)',
         'req_zip' => 'Paquete ZIP de Dolibarr presente', 'req_yes' => 'sí', 'req_no' => 'no', 'req_none' => 'no encontrado',
@@ -430,6 +432,7 @@ function di_dict()
         'w_simple_d' => 'Wählen Sie das Paket (lokal oder Download), entpackt htdocs und leitet Sie zum nativen install/-Assistenten weiter, damit Sie es selbst konfigurieren.',
         'req_title' => 'SYSTEMPRÜFUNG', 'req_block' => 'Pflichtanforderungen fehlen. Beheben Sie sie (fragen Sie Ihren Hoster) und versuchen Sie es erneut.',
         'req_php' => 'PHP-Version ≥ {s}', 'req_ext' => 'PHP-Erweiterung: {s}', 'req_required' => '(erforderlich)', 'req_recommended' => '(empfohlen)',
+        'req_phpver' => 'PHP für Dolibarr {v} (benötigt ≥ {s})', 'req_phpmax' => 'Dolibarr {v} ist nur bis PHP {s} getestet; Ihr PHP ist neuer (mögliche Probleme)', 'req_phpold' => 'Dolibarr {v} ist sehr alt (PHP-5-Ära); evtl. inkompatibel mit diesem PHP — neuere Version bevorzugen',
         'req_dbdrv' => 'Datenbanktreiber (MySQL und/oder PostgreSQL)', 'req_http' => 'cURL oder allow_url_fopen (zum Ausführen des Installers)',
         'req_writable' => 'Installationsverzeichnis beschreibbar', 'req_parent' => 'Übergeordnetes Verzeichnis beschreibbar (für ../documents)',
         'req_zip' => 'Dolibarr-ZIP-Paket vorhanden', 'req_yes' => 'ja', 'req_no' => 'nein', 'req_none' => 'nicht gefunden',
@@ -576,6 +579,7 @@ function di_dict()
         'w_simple_d' => 'Choisissez le paquet (local ou téléchargement), décompresse htdocs et vous redirige vers l\'assistant natif install/ de Dolibarr pour le configurer vous-même.',
         'req_title' => 'VÉRIFICATION DU SYSTÈME', 'req_block' => 'Des prérequis obligatoires manquent. Corrigez-les (demandez à votre hébergeur) et réessayez.',
         'req_php' => 'Version de PHP ≥ {s}', 'req_ext' => 'Extension PHP : {s}', 'req_required' => '(obligatoire)', 'req_recommended' => '(recommandée)',
+        'req_phpver' => 'PHP pour Dolibarr {v} (requiert ≥ {s})', 'req_phpmax' => 'Dolibarr {v} n\'est testé que jusqu\'à PHP {s} ; votre PHP est plus récent (problèmes possibles)', 'req_phpold' => 'Dolibarr {v} est très ancien (ère PHP 5) ; possible incompatibilité avec ce PHP — préférez une version plus récente',
         'req_dbdrv' => 'Pilote de base de données (MySQL et/ou PostgreSQL)', 'req_http' => 'cURL ou allow_url_fopen (pour exécuter l\'installateur)',
         'req_writable' => 'Répertoire d\'installation accessible en écriture', 'req_parent' => 'Répertoire parent accessible en écriture (pour ../documents)',
         'req_zip' => 'Paquet ZIP de Dolibarr présent', 'req_yes' => 'oui', 'req_no' => 'non', 'req_none' => 'introuvable',
@@ -722,6 +726,7 @@ function di_dict()
         'w_simple_d' => 'Scegli il pacchetto (locale o download), decomprime htdocs e ti reindirizza alla procedura nativa install/ di Dolibarr per configurarla tu.',
         'req_title' => 'CONTROLLO DEL SISTEMA', 'req_block' => 'Mancano requisiti obbligatori. Correggili (chiedi al tuo host) e riprova.',
         'req_php' => 'Versione di PHP ≥ {s}', 'req_ext' => 'Estensione PHP: {s}', 'req_required' => '(obbligatoria)', 'req_recommended' => '(consigliata)',
+        'req_phpver' => 'PHP per Dolibarr {v} (richiede ≥ {s})', 'req_phpmax' => 'Dolibarr {v} è testato solo fino a PHP {s}; il tuo PHP è più recente (possibili problemi)', 'req_phpold' => 'Dolibarr {v} è molto vecchio (era PHP 5); potrebbe essere incompatibile con questo PHP — preferisci una versione più recente',
         'req_dbdrv' => 'Driver del database (MySQL e/o PostgreSQL)', 'req_http' => 'cURL o allow_url_fopen (per eseguire l\'installer)',
         'req_writable' => 'Directory di installazione scrivibile', 'req_parent' => 'Directory superiore scrivibile (per ../documents)',
         'req_zip' => 'Pacchetto ZIP di Dolibarr presente', 'req_yes' => 'sì', 'req_no' => 'no', 'req_none' => 'non trovato',
@@ -1473,6 +1478,53 @@ function di_zip_version($zipPath, $prefix)
         }
     }
     return null;
+}
+
+/**
+ * Lee los requisitos de PHP que el PROPIO paquete declara en install/check.php:
+ * mínimo (error), mínimo soportado (warning) y, en versiones modernas, máximo (maj.min).
+ * Soporta el formato moderno ($arrayphpminversionerror = array(7,0,0);) y el antiguo
+ * (versioncompare(versionphparray(), array(5,3,0))). Devuelve ['min','minwarn','max'] o null.
+ */
+function di_pkg_php_range($zipPath, $prefix)
+{
+    if (!is_file($zipPath) || !class_exists('ZipArchive')) {
+        return null;
+    }
+    $zip = new ZipArchive();
+    if ($zip->open($zipPath) !== true) {
+        return null;
+    }
+    $p = rtrim((string) $prefix, '/');
+    $p = ($p === '') ? '' : $p . '/';
+    $c = $zip->getFromName($p . 'install/check.php');
+    $zip->close();
+    if (!$c) {
+        return null;
+    }
+    $min = $minwarn = $max = null;
+    if (preg_match('/arrayphpminversionerror\s*=\s*array\(\s*(\d+)\s*,\s*(\d+)\s*,\s*(\d+)/', $c, $m)) {
+        $min = $m[1] . '.' . $m[2] . '.' . $m[3];
+    }
+    if (preg_match('/arrayphpminversionwarning\s*=\s*array\(\s*(\d+)\s*,\s*(\d+)\s*,\s*(\d+)/', $c, $m)) {
+        $minwarn = $m[1] . '.' . $m[2] . '.' . $m[3];
+    }
+    if (preg_match('/arrayphpmaxversionwarning\s*=\s*array\(\s*(\d+)\s*,\s*(\d+)/', $c, $m)) {
+        $max = $m[1] . '.' . $m[2]; // precisión maj.min (como hace el propio Dolibarr)
+    }
+    // Formato antiguo (<= 3.x): las dos primeras versioncompare(versionphparray(), array(...)).
+    if ($min === null && preg_match_all('/versioncompare\(\s*versionphparray\(\)\s*,\s*array\(\s*(\d+)\s*,\s*(\d+)\s*,\s*(\d+)/', $c, $mm, PREG_SET_ORDER)) {
+        if (isset($mm[0])) {
+            $min = $mm[0][1] . '.' . $mm[0][2] . '.' . $mm[0][3];
+        }
+        if (isset($mm[1])) {
+            $minwarn = $mm[1][1] . '.' . $mm[1][2] . '.' . $mm[1][3];
+        }
+    }
+    if ($min === null && $minwarn === null) {
+        return null;
+    }
+    return array('min' => $min ?: $minwarn, 'minwarn' => $minwarn ?: $min, 'max' => $max);
 }
 
 /* ===========================================================================
@@ -2985,17 +3037,52 @@ if (($_SERVER['REQUEST_METHOD'] ?? 'GET') === 'POST' && ($_POST['accion'] ?? '')
  *  CHEQUEO DE REQUISITOS
  * ======================================================================== */
 
-function di_requisitos()
+function di_requisitos($cfg = null)
 {
     $yes = di_t('req_yes');
     $no = di_t('req_no');
     $r = array();
-    $r[] = array(
-        'ok' => version_compare(PHP_VERSION, DI_PHP_MIN, '>='),
-        'label' => di_t('req_php', array('{s}' => DI_PHP_MIN)),
-        'val' => PHP_VERSION,
-        'crit' => true,
-    );
+
+    // Requisitos de PHP ESPECÍFICOS de la versión elegida (leídos de su install/check.php).
+    $range = null;
+    $pkgVer = null;
+    if ($cfg) {
+        $zip = !empty($cfg['zip']) ? $cfg['zip'] : (!empty($cfg['download_version']) ? di_download_target($cfg) : null);
+        $prefix = isset($cfg['prefix']) ? $cfg['prefix'] : '';
+        if ($zip && is_file($zip)) {
+            $range = di_pkg_php_range($zip, $prefix);
+            $pkgVer = di_zip_version($zip, $prefix);
+        }
+        if (!$pkgVer && !empty($cfg['download_version'])) {
+            $pkgVer = $cfg['download_version'];
+        }
+    }
+
+    if ($range && !empty($range['min'])) {
+        // PHP mínimo que exige el paquete elegido (bloqueante si el servidor está por debajo).
+        $r[] = array(
+            'ok' => version_compare(PHP_VERSION, $range['min'], '>='),
+            'label' => di_t('req_phpver', array('{v}' => $pkgVer ?: '?', '{s}' => $range['min'])),
+            'val' => PHP_VERSION,
+            'crit' => true,
+        );
+        $phpMM = implode('.', array_slice(explode('.', PHP_VERSION), 0, 2));
+        if (!empty($range['max']) && version_compare($phpMM, $range['max'], '>')) {
+            // El paquete declara un máximo (versiones modernas) y el PHP es más nuevo: aviso.
+            $r[] = array('ok' => false, 'label' => di_t('req_phpmax', array('{v}' => $pkgVer ?: '?', '{s}' => $range['max'])), 'val' => PHP_VERSION, 'crit' => false);
+        } elseif (empty($range['max']) && di_ver_major($range['min']) <= 5 && (int) PHP_VERSION >= 7) {
+            // Paquete muy antiguo (era PHP 5) sin máximo declarado, sobre PHP 7/8: aviso heurístico.
+            $r[] = array('ok' => false, 'label' => di_t('req_phpold', array('{v}' => $pkgVer ?: '?')), 'val' => 'PHP ' . PHP_VERSION, 'crit' => false);
+        }
+    } else {
+        // Sin paquete legible aún: mínimo genérico del instalador.
+        $r[] = array(
+            'ok' => version_compare(PHP_VERSION, DI_PHP_MIN, '>='),
+            'label' => di_t('req_php', array('{s}' => DI_PHP_MIN)),
+            'val' => PHP_VERSION,
+            'crit' => true,
+        );
+    }
     foreach (array('zip', 'mysqli', 'json', 'mbstring', 'xml', 'gd', 'curl') as $ext) {
         $crit = in_array($ext, array('zip', 'json'), true);
         $r[] = array(
@@ -3428,7 +3515,7 @@ if ($paso === 'bienvenida') {
 
 if ($paso === 'requisitos') {
     di_header(di_t('st_requisitos'));
-    $reqs = di_requisitos();
+    $reqs = di_requisitos(di_load_config());
     $blocking = false;
     echo '<div class="win"><div class="t">' . di_h(di_t('req_title')) . '</div><div class="b">';
     echo '<table class="kv">';

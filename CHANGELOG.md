@@ -2,6 +2,12 @@
 
 Todos los cambios notables de EasyDoliInstaller.
 
+## [1.9.3] - 2026-06-18
+
+### Añadido — reparar modificados y ausentes por separado
+- El informe de reparar ahora ofrece **botones independientes por sección**: **Restaurar modificados** (sobrescribe solo los ficheros que difieren), **Restaurar ausentes** (recrea solo los que faltan) y **Borrar sobrantes**. Antes había un único botón que restauraba modificados + ausentes juntos. Cada acción mantiene la confirmación y la copia previa.
+- El endpoint `?ajax=reparar` acepta `which=mod|miss|all`.
+
 ## [1.9.2] - 2026-06-18
 
 ### Corregido — falsos "ausentes" en reparar

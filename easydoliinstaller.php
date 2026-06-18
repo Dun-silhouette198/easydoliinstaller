@@ -57,7 +57,7 @@
 @ignore_user_abort(true);
 error_reporting(E_ALL & ~E_DEPRECATED & ~E_NOTICE & ~E_WARNING);
 
-define('DI_VERSION', '1.10.0');
+define('DI_VERSION', '1.10.1');
 define('DI_DIR', __DIR__);
 define('DI_SELF', basename(__FILE__));
 define('DI_TMPDIR', DI_DIR . '/__doli_installer_tmp__');
@@ -248,7 +248,8 @@ function di_dict()
         'st_repair' => 'repair', 'st_verify' => 'verify', 'st_report' => 'report',
         'gi_rep_h' => 'REPAIR / VERIFY INTEGRITY', 'gi_rep_d' => 'Compare your install file-by-file against the official package of the same version and restore the ones that differ.',
         'rp_title' => 'REPAIR — VERIFY INTEGRITY', 'rp_intro' => 'pick the OFFICIAL package of the SAME version; it will be compared file-by-file with your install.',
-        'rp_samever' => 'Use exactly the installed version ({s}); a different version would flag almost everything as changed.', 'rp_start' => 'VERIFY',
+        'rp_samever' => 'Use exactly the installed version ({s}); a different version would flag almost everything as changed.', 'rp_start' => 'VERIFY FILES',
+        'rp_two' => 'Verify files compares your install against the official package and restores any that differ. Repair database recreates missing tables and reference data (like a first install) without touching your data, admin or config.',
         'rp_noresult' => 'No comparison result; run the verification first.', 'rp_applied' => 'Repaired: {ok} restored, {fail} failed.',
         'vf_title' => 'VERIFYING INTEGRITY', 'vf_note' => 'comparing against the official package ...',
         'vf_start' => 'starting comparison ...', 'vf_chk' => 'checked {c} — modified {m}, missing {k}', 'vf_comp' => 'comparison complete: {m} modified, {k} missing',
@@ -431,7 +432,8 @@ function di_dict()
         'st_repair' => 'reparar', 'st_verify' => 'verificar', 'st_report' => 'informe',
         'gi_rep_h' => 'REPARAR / VERIFICAR INTEGRIDAD', 'gi_rep_d' => 'Compara tu instalación fichero a fichero con el paquete oficial de la misma versión y restaura los que difieran.',
         'rp_title' => 'REPARAR — VERIFICAR INTEGRIDAD', 'rp_intro' => 'elige el paquete OFICIAL de la MISMA versión; se cotejará fichero a fichero con tu instalación.',
-        'rp_samever' => 'Usa exactamente la versión instalada ({s}); otra versión marcaría casi todo como cambiado.', 'rp_start' => 'VERIFICAR',
+        'rp_samever' => 'Usa exactamente la versión instalada ({s}); otra versión marcaría casi todo como cambiado.', 'rp_start' => 'VERIFICAR FICHEROS',
+        'rp_two' => 'Verificar ficheros coteja tu instalación con el paquete oficial y restaura los que difieran. Reparar base de datos recrea tablas y datos de referencia ausentes (como una primera instalación) sin tocar tus datos, el administrador ni la configuración.',
         'rp_noresult' => 'No hay resultado de comparación; ejecuta antes la verificación.', 'rp_applied' => 'Reparado: {ok} restaurados, {fail} fallidos.',
         'vf_title' => 'VERIFICANDO INTEGRIDAD', 'vf_note' => 'comparando con el paquete oficial ...',
         'vf_start' => 'iniciando comparación ...', 'vf_chk' => 'comprobados {c} — modificados {m}, ausentes {k}', 'vf_comp' => 'comparación completa: {m} modificados, {k} ausentes',
@@ -614,7 +616,8 @@ function di_dict()
         'st_repair' => 'reparieren', 'st_verify' => 'prüfen', 'st_report' => 'bericht',
         'gi_rep_h' => 'REPARIEREN / INTEGRITÄT PRÜFEN', 'gi_rep_d' => 'Vergleicht Ihre Installation Datei für Datei mit dem offiziellen Paket derselben Version und stellt abweichende Dateien wieder her.',
         'rp_title' => 'REPARIEREN — INTEGRITÄT PRÜFEN', 'rp_intro' => 'wählen Sie das OFFIZIELLE Paket DERSELBEN Version; es wird Datei für Datei mit Ihrer Installation verglichen.',
-        'rp_samever' => 'Genau die installierte Version verwenden ({s}); eine andere Version würde fast alles als geändert melden.', 'rp_start' => 'PRÜFEN',
+        'rp_samever' => 'Genau die installierte Version verwenden ({s}); eine andere Version würde fast alles als geändert melden.', 'rp_start' => 'DATEIEN PRÜFEN',
+        'rp_two' => 'Dateien prüfen vergleicht Ihre Installation mit dem offiziellen Paket und stellt abweichende Dateien wieder her. Datenbank reparieren legt fehlende Tabellen und Referenzdaten neu an (wie bei einer Erstinstallation), ohne Ihre Daten, den Administrator oder die Konfiguration zu verändern.',
         'rp_noresult' => 'Kein Vergleichsergebnis; führen Sie zuerst die Prüfung aus.', 'rp_applied' => 'Repariert: {ok} wiederhergestellt, {fail} fehlgeschlagen.',
         'vf_title' => 'INTEGRITÄT WIRD GEPRÜFT', 'vf_note' => 'Vergleich mit dem offiziellen Paket ...',
         'vf_start' => 'Vergleich startet ...', 'vf_chk' => 'geprüft {c} — geändert {m}, fehlend {k}', 'vf_comp' => 'Vergleich fertig: {m} geändert, {k} fehlend',
@@ -797,7 +800,8 @@ function di_dict()
         'st_repair' => 'réparer', 'st_verify' => 'vérifier', 'st_report' => 'rapport',
         'gi_rep_h' => 'RÉPARER / VÉRIFIER L\'INTÉGRITÉ', 'gi_rep_d' => 'Compare votre installation fichier par fichier avec le paquet officiel de la même version et restaure ceux qui diffèrent.',
         'rp_title' => 'RÉPARER — VÉRIFIER L\'INTÉGRITÉ', 'rp_intro' => 'choisissez le paquet OFFICIEL de la MÊME version ; il sera comparé fichier par fichier à votre installation.',
-        'rp_samever' => 'Utilisez exactement la version installée ({s}) ; une autre version signalerait presque tout comme modifié.', 'rp_start' => 'VÉRIFIER',
+        'rp_samever' => 'Utilisez exactement la version installée ({s}) ; une autre version signalerait presque tout comme modifié.', 'rp_start' => 'VÉRIFIER LES FICHIERS',
+        'rp_two' => 'Vérifier les fichiers compare votre installation au paquet officiel et restaure ceux qui diffèrent. Réparer la base de données recrée les tables et données de référence manquantes (comme une première installation) sans toucher à vos données, à l\'administrateur ni à la configuration.',
         'rp_noresult' => 'Aucun résultat de comparaison ; lancez d\'abord la vérification.', 'rp_applied' => 'Réparé : {ok} restaurés, {fail} échoués.',
         'vf_title' => 'VÉRIFICATION DE L\'INTÉGRITÉ', 'vf_note' => 'comparaison avec le paquet officiel ...',
         'vf_start' => 'démarrage de la comparaison ...', 'vf_chk' => 'vérifiés {c} — modifiés {m}, manquants {k}', 'vf_comp' => 'comparaison terminée : {m} modifiés, {k} manquants',
@@ -980,7 +984,8 @@ function di_dict()
         'st_repair' => 'ripara', 'st_verify' => 'verifica', 'st_report' => 'rapporto',
         'gi_rep_h' => 'RIPARA / VERIFICA INTEGRITÀ', 'gi_rep_d' => 'Confronta la tua installazione file per file con il pacchetto ufficiale della stessa versione e ripristina quelli che differiscono.',
         'rp_title' => 'RIPARA — VERIFICA INTEGRITÀ', 'rp_intro' => 'scegli il pacchetto UFFICIALE della STESSA versione; verrà confrontato file per file con la tua installazione.',
-        'rp_samever' => 'Usa esattamente la versione installata ({s}); una versione diversa segnalerebbe quasi tutto come modificato.', 'rp_start' => 'VERIFICA',
+        'rp_samever' => 'Usa esattamente la versione installata ({s}); una versione diversa segnalerebbe quasi tutto come modificato.', 'rp_start' => 'VERIFICA FILE',
+        'rp_two' => 'Verifica file confronta l\'installazione con il pacchetto ufficiale e ripristina quelli che differiscono. Ripara database ricrea tabelle e dati di riferimento mancanti (come una prima installazione) senza toccare i tuoi dati, l\'amministratore o la configurazione.',
         'rp_noresult' => 'Nessun risultato di confronto; esegui prima la verifica.', 'rp_applied' => 'Riparato: {ok} ripristinati, {fail} falliti.',
         'vf_title' => 'VERIFICA INTEGRITÀ', 'vf_note' => 'confronto con il pacchetto ufficiale ...',
         'vf_start' => 'avvio confronto ...', 'vf_chk' => 'controllati {c} — modificati {m}, mancanti {k}', 'vf_comp' => 'confronto completato: {m} modificati, {k} mancanti',
@@ -3993,6 +3998,8 @@ if (($_SERVER['REQUEST_METHOD'] ?? 'GET') === 'POST' && ($_POST['accion'] ?? '')
         $prefix = $zip ? di_detect_prefix($zip) : null;
     }
 
+    $rgoal = (($_POST['go'] ?? '') === 'db') ? 'db' : 'files';
+
     $errs = array();
     if ($pkgsource === 'download') {
         if (!$downloadVer) {
@@ -4009,6 +4016,7 @@ if (($_SERVER['REQUEST_METHOD'] ?? 'GET') === 'POST' && ($_POST['accion'] ?? '')
     } else {
         di_save_config(array(
             'mode' => 'repair',
+            'rgoal' => $rgoal,
             'zip' => $zip,
             'prefix' => $prefix,
             'download_version' => $downloadVer,
@@ -4022,7 +4030,14 @@ if (($_SERVER['REQUEST_METHOD'] ?? 'GET') === 'POST' && ($_POST['accion'] ?? '')
             di_set_token_cookie($saved['tok'] ?? '');
         }
         @unlink(di_repair_state_path()); // nueva verificación desde cero
-        header('Location: ' . DI_SELF . '?paso=' . ($pkgsource === 'download' ? 'descargar' : 'verificar'));
+        // Tras descargar el paquete seguimos en 'descargar' (decide allí según rgoal);
+        // con paquete local saltamos directos: BD → repararbd, ficheros → verificar.
+        if ($pkgsource === 'download') {
+            $next = 'descargar';
+        } else {
+            $next = ($rgoal === 'db') ? 'repararbd' : 'verificar';
+        }
+        header('Location: ' . DI_SELF . '?paso=' . $next);
         exit;
     }
 }
@@ -4797,8 +4812,12 @@ if ($paso === 'reparar') {
     <?php di_package_picker($pp, $zips); ?>
     <div class="row">
         <a class="btn dim" href="?paso=bienvenida"><?php echo di_h(di_t('b_back')); ?></a>
-        <button class="btn amber" type="submit"><?php echo di_h(di_t('rp_start')); ?></button>
+        <span style="display:flex;gap:10px;flex-wrap:wrap">
+            <button class="btn amber" type="submit" name="go" value="files"><?php echo di_h(di_t('rp_start')); ?></button>
+            <button class="btn" type="submit" name="go" value="db"><?php echo di_h(di_t('rb_btn')); ?></button>
+        </span>
     </div>
+    <div class="hint" style="margin-top:6px"><?php echo di_h(di_t('rp_two')); ?></div>
 </form>
 <?php
     di_footer();
@@ -5218,7 +5237,11 @@ if ($paso === 'descargar') {
     $dlCur = ($dlMode === 'update') ? 'actualizar' : (($dlMode === 'repair') ? 'reparar' : 'paquete');
     di_header('Descarga', $dlCur);
     $ver = $cfg['download_version'];
-    $nextStep = ($dlMode === 'repair') ? 'verificar' : (($dlMode === 'full') ? 'requisitos' : 'extraer');
+    if ($dlMode === 'repair') {
+        $nextStep = (($cfg['rgoal'] ?? 'files') === 'db') ? 'repararbd' : 'verificar';
+    } else {
+        $nextStep = ($dlMode === 'full') ? 'requisitos' : 'extraer';
+    }
     ?>
 <div class="win"><div class="t"><?php echo di_h(di_t('dl_title', array('{ver}' => $ver))); ?></div><div class="b">
 <div class="pbar" role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0" id="pbar"><i id="bar"></i><span id="pct">0%</span></div>

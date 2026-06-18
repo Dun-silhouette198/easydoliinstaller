@@ -2,6 +2,12 @@
 
 Todos los cambios notables de EasyDoliInstaller.
 
+## [1.10.1] - 2026-06-18
+
+### Mejorado — "Reparar base de datos" ahora es accesible directamente
+- La opción **"Reparar base de datos"** ya no está escondida tras el informe de integridad. La página **Reparar** ofrece ahora **dos botones** justo después de elegir el paquete: **"Verificar ficheros"** (cotejo de integridad fichero a fichero) y **"Reparar base de datos"** (recrea tablas y datos de referencia que falten), con una nota que explica cada uno.
+- Con paquete local el botón de BD salta directo a la reparación de base de datos sin tener que pasar antes por la verificación de ficheros; con descarga, baja el paquete y continúa solo. El acceso desde el informe de integridad se mantiene como ruta secundaria.
+
 ## [1.10.0] - 2026-06-18
 
 ### Añadido — reparar también la BASE DE DATOS (no solo ficheros)

@@ -6,41 +6,41 @@
  *  Copyright:  (c) Easysoft Tech S.L.  -  https://github.com/easySoft-Tech-SL
  * ============================================================================
  *
- *  Un único archivo que:
+ *  Un Ãºnico archivo que:
  *    1. Comprueba requisitos del servidor.
- *    2. Pide la configuración (base de datos + administrador) en un formulario.
- *    3. Descomprime el ZIP de Dolibarr (solo el contenido de htdocs) en la raíz.
+ *    2. Pide la configuraciÃ³n (base de datos + administrador) en un formulario.
+ *    3. Descomprime el ZIP de Dolibarr (solo el contenido de htdocs) en la raÃ­z.
  *    4. Escribe install.forced.php + conf.php y ejecuta el instalador NATIVO de
  *       Dolibarr de forma desatendida (step1 -> step2 -> step5).
- *    5. Verifica el resultado, bloquea la instalación y se autodestruye.
+ *    5. Verifica el resultado, bloquea la instalaciÃ³n y se autodestruye.
  *
- *  Tiene además un MODO ULTRASENCILLO: solo descomprime htdocs y te redirige
+ *  Tiene ademÃ¡s un MODO ULTRASENCILLO: solo descomprime htdocs y te redirige
  *  al asistente nativo install/ de Dolibarr.
  *
  *  MODO ACTUALIZAR: si detecta un Dolibarr ya instalado, ofrece ABRIR / ACTUALIZAR /
- *  REPARAR / REINSTALAR. La actualización descarga una versión superior, sustituye los
+ *  REPARAR / REINSTALAR. La actualizaciÃ³n descarga una versiÃ³n superior, sustituye los
  *  ficheros preservando conf/, custom/ y documents/, y ejecuta las migraciones nativas una
  *  major a la vez (upgrade.php -> upgrade2.php por salto, step5 al final) con log en vivo;
  *  o, en modo "paso a paso", te entrega al asistente nativo de Dolibarr. Sin downgrade.
- *  Antes de migrar guarda un dump de la BD (punto de restauración) en documents/.
+ *  Antes de migrar guarda un dump de la BD (punto de restauraciÃ³n) en documents/.
  *
- *  MODO REPARAR: coteja la instalación fichero a fichero con el paquete OFICIAL de la
- *  MISMA versión, muestra un informe de los que difieren, faltan o SOBRAN (ficheros
+ *  MODO REPARAR: coteja la instalaciÃ³n fichero a fichero con el paquete OFICIAL de la
+ *  MISMA versiÃ³n, muestra un informe de los que difieren, faltan o SOBRAN (ficheros
  *  inyectados/no oficiales en el core; excluye conf/, custom/ y documents/), permite
  *  descargar un ZIP de los afectados, restaurar desde el oficial y borrar los sobrantes,
- *  todo con confirmación. Así el instalador cubre INSTALAR, ACTUALIZAR y REPARAR.
+ *  todo con confirmaciÃ³n. AsÃ­ el instalador cubre INSTALAR, ACTUALIZAR y REPARAR.
  *
  *  USO
  *  ---
- *    - Sube a tu hosting (en la carpeta que será la raíz de Dolibarr) SOLO:
+ *    - Sube a tu hosting (en la carpeta que serÃ¡ la raÃ­z de Dolibarr) SOLO:
  *          easydoliinstaller.php   (este archivo)
  *      Opcionalmente, junto a un dolibarr-XX.Y.Z.zip si prefieres no descargar:
- *      el asistente puede DESCARGAR la versión que elijas automáticamente.
+ *      el asistente puede DESCARGAR la versiÃ³n que elijas automÃ¡ticamente.
  *    - Abre en el navegador:  https://tu-dominio/easydoliinstaller.php
  *    - Sigue el asistente. Al terminar, el instalador se borra solo.
  *
  *  SEGURIDAD: es una herramienta de UN SOLO USO. No la dejes en un servidor
- *  público: al acabar se autodestruye, pero si interrumpes el proceso, BÓRRALA
+ *  pÃºblico: al acabar se autodestruye, pero si interrumpes el proceso, BÃ“RRALA
  *  manualmente junto al ZIP y la carpeta temporal __doli_installer_tmp__.
  *
  *  El ZIP debe ser el paquete oficial de Dolibarr (contiene "<dir>/htdocs/...").
@@ -57,7 +57,7 @@
 @ignore_user_abort(true);
 error_reporting(E_ALL & ~E_DEPRECATED & ~E_NOTICE & ~E_WARNING);
 
-define('DI_VERSION', '1.9.0');
+define('DI_VERSION', '1.9.1');
 define('DI_DIR', __DIR__);
 define('DI_SELF', basename(__FILE__));
 define('DI_TMPDIR', DI_DIR . '/__doli_installer_tmp__');
@@ -67,18 +67,18 @@ define('DI_CONFIG_TTL', 7200);                      // caduca la config a las 2h
 define('DI_COOKIES', DI_TMPDIR . '/cookies.txt');
 define('DI_LOG', DI_TMPDIR . '/install.log');
 
-define('DI_PHP_MIN', '7.1.0');                 // mínimo que exige Dolibarr 23
-define('DI_EXTRACT_CHUNK', 2500);              // entradas del ZIP por petición AJAX (extracción nativa)
-define('DI_COMPARE_CHUNK', 900);               // entradas comparadas por petición AJAX (verificación de integridad)
+define('DI_PHP_MIN', '7.1.0');                 // mÃ­nimo que exige Dolibarr 23
+define('DI_EXTRACT_CHUNK', 2500);              // entradas del ZIP por peticiÃ³n AJAX (extracciÃ³n nativa)
+define('DI_COMPARE_CHUNK', 900);               // entradas comparadas por peticiÃ³n AJAX (verificaciÃ³n de integridad)
 
 /* ===========================================================================
- *  i18n — TRADUCCIONES AUTOCONTENIDAS (en, es, de, fr, it)
+ *  i18n â€” TRADUCCIONES AUTOCONTENIDAS (en, es, de, fr, it)
  * ======================================================================== */
 
 /** Idiomas de interfaz soportados. */
 function di_langs()
 {
-    return array('en' => 'English', 'es' => 'Español', 'de' => 'Deutsch', 'fr' => 'Français', 'it' => 'Italiano');
+    return array('en' => 'English', 'es' => 'EspaÃ±ol', 'de' => 'Deutsch', 'fr' => 'FranÃ§ais', 'it' => 'Italiano');
 }
 
 /** Idioma de interfaz actual: ?ui=xx (persistido en cookie) > cookie > navegador > es. */
@@ -135,18 +135,18 @@ function di_dict()
         'b_back' => '< BACK', 'b_continue' => 'CONTINUE >', 'b_retry' => 'RETRY', 'b_finish' => 'FINISH >',
         'b_extract' => 'EXTRACT >', 'b_install' => 'INSTALL >', 'b_open' => 'OPEN DOLIBARR',
         'b_clean' => 'CLEAN UP & ENTER >', 'b_go' => 'GO TO WIZARD >',
-        'tagline' => '// automatic Dolibarr installer — unpacks and configures everything',
+        'tagline' => '// automatic Dolibarr installer â€” unpacks and configures everything',
         'w_pkg' => 'PACKAGE', 'w_none' => 'No local ZIP: in the next step you can download any version automatically.',
-        'w_one' => 'detected: {s} ({mb} MB) — or download another version in the next step.',
-        'w_many' => '{n} packages detected — you will choose which (or download another) in the next step.',
+        'w_one' => 'detected: {s} ({mb} MB) â€” or download another version in the next step.',
+        'w_many' => '{n} packages detected â€” you will choose which (or download another) in the next step.',
         'w_dest' => 'destination: {s}', 'w_choose' => 'CHOOSE MODE',
         'w_auto_h' => '[ 1 ]  AUTOMATIC INSTALL',
-        'w_auto_d' => 'Choose the package (local or download) → creates database + tables + administrator + lock. Zero clicks in the Dolibarr wizard. Self-destructs when finished.',
+        'w_auto_d' => 'Choose the package (local or download) â†’ creates database + tables + administrator + lock. Zero clicks in the Dolibarr wizard. Self-destructs when finished.',
         'w_simple_h' => '[ 2 ]  EXTRACT ONLY  (expert mode)',
         'w_simple_d' => 'Choose the package (local or download), unpack htdocs and redirect you to the native install/ wizard so you configure it yourself.',
         'req_title' => 'SYSTEM CHECK', 'req_block' => 'Mandatory requirements are missing. Fix them (ask your host) and retry.',
-        'req_php' => 'PHP version ≥ {s}', 'req_ext' => 'PHP extension: {s}', 'req_required' => '(required)', 'req_recommended' => '(recommended)',
-        'req_phpver' => 'PHP for Dolibarr {v} (requires ≥ {s})', 'req_phpmax' => 'Dolibarr {v} is tested only up to PHP {s}; your PHP is newer (may have issues)', 'req_phpold' => 'Dolibarr {v} is very old (PHP 5 era); it may be incompatible with this PHP — prefer a newer version',
+        'req_php' => 'PHP version â‰¥ {s}', 'req_ext' => 'PHP extension: {s}', 'req_required' => '(required)', 'req_recommended' => '(recommended)',
+        'req_phpver' => 'PHP for Dolibarr {v} (requires â‰¥ {s})', 'req_phpmax' => 'Dolibarr {v} is tested only up to PHP {s}; your PHP is newer (may have issues)', 'req_phpold' => 'Dolibarr {v} is very old (PHP 5 era); it may be incompatible with this PHP â€” prefer a newer version',
         'req_dbdrv' => 'Database driver (MySQL and/or PostgreSQL)', 'req_http' => 'cURL or allow_url_fopen (to run the installer)',
         'req_writable' => 'Installation directory writable', 'req_parent' => 'Parent directory writable (for ../documents)',
         'req_zip' => 'Dolibarr ZIP package present', 'req_yes' => 'yes', 'req_no' => 'no', 'req_none' => 'not found',
@@ -162,7 +162,7 @@ function di_dict()
         'pp_intro_full' => 'automatic install: after choosing the package you will configure database and administrator',
         'dest_title' => 'DESTINATION', 'dest_sub' => 'installation subfolder (optional, empty = here)', 'dest_empty' => '(empty)',
         'cf_chosen' => 'CHOSEN PACKAGE', 'cf_dl' => 'download dolibarr-{ver}.zip', 'cf_undef' => '(undefined)',
-        'cf_destarrow' => '→ destination', 'cf_change' => 'change package',
+        'cf_destarrow' => 'â†’ destination', 'cf_change' => 'change package',
         'cf_db' => 'DATABASE', 'cf_dbtype' => 'database type', 'cf_host' => 'server (host)', 'cf_port' => 'port',
         'cf_dbname' => 'database name', 'cf_prefix' => 'table prefix', 'cf_user' => 'user', 'cf_pass' => 'password',
         'cf_passempty' => '(may be empty in tests)',
@@ -199,7 +199,7 @@ function di_dict()
         'in_starting' => 'starting installation sequence', 'in_resuming' => '(resuming after {s})',
         'in_finished' => 'INSTALLATION FINISHED.', 'in_working' => 'working ({s})',
         'in_retrystep' => 'RETRY THIS STEP', 'in_openinstall' => 'OPEN /install/',
-        'rd_title' => 'EXTRACTION COMPLETE — LAUNCHING THE DOLIBARR WIZARD',
+        'rd_title' => 'EXTRACTION COMPLETE â€” LAUNCHING THE DOLIBARR WIZARD',
         'rd_deployed' => 'htdocs deployed and conf.php prepared.', 'rd_removing' => 'removing installer and .zip ...',
         'rd_redir' => 'done. redirecting to the native wizard ...', 'rd_manual' => '(could not clean up: delete the installer manually) redirecting ...',
         'fn_title' => 'INSTALLATION COMPLETE', 'fn_op' => 'dolibarr up and running', 'fn_user' => 'user:',
@@ -210,7 +210,7 @@ function di_dict()
         'gi_re' => 'Tip: when you are done, delete easydoliinstaller.php from the server.',
         'st_update' => 'update', 'st_migrate' => 'migrate',
         'gi_ver' => 'detected version {s}',
-        'gi_open_h' => 'OPEN DOLIBARR', 'gi_open_d' => 'It is already installed — go to the application.',
+        'gi_open_h' => 'OPEN DOLIBARR', 'gi_open_d' => 'It is already installed â€” go to the application.',
         'gi_upd_h' => 'UPDATE / UPGRADE', 'gi_upd_d' => 'Download a newer version and run every migration automatically, with a live log.',
         'gi_re_h' => 'REINSTALL FROM SCRATCH', 'gi_re_d' => 'Overwrite this Dolibarr and install again. Existing data may be destroyed.',
         'gi_re_confirm' => 'This will overwrite the existing Dolibarr and its data may be lost. Continue?',
@@ -228,9 +228,9 @@ function di_dict()
         'up_noconf' => 'No installed Dolibarr found here (conf/conf.php with a database is missing).',
         'up_nodown' => 'The chosen version ({new}) is older than the installed one ({cur}). Downgrades are not supported.',
         'up_modet' => 'UPDATE MODE',
-        'up_mode_auto_h' => 'Automatic — migrate N versions in one go',
+        'up_mode_auto_h' => 'Automatic â€” migrate N versions in one go',
         'up_mode_auto_d' => 'Replace the files and run every intermediate migration automatically, one major at a time, with a full live log. Recommended.',
-        'up_mode_manual_h' => 'Step by step — native wizard',
+        'up_mode_manual_h' => 'Step by step â€” native wizard',
         'up_mode_manual_d' => 'Replace the files and hand off to Dolibarr\'s own upgrade wizard so you click through each step yourself.',
         'up_httpfail' => 'The migration step {s} returned HTTP {code}.',
         'up_migfail' => 'Migration {s} failed.', 'up_migok' => 'migrated {s}',
@@ -243,17 +243,17 @@ function di_dict()
         'mg_final' => 'finalize and lock ({s})', 'mg_starting' => 'starting migration',
         'mg_finished' => 'all migrations done', 'mg_openinstall' => 'OPEN NATIVE WIZARD',
         'mg_backup' => 'back up database (restore point)',
-        'up_bk_ok' => 'database backup saved ({s}, {n} KB)', 'up_bk_warn' => 'could not auto-save the DB backup ({s}); continuing — restore from your manual dump if needed', 'up_bk_pg' => 'PostgreSQL: auto-backup skipped (use pg_dump); continuing',
+        'up_bk_ok' => 'database backup saved ({s}, {n} KB)', 'up_bk_warn' => 'could not auto-save the DB backup ({s}); continuing â€” restore from your manual dump if needed', 'up_bk_pg' => 'PostgreSQL: auto-backup skipped (use pg_dump); continuing',
         'up_rollback_hint' => 'Rollback point: a DB dump is saved as {s} in your documents folder. To roll back: restore that .sql and put back the previous Dolibarr files.',
         'st_repair' => 'repair', 'st_verify' => 'verify', 'st_report' => 'report',
         'gi_rep_h' => 'REPAIR / VERIFY INTEGRITY', 'gi_rep_d' => 'Compare your install file-by-file against the official package of the same version and restore the ones that differ.',
-        'rp_title' => 'REPAIR — VERIFY INTEGRITY', 'rp_intro' => 'pick the OFFICIAL package of the SAME version; it will be compared file-by-file with your install.',
+        'rp_title' => 'REPAIR â€” VERIFY INTEGRITY', 'rp_intro' => 'pick the OFFICIAL package of the SAME version; it will be compared file-by-file with your install.',
         'rp_samever' => 'Use exactly the installed version ({s}); a different version would flag almost everything as changed.', 'rp_start' => 'VERIFY',
         'rp_noresult' => 'No comparison result; run the verification first.', 'rp_applied' => 'Repaired: {ok} restored, {fail} failed.',
         'vf_title' => 'VERIFYING INTEGRITY', 'vf_note' => 'comparing against the official package ...',
-        'vf_start' => 'starting comparison ...', 'vf_chk' => 'checked {c} — modified {m}, missing {k}', 'vf_comp' => 'comparison complete: {m} modified, {k} missing',
+        'vf_start' => 'starting comparison ...', 'vf_chk' => 'checked {c} â€” modified {m}, missing {k}', 'vf_comp' => 'comparison complete: {m} modified, {k} missing',
         'ir_title' => 'INTEGRITY REPORT', 'ir_checked' => '{n} core files checked', 'ir_summary' => '{m} modified, {k} missing',
-        'ir_clean' => 'Integrity OK — every core file matches the official package. Nothing to repair.',
+        'ir_clean' => 'Integrity OK â€” every core file matches the official package. Nothing to repair.',
         'ir_more' => 'more', 'ir_legend' => '~ modified (differs from official)   + missing (absent locally). conf/, custom/ and documents/ are excluded.',
         'ir_dlzip' => 'DOWNLOAD AFFECTED FILES (.zip)', 'ir_repair' => 'REPAIR {n} FILES',
         'ir_confirm' => 'Restore {n} files from the official package (overwriting the current ones)? A backup zip of the affected files is kept first.',
@@ -266,7 +266,7 @@ function di_dict()
         'pk_nodown' => '(only {s} or newer)',
         'e_exists' => 'A Dolibarr is already installed here. Use Update, or confirm a reinstall.',
         'fn_title_up' => 'UPGRADE COMPLETE', 'fn_op_up' => 'dolibarr upgraded', 'fn_upgraded' => 'version: {s}',
-        'rd_title_up' => 'FILES REPLACED — LAUNCHING THE NATIVE UPGRADE WIZARD',
+        'rd_title_up' => 'FILES REPLACED â€” LAUNCHING THE NATIVE UPGRADE WIZARD',
         'rd_up_warn' => 'Files updated. Handing off to Dolibarr\'s native upgrade wizard to run the migrations.',
         'err' => 'ERROR:', 'net' => 'network:', 'retrying_block' => 'retrying block (offset {off}, attempt {try}) ...',
         'net_fail' => 'Network failure at offset {off}:',
@@ -295,508 +295,508 @@ function di_dict()
         'e_forbidden' => 'Forbidden: this installation is tied to the browser that started it. Reload the installer in that browser, or delete __doli_installer_tmp__ to start over.',
     ),
     'es' => array(
-        'topbar_sub' => 'terminal de instalación', 'lang' => 'idioma',
+        'topbar_sub' => 'terminal de instalaciÃ³n', 'lang' => 'idioma',
         'foot' => 'si interrumpes el proceso, borra este archivo y el .zip a mano',
         'st_inicio' => 'inicio', 'st_paquete' => 'paquete', 'st_requisitos' => 'requisitos',
         'st_config' => 'config', 'st_extraer' => 'extraer', 'st_instalar' => 'instalar',
         'st_listo' => 'listo', 'st_lanzar' => 'lanzar',
-        'b_back' => '< ATRÁS', 'b_continue' => 'CONTINUAR >', 'b_retry' => 'REINTENTAR', 'b_finish' => 'FINALIZAR >',
+        'b_back' => '< ATRÃS', 'b_continue' => 'CONTINUAR >', 'b_retry' => 'REINTENTAR', 'b_finish' => 'FINALIZAR >',
         'b_extract' => 'EXTRAER >', 'b_install' => 'INSTALAR >', 'b_open' => 'ABRIR DOLIBARR',
         'b_clean' => 'LIMPIAR Y ENTRAR >', 'b_go' => 'IR AL ASISTENTE >',
-        'tagline' => '// instalador automático de Dolibarr — descomprime y configura todo',
-        'w_pkg' => 'PAQUETE', 'w_none' => 'Sin ZIP local: en el siguiente paso podrás descargar la versión que quieras automáticamente.',
-        'w_one' => 'detectado: {s} ({mb} MB) — o descarga otra versión en el siguiente paso.',
-        'w_many' => '{n} paquetes detectados — elegirás cuál (o descargarás otro) en el siguiente paso.',
+        'tagline' => '// instalador automÃ¡tico de Dolibarr â€” descomprime y configura todo',
+        'w_pkg' => 'PAQUETE', 'w_none' => 'Sin ZIP local: en el siguiente paso podrÃ¡s descargar la versiÃ³n que quieras automÃ¡ticamente.',
+        'w_one' => 'detectado: {s} ({mb} MB) â€” o descarga otra versiÃ³n en el siguiente paso.',
+        'w_many' => '{n} paquetes detectados â€” elegirÃ¡s cuÃ¡l (o descargarÃ¡s otro) en el siguiente paso.',
         'w_dest' => 'destino: {s}', 'w_choose' => 'ELIGE MODO',
-        'w_auto_h' => '[ 1 ]  INSTALACIÓN AUTOMÁTICA',
-        'w_auto_d' => 'Elige el paquete (local o descargar) → crea base de datos + tablas + administrador + bloqueo. Cero clics en el asistente de Dolibarr. Se autodestruye al terminar.',
+        'w_auto_h' => '[ 1 ]  INSTALACIÃ“N AUTOMÃTICA',
+        'w_auto_d' => 'Elige el paquete (local o descargar) â†’ crea base de datos + tablas + administrador + bloqueo. Cero clics en el asistente de Dolibarr. Se autodestruye al terminar.',
         'w_simple_h' => '[ 2 ]  SOLO EXTRAER  (modo experto)',
-        'w_simple_d' => 'Elige el paquete (local o descargar), descomprime htdocs y te redirige al asistente nativo install/ de Dolibarr para que lo configures tú.',
-        'req_title' => 'COMPROBACIÓN DEL SISTEMA', 'req_block' => 'Faltan requisitos obligatorios. Corrígelos (consulta a tu hosting) y reintenta.',
-        'req_php' => 'Versión de PHP ≥ {s}', 'req_ext' => 'Extensión PHP: {s}', 'req_required' => '(obligatoria)', 'req_recommended' => '(recomendada)',
-        'req_phpver' => 'PHP para Dolibarr {v} (requiere ≥ {s})', 'req_phpmax' => 'Dolibarr {v} solo está probado hasta PHP {s}; tu PHP es más nuevo (puede dar problemas)', 'req_phpold' => 'Dolibarr {v} es muy antiguo (era PHP 5); puede ser incompatible con este PHP — usa una versión más reciente',
+        'w_simple_d' => 'Elige el paquete (local o descargar), descomprime htdocs y te redirige al asistente nativo install/ de Dolibarr para que lo configures tÃº.',
+        'req_title' => 'COMPROBACIÃ“N DEL SISTEMA', 'req_block' => 'Faltan requisitos obligatorios. CorrÃ­gelos (consulta a tu hosting) y reintenta.',
+        'req_php' => 'VersiÃ³n de PHP â‰¥ {s}', 'req_ext' => 'ExtensiÃ³n PHP: {s}', 'req_required' => '(obligatoria)', 'req_recommended' => '(recomendada)',
+        'req_phpver' => 'PHP para Dolibarr {v} (requiere â‰¥ {s})', 'req_phpmax' => 'Dolibarr {v} solo estÃ¡ probado hasta PHP {s}; tu PHP es mÃ¡s nuevo (puede dar problemas)', 'req_phpold' => 'Dolibarr {v} es muy antiguo (era PHP 5); puede ser incompatible con este PHP â€” usa una versiÃ³n mÃ¡s reciente',
         'req_dbdrv' => 'Driver de base de datos (MySQL y/o PostgreSQL)', 'req_http' => 'cURL o allow_url_fopen (para ejecutar el instalador)',
-        'req_writable' => 'Directorio de instalación escribible', 'req_parent' => 'Directorio padre escribible (para ../documents)',
-        'req_zip' => 'Paquete ZIP de Dolibarr presente', 'req_yes' => 'sí', 'req_no' => 'no', 'req_none' => 'no encontrado',
+        'req_writable' => 'Directorio de instalaciÃ³n escribible', 'req_parent' => 'Directorio padre escribible (para ../documents)',
+        'req_zip' => 'Paquete ZIP de Dolibarr presente', 'req_yes' => 'sÃ­', 'req_no' => 'no', 'req_none' => 'no encontrado',
         'req_npkg' => '{n} paquetes: {s}',
-        'pk_title' => 'PAQUETE DE DOLIBARR', 'pk_uselocal' => 'usar un ZIP que ya está aquí', 'pk_nonehere' => '(no hay ninguno)',
-        'pk_download' => 'descargar una versión automáticamente', 'pk_reqcurl' => '(requiere cURL)',
-        'pk_nozip' => 'No hay ningún .zip junto al instalador.', 'pk_locallabel' => 'ZIP local:', 'pk_chooselocal' => 'elige ZIP local ({n} detectados)',
-        'pk_verlabel' => 'versión a descargar (paquete oficial de sourceforge.net)',
-        'pk_vermanual' => 'o escribe una versión exacta (x.y.z)', 'pk_optional' => '(opcional)',
+        'pk_title' => 'PAQUETE DE DOLIBARR', 'pk_uselocal' => 'usar un ZIP que ya estÃ¡ aquÃ­', 'pk_nonehere' => '(no hay ninguno)',
+        'pk_download' => 'descargar una versiÃ³n automÃ¡ticamente', 'pk_reqcurl' => '(requiere cURL)',
+        'pk_nozip' => 'No hay ningÃºn .zip junto al instalador.', 'pk_locallabel' => 'ZIP local:', 'pk_chooselocal' => 'elige ZIP local ({n} detectados)',
+        'pk_verlabel' => 'versiÃ³n a descargar (paquete oficial de sourceforge.net)',
+        'pk_vermanual' => 'o escribe una versiÃ³n exacta (x.y.z)', 'pk_optional' => '(opcional)',
         'pk_dlhint' => '~85 MB. Se descarga al servidor por bloques, con barra de progreso real.',
         'pp_title' => 'ELIGE EL PAQUETE DE DOLIBARR',
         'pp_intro_simple' => 'modo ultrasencillo: se descomprime htdocs y te llevamos al asistente nativo install/',
-        'pp_intro_full' => 'instalación automática: tras elegir el paquete configurarás base de datos y administrador',
-        'dest_title' => 'DESTINO', 'dest_sub' => 'subcarpeta de instalación (opcional, vacío = aquí)', 'dest_empty' => '(vacío)',
+        'pp_intro_full' => 'instalaciÃ³n automÃ¡tica: tras elegir el paquete configurarÃ¡s base de datos y administrador',
+        'dest_title' => 'DESTINO', 'dest_sub' => 'subcarpeta de instalaciÃ³n (opcional, vacÃ­o = aquÃ­)', 'dest_empty' => '(vacÃ­o)',
         'cf_chosen' => 'PAQUETE ELEGIDO', 'cf_dl' => 'descargar dolibarr-{ver}.zip', 'cf_undef' => '(sin definir)',
-        'cf_destarrow' => '→ destino', 'cf_change' => 'cambiar paquete',
+        'cf_destarrow' => 'â†’ destino', 'cf_change' => 'cambiar paquete',
         'cf_db' => 'BASE DE DATOS', 'cf_dbtype' => 'tipo de base de datos', 'cf_host' => 'servidor (host)', 'cf_port' => 'puerto',
-        'cf_dbname' => 'nombre de la base de datos', 'cf_prefix' => 'prefijo de tablas', 'cf_user' => 'usuario', 'cf_pass' => 'contraseña',
-        'cf_passempty' => '(puede ir vacía en pruebas)',
-        'cf_create' => 'crear la base de datos automáticamente (requiere usuario administrador del SGBD)',
-        'cf_rootuser' => 'usuario admin del SGBD (root / postgres)', 'cf_rootpass' => 'contraseña del admin del SGBD',
+        'cf_dbname' => 'nombre de la base de datos', 'cf_prefix' => 'prefijo de tablas', 'cf_user' => 'usuario', 'cf_pass' => 'contraseÃ±a',
+        'cf_passempty' => '(puede ir vacÃ­a en pruebas)',
+        'cf_create' => 'crear la base de datos automÃ¡ticamente (requiere usuario administrador del SGBD)',
+        'cf_rootuser' => 'usuario admin del SGBD (root / postgres)', 'cf_rootpass' => 'contraseÃ±a del admin del SGBD',
         'cf_admin' => 'ADMINISTRADOR DOLIBARR', 'cf_login' => 'login',
         'cf_opts' => 'OPCIONES', 'cf_deflang' => 'idioma por defecto', 'cf_https' => 'forzar HTTPS',
-        'cf_baseurl' => 'URL base detectada', 'cf_baseurl_h' => 'URL pública de la raíz de Dolibarr; normalmente correcta.',
+        'cf_baseurl' => 'URL base detectada', 'cf_baseurl_h' => 'URL pÃºblica de la raÃ­z de Dolibarr; normalmente correcta.',
         'cf_review' => 'Revisa:',
         'v_dbname' => 'El nombre de la base de datos es obligatorio.', 'v_dbuser' => 'El usuario de la base de datos es obligatorio.',
-        'v_prefix' => 'El prefijo de tablas debe ser alfanumérico y terminar en "_" (p. ej. llx_).',
+        'v_prefix' => 'El prefijo de tablas debe ser alfanumÃ©rico y terminar en "_" (p. ej. llx_).',
         'v_root' => 'Para crear la base de datos necesitas el usuario root/admin del SGBD.',
         'v_alogin' => 'El login del administrador es obligatorio.',
-        'v_apass' => 'La contraseña del administrador es obligatoria (Dolibarr no permite dejarla vacía).',
-        'v_achars' => 'La contraseña del administrador no puede contener comillas dobles ("), los caracteres < > \\, la secuencia ../ ni entidades HTML (&#..., &quot): el instalador de Dolibarr los elimina y te dejaría fuera.',
-        'v_ver' => 'Selecciona o escribe una versión válida (formato x.y.z) para descargar.',
-        'v_nolocal' => 'No hay ningún ZIP local. Sube un dolibarr-*.zip o elige "Descargar versión".',
-        'v_choosezip' => 'Selecciona cuál de los {n} paquetes ZIP quieres usar.',
+        'v_apass' => 'La contraseÃ±a del administrador es obligatoria (Dolibarr no permite dejarla vacÃ­a).',
+        'v_achars' => 'La contraseÃ±a del administrador no puede contener comillas dobles ("), los caracteres < > \\, la secuencia ../ ni entidades HTML (&#..., &quot): el instalador de Dolibarr los elimina y te dejarÃ­a fuera.',
+        'v_ver' => 'Selecciona o escribe una versiÃ³n vÃ¡lida (formato x.y.z) para descargar.',
+        'v_nolocal' => 'No hay ningÃºn ZIP local. Sube un dolibarr-*.zip o elige "Descargar versiÃ³n".',
+        'v_choosezip' => 'Selecciona cuÃ¡l de los {n} paquetes ZIP quieres usar.',
         'v_badzip' => 'El ZIP "{s}" no parece un paquete oficial de Dolibarr (no contiene "*/htdocs/").',
         'ex_title' => 'DESCOMPRIMIENDO :: {s}',
-        'ex_noscript' => 'Este asistente necesita JavaScript para descomprimir por bloques. Actívalo (o desactiva la extensión que bloquea fetch) y recarga.',
+        'ex_noscript' => 'Este asistente necesita JavaScript para descomprimir por bloques. ActÃ­valo (o desactiva la extensiÃ³n que bloquea fetch) y recarga.',
         'ex_dest' => 'destino: {s}', 'ex_opening' => 'abriendo {s} ...', 'ex_block' => 'bloque', 'ex_files' => 'arch.',
-        'ex_processed' => '{n} entradas procesadas. moviendo htdocs -> raíz ...', 'ex_complete' => 'extracción COMPLETA.',
+        'ex_processed' => '{n} entradas procesadas. moviendo htdocs -> raÃ­z ...', 'ex_complete' => 'extracciÃ³n COMPLETA.',
         'ex_retryblock' => 'REINTENTAR ESTE BLOQUE',
         'dl_title' => 'DESCARGANDO :: dolibarr-{ver}.zip',
-        'dl_noscript' => 'Este asistente necesita JavaScript para descargar por bloques. Actívalo y recarga.',
+        'dl_noscript' => 'Este asistente necesita JavaScript para descargar por bloques. ActÃ­valo y recarga.',
         'dl_origin' => 'origen: sourceforge.net', 'dl_connecting' => 'conectando con sourceforge.net ...',
         'dl_complete' => 'descarga COMPLETA ({mb}). validando ZIP ...', 'dl_ready' => 'paquete listo.', 'dl_retry' => 'REINTENTAR',
         'in_title' => 'EJECUTANDO INSTALADOR NATIVO (desatendido)',
-        'in_noscript' => 'Este asistente necesita JavaScript para ejecutar la instalación. Actívalo y recarga, o termina manualmente en {url}/install/.',
+        'in_noscript' => 'Este asistente necesita JavaScript para ejecutar la instalaciÃ³n. ActÃ­valo y recarga, o termina manualmente en {url}/install/.',
         'in_tables' => '// el paso de tablas puede tardar varios minutos en hostings lentos; no cierres la ventana',
-        'in_s1' => 'crear configuración y base de datos', 'in_s2' => 'crear tablas y datos de referencia',
-        'in_s5' => 'crear administrador y bloquear instalación',
-        'in_starting' => 'iniciando secuencia de instalación', 'in_resuming' => '(reanudando tras {s})',
-        'in_finished' => 'INSTALACIÓN FINALIZADA.', 'in_working' => 'trabajando ({s})',
+        'in_s1' => 'crear configuraciÃ³n y base de datos', 'in_s2' => 'crear tablas y datos de referencia',
+        'in_s5' => 'crear administrador y bloquear instalaciÃ³n',
+        'in_starting' => 'iniciando secuencia de instalaciÃ³n', 'in_resuming' => '(reanudando tras {s})',
+        'in_finished' => 'INSTALACIÃ“N FINALIZADA.', 'in_working' => 'trabajando ({s})',
         'in_retrystep' => 'REINTENTAR ESTE PASO', 'in_openinstall' => 'ABRIR /install/',
-        'rd_title' => 'EXTRACCIÓN COMPLETA — LANZANDO EL ASISTENTE DE DOLIBARR',
+        'rd_title' => 'EXTRACCIÃ“N COMPLETA â€” LANZANDO EL ASISTENTE DE DOLIBARR',
         'rd_deployed' => 'htdocs desplegado y conf.php preparado.', 'rd_removing' => 'retirando el instalador y el .zip ...',
         'rd_redir' => 'listo. redirigiendo al asistente nativo ...', 'rd_manual' => '(no se pudo limpiar: borra el instalador a mano) redirigiendo ...',
-        'fn_title' => 'INSTALACIÓN COMPLETADA', 'fn_op' => 'dolibarr operativo', 'fn_user' => 'usuario:',
+        'fn_title' => 'INSTALACIÃ“N COMPLETADA', 'fn_op' => 'dolibarr operativo', 'fn_user' => 'usuario:',
         'fn_sec' => 'Por seguridad, pulsa LIMPIAR para borrar el instalador, el ZIP y el directorio install/.',
         'fn_cleaning' => 'LIMPIANDO...', 'fn_deleting' => 'borrando install/, .zip e instalador ...',
         'fn_removed' => 'instalador eliminado. redirigiendo ...', 'fn_manual' => '(limpieza manual necesaria)',
-        'gi_title' => 'AVISO', 'gi_msg' => 'Parece que Dolibarr YA está instalado en este directorio (existe conf/conf.php con datos).',
+        'gi_title' => 'AVISO', 'gi_msg' => 'Parece que Dolibarr YA estÃ¡ instalado en este directorio (existe conf/conf.php con datos).',
         'gi_re' => 'Consejo: cuando termines, borra easydoliinstaller.php del servidor.',
         'st_update' => 'actualizar', 'st_migrate' => 'migrar',
-        'gi_ver' => 'versión detectada {s}',
-        'gi_open_h' => 'ABRIR DOLIBARR', 'gi_open_d' => 'Ya está instalado — ir a la aplicación.',
-        'gi_upd_h' => 'ACTUALIZAR', 'gi_upd_d' => 'Descarga una versión superior y ejecuta todas las migraciones automáticamente, con log en vivo.',
+        'gi_ver' => 'versiÃ³n detectada {s}',
+        'gi_open_h' => 'ABRIR DOLIBARR', 'gi_open_d' => 'Ya estÃ¡ instalado â€” ir a la aplicaciÃ³n.',
+        'gi_upd_h' => 'ACTUALIZAR', 'gi_upd_d' => 'Descarga una versiÃ³n superior y ejecuta todas las migraciones automÃ¡ticamente, con log en vivo.',
         'gi_re_h' => 'REINSTALAR DESDE CERO', 'gi_re_d' => 'Sobrescribe este Dolibarr e instala de nuevo. Los datos existentes pueden destruirse.',
-        'gi_re_confirm' => 'Esto sobrescribirá el Dolibarr existente y sus datos pueden perderse. ¿Continuar?',
-        'gi_re_warn' => 'Modo reinstalar: la instalación actual será sobrescrita. Haz una copia de seguridad antes.',
-        'up_detected' => 'INSTALACIÓN EXISTENTE DETECTADA',
-        'up_curver' => 'versión actual', 'up_files' => 'ficheros', 'up_db' => 'base de datos',
-        'up_intro' => 'elige la versión de destino y el modo de actualización debajo.',
+        'gi_re_confirm' => 'Esto sobrescribirÃ¡ el Dolibarr existente y sus datos pueden perderse. Â¿Continuar?',
+        'gi_re_warn' => 'Modo reinstalar: la instalaciÃ³n actual serÃ¡ sobrescrita. Haz una copia de seguridad antes.',
+        'up_detected' => 'INSTALACIÃ“N EXISTENTE DETECTADA',
+        'up_curver' => 'versiÃ³n actual', 'up_files' => 'ficheros', 'up_db' => 'base de datos',
+        'up_intro' => 'elige la versiÃ³n de destino y el modo de actualizaciÃ³n debajo.',
         'up_backup' => 'COPIA DE SEGURIDAD (RECOMENDADO)',
-        'up_warn' => 'Una actualización modifica la base de datos. Si falla a medias tus datos pueden quedar inconsistentes. Haz copia antes de continuar.',
-        'up_backup_pg' => 'PostgreSQL: el volcado automático no está disponible aquí. Usa pg_dump antes de actualizar.',
+        'up_warn' => 'Una actualizaciÃ³n modifica la base de datos. Si falla a medias tus datos pueden quedar inconsistentes. Haz copia antes de continuar.',
+        'up_backup_pg' => 'PostgreSQL: el volcado automÃ¡tico no estÃ¡ disponible aquÃ­. Usa pg_dump antes de actualizar.',
         'up_backup_btn' => 'DESCARGAR COPIA DE LA BASE DE DATOS (.sql)',
-        'up_backup_hint' => 'Volcado lógico opcional de MySQL/MariaDB (estructura + datos). Para bases muy grandes usa tu herramienta habitual.',
-        'up_backup_later' => 'Inicia la actualización para habilitar la descarga del backup (requiere el token de la instalación).',
-        'up_start' => 'INICIAR ACTUALIZACIÓN',
-        'up_noconf' => 'No se encontró un Dolibarr instalado aquí (falta conf/conf.php con una base de datos).',
-        'up_nodown' => 'La versión elegida ({new}) es anterior a la instalada ({cur}). No se permite bajar de versión.',
-        'up_modet' => 'MODO DE ACTUALIZACIÓN',
-        'up_mode_auto_h' => 'Automático — migra N versiones del tirón',
-        'up_mode_auto_d' => 'Sustituye los ficheros y ejecuta todas las migraciones intermedias automáticamente, una major a la vez, con log en vivo completo. Opción recomendada.',
-        'up_mode_manual_h' => 'Paso a paso — asistente nativo',
-        'up_mode_manual_d' => 'Sustituye los ficheros y te entrega al propio asistente de actualización de Dolibarr para que avances paso a paso.',
-        'up_httpfail' => 'El paso de migración {s} devolvió HTTP {code}.',
-        'up_migfail' => 'La migración {s} falló.', 'up_migok' => 'migrado {s}',
+        'up_backup_hint' => 'Volcado lÃ³gico opcional de MySQL/MariaDB (estructura + datos). Para bases muy grandes usa tu herramienta habitual.',
+        'up_backup_later' => 'Inicia la actualizaciÃ³n para habilitar la descarga del backup (requiere el token de la instalaciÃ³n).',
+        'up_start' => 'INICIAR ACTUALIZACIÃ“N',
+        'up_noconf' => 'No se encontrÃ³ un Dolibarr instalado aquÃ­ (falta conf/conf.php con una base de datos).',
+        'up_nodown' => 'La versiÃ³n elegida ({new}) es anterior a la instalada ({cur}). No se permite bajar de versiÃ³n.',
+        'up_modet' => 'MODO DE ACTUALIZACIÃ“N',
+        'up_mode_auto_h' => 'AutomÃ¡tico â€” migra N versiones del tirÃ³n',
+        'up_mode_auto_d' => 'Sustituye los ficheros y ejecuta todas las migraciones intermedias automÃ¡ticamente, una major a la vez, con log en vivo completo. OpciÃ³n recomendada.',
+        'up_mode_manual_h' => 'Paso a paso â€” asistente nativo',
+        'up_mode_manual_d' => 'Sustituye los ficheros y te entrega al propio asistente de actualizaciÃ³n de Dolibarr para que avances paso a paso.',
+        'up_httpfail' => 'El paso de migraciÃ³n {s} devolviÃ³ HTTP {code}.',
+        'up_migfail' => 'La migraciÃ³n {s} fallÃ³.', 'up_migok' => 'migrado {s}',
         'up_warns' => '({n} avisos SQL, ignorados como hace el asistente nativo)',
-        'up_done' => 'Actualización completada. Versión en BD: {s}.',
-        'up_doneish' => 'Actualización terminada (no se pudo verificar la versión en la base de datos).',
-        'up_finfail' => 'No se pudo finalizar la actualización. ',
+        'up_done' => 'ActualizaciÃ³n completada. VersiÃ³n en BD: {s}.',
+        'up_doneish' => 'ActualizaciÃ³n terminada (no se pudo verificar la versiÃ³n en la base de datos).',
+        'up_finfail' => 'No se pudo finalizar la actualizaciÃ³n. ',
         'mg_title' => 'MIGRANDO {from} -> {to}', 'mg_note' => 'ejecutando todas las migraciones en secuencia ...',
         'mg_db' => 'migrar base de datos {from} -> {to}', 'mg_data' => 'migrar datos {from} -> {to}',
-        'mg_final' => 'finalizar y bloquear ({s})', 'mg_starting' => 'iniciando migración',
+        'mg_final' => 'finalizar y bloquear ({s})', 'mg_starting' => 'iniciando migraciÃ³n',
         'mg_finished' => 'todas las migraciones hechas', 'mg_openinstall' => 'ABRIR ASISTENTE NATIVO',
-        'mg_backup' => 'copia de seguridad de la BD (punto de restauración)',
-        'up_bk_ok' => 'copia de la BD guardada ({s}, {n} KB)', 'up_bk_warn' => 'no se pudo auto-guardar la copia de la BD ({s}); se continúa — restaura desde tu dump manual si hiciera falta', 'up_bk_pg' => 'PostgreSQL: copia automática omitida (usa pg_dump); se continúa',
-        'up_rollback_hint' => 'Punto de rollback: se guarda un dump de la BD como {s} en tu carpeta documents. Para revertir: restaura ese .sql y repón los ficheros de la versión anterior.',
+        'mg_backup' => 'copia de seguridad de la BD (punto de restauraciÃ³n)',
+        'up_bk_ok' => 'copia de la BD guardada ({s}, {n} KB)', 'up_bk_warn' => 'no se pudo auto-guardar la copia de la BD ({s}); se continÃºa â€” restaura desde tu dump manual si hiciera falta', 'up_bk_pg' => 'PostgreSQL: copia automÃ¡tica omitida (usa pg_dump); se continÃºa',
+        'up_rollback_hint' => 'Punto de rollback: se guarda un dump de la BD como {s} en tu carpeta documents. Para revertir: restaura ese .sql y repÃ³n los ficheros de la versiÃ³n anterior.',
         'st_repair' => 'reparar', 'st_verify' => 'verificar', 'st_report' => 'informe',
-        'gi_rep_h' => 'REPARAR / VERIFICAR INTEGRIDAD', 'gi_rep_d' => 'Compara tu instalación fichero a fichero con el paquete oficial de la misma versión y restaura los que difieran.',
-        'rp_title' => 'REPARAR — VERIFICAR INTEGRIDAD', 'rp_intro' => 'elige el paquete OFICIAL de la MISMA versión; se cotejará fichero a fichero con tu instalación.',
-        'rp_samever' => 'Usa exactamente la versión instalada ({s}); otra versión marcaría casi todo como cambiado.', 'rp_start' => 'VERIFICAR',
-        'rp_noresult' => 'No hay resultado de comparación; ejecuta antes la verificación.', 'rp_applied' => 'Reparado: {ok} restaurados, {fail} fallidos.',
+        'gi_rep_h' => 'REPARAR / VERIFICAR INTEGRIDAD', 'gi_rep_d' => 'Compara tu instalaciÃ³n fichero a fichero con el paquete oficial de la misma versiÃ³n y restaura los que difieran.',
+        'rp_title' => 'REPARAR â€” VERIFICAR INTEGRIDAD', 'rp_intro' => 'elige el paquete OFICIAL de la MISMA versiÃ³n; se cotejarÃ¡ fichero a fichero con tu instalaciÃ³n.',
+        'rp_samever' => 'Usa exactamente la versiÃ³n instalada ({s}); otra versiÃ³n marcarÃ­a casi todo como cambiado.', 'rp_start' => 'VERIFICAR',
+        'rp_noresult' => 'No hay resultado de comparaciÃ³n; ejecuta antes la verificaciÃ³n.', 'rp_applied' => 'Reparado: {ok} restaurados, {fail} fallidos.',
         'vf_title' => 'VERIFICANDO INTEGRIDAD', 'vf_note' => 'comparando con el paquete oficial ...',
-        'vf_start' => 'iniciando comparación ...', 'vf_chk' => 'comprobados {c} — modificados {m}, ausentes {k}', 'vf_comp' => 'comparación completa: {m} modificados, {k} ausentes',
+        'vf_start' => 'iniciando comparaciÃ³n ...', 'vf_chk' => 'comprobados {c} â€” modificados {m}, ausentes {k}', 'vf_comp' => 'comparaciÃ³n completa: {m} modificados, {k} ausentes',
         'ir_title' => 'INFORME DE INTEGRIDAD', 'ir_checked' => '{n} ficheros del core comprobados', 'ir_summary' => '{m} modificados, {k} ausentes',
-        'ir_clean' => 'Integridad OK — todos los ficheros del core coinciden con el paquete oficial. Nada que reparar.',
-        'ir_more' => 'más', 'ir_legend' => '~ modificado (difiere del oficial)   + ausente (falta en local). Se excluyen conf/, custom/ y documents/.',
+        'ir_clean' => 'Integridad OK â€” todos los ficheros del core coinciden con el paquete oficial. Nada que reparar.',
+        'ir_more' => 'mÃ¡s', 'ir_legend' => '~ modificado (difiere del oficial)   + ausente (falta en local). Se excluyen conf/, custom/ y documents/.',
         'ir_dlzip' => 'DESCARGAR FICHEROS AFECTADOS (.zip)', 'ir_repair' => 'REPARAR {n} FICHEROS',
-        'ir_confirm' => '¿Restaurar {n} ficheros desde el paquete oficial (sobrescribiendo los actuales)? Antes se guarda un zip de copia de los afectados.',
-        'ir_working' => 'reparando ...', 'ir_done' => 'reparación completada.', 'ir_fail' => 'la reparación falló.', 'ir_clean_btn' => 'QUITAR INSTALADOR',
+        'ir_confirm' => 'Â¿Restaurar {n} ficheros desde el paquete oficial (sobrescribiendo los actuales)? Antes se guarda un zip de copia de los afectados.',
+        'ir_working' => 'reparando ...', 'ir_done' => 'reparaciÃ³n completada.', 'ir_fail' => 'la reparaciÃ³n fallÃ³.', 'ir_clean_btn' => 'QUITAR INSTALADOR',
         'vf_extras' => 'buscando ficheros inesperados ...',
-        'ir_extrasum' => '{n} ficheros inesperados en el core (no están en el paquete oficial)',
-        'ir_delextra' => 'BORRAR {n} SOBRANTES', 'ir_confirmdel' => '¿Borrar {n} ficheros inesperados de la instalación? NO están en el paquete oficial (posible manipulación o parches locales). Antes se guarda un zip de copia. Esto no se puede deshacer.',
+        'ir_extrasum' => '{n} ficheros inesperados en el core (no estÃ¡n en el paquete oficial)',
+        'ir_delextra' => 'BORRAR {n} SOBRANTES', 'ir_confirmdel' => 'Â¿Borrar {n} ficheros inesperados de la instalaciÃ³n? NO estÃ¡n en el paquete oficial (posible manipulaciÃ³n o parches locales). Antes se guarda un zip de copia. Esto no se puede deshacer.',
         'ir_deleting' => 'borrando sobrantes ...', 'ir_noextra' => 'no hay sobrantes que borrar.', 'ir_extradel' => 'Borrados: {ok} eliminados, {fail} fallidos.',
-        'ir_vermismatch' => 'El paquete elegido ({pkg}) no coincide con la versión instalada ({inst}); el diff saldrá inflado. Usa la misma versión.',
+        'ir_vermismatch' => 'El paquete elegido ({pkg}) no coincide con la versiÃ³n instalada ({inst}); el diff saldrÃ¡ inflado. Usa la misma versiÃ³n.',
         'pk_nodown' => '(solo {s} o superior)',
-        'e_exists' => 'Ya hay un Dolibarr instalado aquí. Usa Actualizar, o confirma una reinstalación.',
-        'fn_title_up' => 'ACTUALIZACIÓN COMPLETA', 'fn_op_up' => 'dolibarr actualizado', 'fn_upgraded' => 'versión: {s}',
-        'rd_title_up' => 'FICHEROS SUSTITUIDOS — LANZANDO EL ASISTENTE NATIVO DE ACTUALIZACIÓN',
+        'e_exists' => 'Ya hay un Dolibarr instalado aquÃ­. Usa Actualizar, o confirma una reinstalaciÃ³n.',
+        'fn_title_up' => 'ACTUALIZACIÃ“N COMPLETA', 'fn_op_up' => 'dolibarr actualizado', 'fn_upgraded' => 'versiÃ³n: {s}',
+        'rd_title_up' => 'FICHEROS SUSTITUIDOS â€” LANZANDO EL ASISTENTE NATIVO DE ACTUALIZACIÃ“N',
         'rd_up_warn' => 'Ficheros actualizados. Te entregamos al asistente nativo de Dolibarr para ejecutar las migraciones.',
         'err' => 'ERROR:', 'net' => 'red:', 'retrying_block' => 'reintentando bloque (offset {off}, intento {try}) ...',
         'net_fail' => 'Fallo de red en offset {off}:',
         'ss_nocontact' => 'No se pudo contactar con {url} ({s}).',
-        'ss_single' => ' Si tu servidor atiende una sola petición a la vez (php -S, 1 worker), termina en {url}/install/.',
-        'ss_s1ok' => 'Configuración creada y conexión a la base de datos establecida.',
-        'ss_s1fail' => 'step1 no escribió conf.php correctamente. ', 'ss_s2fail' => 'step2 falló. ',
+        'ss_single' => ' Si tu servidor atiende una sola peticiÃ³n a la vez (php -S, 1 worker), termina en {url}/install/.',
+        'ss_s1ok' => 'ConfiguraciÃ³n creada y conexiÃ³n a la base de datos establecida.',
+        'ss_s1fail' => 'step1 no escribiÃ³ conf.php correctamente. ', 'ss_s2fail' => 'step2 fallÃ³. ',
         'ss_s2ok' => '{n} tablas creadas y datos de referencia cargados.', 'ss_s2nodrv' => 'Tablas creadas (no verificable por driver).',
-        'ss_s2no' => 'No se crearon todas las tablas básicas de Dolibarr. ',
-        'ss_s5ok' => 'Administrador "{s}" creado e instalación bloqueada.',
-        'ss_s5warn' => ' (AVISO: no se encontró install.lock; revisa y elimina /install/ a mano)',
-        'ss_s5fail' => 'No se pudo confirmar la creación del administrador "{s}". ',
-        'ss_blocked' => 'El servidor respondió HTTP {code} al instalador nativo (posible bloqueo de mod_security/WAF o error del servidor). Añade una excepción para /install/ o termina manualmente en {url}/install/.',
-        'ss_emptyresp' => 'Respuesta vacía del servidor.', 'ss_reported' => 'Dolibarr informó: {s}',
+        'ss_s2no' => 'No se crearon todas las tablas bÃ¡sicas de Dolibarr. ',
+        'ss_s5ok' => 'Administrador "{s}" creado e instalaciÃ³n bloqueada.',
+        'ss_s5warn' => ' (AVISO: no se encontrÃ³ install.lock; revisa y elimina /install/ a mano)',
+        'ss_s5fail' => 'No se pudo confirmar la creaciÃ³n del administrador "{s}". ',
+        'ss_blocked' => 'El servidor respondiÃ³ HTTP {code} al instalador nativo (posible bloqueo de mod_security/WAF o error del servidor). AÃ±ade una excepciÃ³n para /install/ o termina manualmente en {url}/install/.',
+        'ss_emptyresp' => 'Respuesta vacÃ­a del servidor.', 'ss_reported' => 'Dolibarr informÃ³: {s}',
         'ss_checklog' => 'Revisa el log o ejecuta /install/ manualmente.',
-        'ss_phpfatal' => 'Error fatal de PHP: {s}. Esta versión de Dolibarr probablemente no es compatible con tu PHP ({php}); elige una versión de Dolibarr más reciente.',
-        'e_noinstall' => 'No existe el directorio install/ tras la extracción.',
-        'e_cantopen' => 'No se pudo abrir el ZIP: {s}', 'e_blockfail' => 'Fallo al extraer el bloque (offset {s}). ¿Espacio en disco o permisos?',
-        'e_notfound' => 'No se encontró el contenido extraído en {s}', 'e_cantread' => 'No se pudo leer el directorio temporal de extracción.',
+        'ss_phpfatal' => 'Error fatal de PHP: {s}. Esta versiÃ³n de Dolibarr probablemente no es compatible con tu PHP ({php}); elige una versiÃ³n de Dolibarr mÃ¡s reciente.',
+        'e_noinstall' => 'No existe el directorio install/ tras la extracciÃ³n.',
+        'e_cantopen' => 'No se pudo abrir el ZIP: {s}', 'e_blockfail' => 'Fallo al extraer el bloque (offset {s}). Â¿Espacio en disco o permisos?',
+        'e_notfound' => 'No se encontrÃ³ el contenido extraÃ­do en {s}', 'e_cantread' => 'No se pudo leer el directorio temporal de extracciÃ³n.',
         'e_cantmove' => 'No se pudo mover/copiar "{s}" al destino. Revisa espacio en disco y permisos.',
-        'e_needcurl' => 'La descarga automática requiere la extensión cURL.', 'e_cantwrite' => 'No se puede escribir el archivo de descarga: {s}',
+        'e_needcurl' => 'La descarga automÃ¡tica requiere la extensiÃ³n cURL.', 'e_cantwrite' => 'No se puede escribir el archivo de descarga: {s}',
         'e_dlfail' => 'Descarga fallida: {s}', 'e_unexpected' => 'Respuesta inesperada del servidor de descargas (HTTP {code}).',
-        'e_noversion' => 'No hay versión seleccionada para descargar.', 'e_corrupt' => 'El ZIP descargado no es un paquete Dolibarr válido (descarga corrupta). Reinténtalo.',
-        'e_badhash' => 'Falló la verificación de integridad del paquete descargado (versión {s}): el SHA-256 no coincide. Posible MITM o mirror corrupto. Reinténtalo o sube el ZIP a mano.',
-        'e_noconfig' => 'No hay configuración guardada.', 'e_unknownajax' => 'acción AJAX desconocida',
-        'e_forbidden' => 'Prohibido: esta instalación está atada al navegador que la inició. Recarga el instalador en ese navegador, o borra __doli_installer_tmp__ para empezar de nuevo.',
+        'e_noversion' => 'No hay versiÃ³n seleccionada para descargar.', 'e_corrupt' => 'El ZIP descargado no es un paquete Dolibarr vÃ¡lido (descarga corrupta). ReintÃ©ntalo.',
+        'e_badhash' => 'FallÃ³ la verificaciÃ³n de integridad del paquete descargado (versiÃ³n {s}): el SHA-256 no coincide. Posible MITM o mirror corrupto. ReintÃ©ntalo o sube el ZIP a mano.',
+        'e_noconfig' => 'No hay configuraciÃ³n guardada.', 'e_unknownajax' => 'acciÃ³n AJAX desconocida',
+        'e_forbidden' => 'Prohibido: esta instalaciÃ³n estÃ¡ atada al navegador que la iniciÃ³. Recarga el instalador en ese navegador, o borra __doli_installer_tmp__ para empezar de nuevo.',
     ),
     'de' => array(
         'topbar_sub' => 'Installationsterminal', 'lang' => 'Sprache',
-        'foot' => 'wenn Sie den Vorgang abbrechen, löschen Sie diese Datei und die .zip manuell',
+        'foot' => 'wenn Sie den Vorgang abbrechen, lÃ¶schen Sie diese Datei und die .zip manuell',
         'st_inicio' => 'Start', 'st_paquete' => 'Paket', 'st_requisitos' => 'Anforderungen',
         'st_config' => 'Konfig', 'st_extraer' => 'Entpacken', 'st_instalar' => 'Installieren',
         'st_listo' => 'Fertig', 'st_lanzar' => 'Starten',
-        'b_back' => '< ZURÜCK', 'b_continue' => 'WEITER >', 'b_retry' => 'WIEDERHOLEN', 'b_finish' => 'FERTIG >',
-        'b_extract' => 'ENTPACKEN >', 'b_install' => 'INSTALLIEREN >', 'b_open' => 'DOLIBARR ÖFFNEN',
-        'b_clean' => 'AUFRÄUMEN & ÖFFNEN >', 'b_go' => 'ZUM ASSISTENTEN >',
-        'tagline' => '// automatischer Dolibarr-Installer — entpackt und konfiguriert alles',
-        'w_pkg' => 'PAKET', 'w_none' => 'Kein lokales ZIP: im nächsten Schritt können Sie jede Version automatisch herunterladen.',
-        'w_one' => 'erkannt: {s} ({mb} MB) — oder im nächsten Schritt eine andere Version herunterladen.',
-        'w_many' => '{n} Pakete erkannt — Sie wählen im nächsten Schritt welches (oder laden ein anderes herunter).',
-        'w_dest' => 'Ziel: {s}', 'w_choose' => 'MODUS WÄHLEN',
+        'b_back' => '< ZURÃœCK', 'b_continue' => 'WEITER >', 'b_retry' => 'WIEDERHOLEN', 'b_finish' => 'FERTIG >',
+        'b_extract' => 'ENTPACKEN >', 'b_install' => 'INSTALLIEREN >', 'b_open' => 'DOLIBARR Ã–FFNEN',
+        'b_clean' => 'AUFRÃ„UMEN & Ã–FFNEN >', 'b_go' => 'ZUM ASSISTENTEN >',
+        'tagline' => '// automatischer Dolibarr-Installer â€” entpackt und konfiguriert alles',
+        'w_pkg' => 'PAKET', 'w_none' => 'Kein lokales ZIP: im nÃ¤chsten Schritt kÃ¶nnen Sie jede Version automatisch herunterladen.',
+        'w_one' => 'erkannt: {s} ({mb} MB) â€” oder im nÃ¤chsten Schritt eine andere Version herunterladen.',
+        'w_many' => '{n} Pakete erkannt â€” Sie wÃ¤hlen im nÃ¤chsten Schritt welches (oder laden ein anderes herunter).',
+        'w_dest' => 'Ziel: {s}', 'w_choose' => 'MODUS WÃ„HLEN',
         'w_auto_h' => '[ 1 ]  AUTOMATISCHE INSTALLATION',
-        'w_auto_d' => 'Wählen Sie das Paket (lokal oder Download) → erstellt Datenbank + Tabellen + Administrator + Sperre. Null Klicks im Dolibarr-Assistenten. Löscht sich am Ende selbst.',
+        'w_auto_d' => 'WÃ¤hlen Sie das Paket (lokal oder Download) â†’ erstellt Datenbank + Tabellen + Administrator + Sperre. Null Klicks im Dolibarr-Assistenten. LÃ¶scht sich am Ende selbst.',
         'w_simple_h' => '[ 2 ]  NUR ENTPACKEN  (Expertenmodus)',
-        'w_simple_d' => 'Wählen Sie das Paket (lokal oder Download), entpackt htdocs und leitet Sie zum nativen install/-Assistenten weiter, damit Sie es selbst konfigurieren.',
-        'req_title' => 'SYSTEMPRÜFUNG', 'req_block' => 'Pflichtanforderungen fehlen. Beheben Sie sie (fragen Sie Ihren Hoster) und versuchen Sie es erneut.',
-        'req_php' => 'PHP-Version ≥ {s}', 'req_ext' => 'PHP-Erweiterung: {s}', 'req_required' => '(erforderlich)', 'req_recommended' => '(empfohlen)',
-        'req_phpver' => 'PHP für Dolibarr {v} (benötigt ≥ {s})', 'req_phpmax' => 'Dolibarr {v} ist nur bis PHP {s} getestet; Ihr PHP ist neuer (mögliche Probleme)', 'req_phpold' => 'Dolibarr {v} ist sehr alt (PHP-5-Ära); evtl. inkompatibel mit diesem PHP — neuere Version bevorzugen',
-        'req_dbdrv' => 'Datenbanktreiber (MySQL und/oder PostgreSQL)', 'req_http' => 'cURL oder allow_url_fopen (zum Ausführen des Installers)',
-        'req_writable' => 'Installationsverzeichnis beschreibbar', 'req_parent' => 'Übergeordnetes Verzeichnis beschreibbar (für ../documents)',
+        'w_simple_d' => 'WÃ¤hlen Sie das Paket (lokal oder Download), entpackt htdocs und leitet Sie zum nativen install/-Assistenten weiter, damit Sie es selbst konfigurieren.',
+        'req_title' => 'SYSTEMPRÃœFUNG', 'req_block' => 'Pflichtanforderungen fehlen. Beheben Sie sie (fragen Sie Ihren Hoster) und versuchen Sie es erneut.',
+        'req_php' => 'PHP-Version â‰¥ {s}', 'req_ext' => 'PHP-Erweiterung: {s}', 'req_required' => '(erforderlich)', 'req_recommended' => '(empfohlen)',
+        'req_phpver' => 'PHP fÃ¼r Dolibarr {v} (benÃ¶tigt â‰¥ {s})', 'req_phpmax' => 'Dolibarr {v} ist nur bis PHP {s} getestet; Ihr PHP ist neuer (mÃ¶gliche Probleme)', 'req_phpold' => 'Dolibarr {v} ist sehr alt (PHP-5-Ã„ra); evtl. inkompatibel mit diesem PHP â€” neuere Version bevorzugen',
+        'req_dbdrv' => 'Datenbanktreiber (MySQL und/oder PostgreSQL)', 'req_http' => 'cURL oder allow_url_fopen (zum AusfÃ¼hren des Installers)',
+        'req_writable' => 'Installationsverzeichnis beschreibbar', 'req_parent' => 'Ãœbergeordnetes Verzeichnis beschreibbar (fÃ¼r ../documents)',
         'req_zip' => 'Dolibarr-ZIP-Paket vorhanden', 'req_yes' => 'ja', 'req_no' => 'nein', 'req_none' => 'nicht gefunden',
         'req_npkg' => '{n} Pakete: {s}',
         'pk_title' => 'DOLIBARR-PAKET', 'pk_uselocal' => 'ein bereits vorhandenes ZIP verwenden', 'pk_nonehere' => '(keines vorhanden)',
         'pk_download' => 'eine Version automatisch herunterladen', 'pk_reqcurl' => '(erfordert cURL)',
-        'pk_nozip' => 'Keine .zip neben dem Installer.', 'pk_locallabel' => 'lokales ZIP:', 'pk_chooselocal' => 'lokales ZIP wählen ({n} erkannt)',
+        'pk_nozip' => 'Keine .zip neben dem Installer.', 'pk_locallabel' => 'lokales ZIP:', 'pk_chooselocal' => 'lokales ZIP wÃ¤hlen ({n} erkannt)',
         'pk_verlabel' => 'herunterzuladende Version (offizielles Paket von sourceforge.net)',
         'pk_vermanual' => 'oder genaue Version eingeben (x.y.z)', 'pk_optional' => '(optional)',
-        'pk_dlhint' => '~85 MB. Wird in Blöcken auf den Server geladen, mit echter Fortschrittsanzeige.',
-        'pp_title' => 'WÄHLEN SIE DAS DOLIBARR-PAKET',
+        'pk_dlhint' => '~85 MB. Wird in BlÃ¶cken auf den Server geladen, mit echter Fortschrittsanzeige.',
+        'pp_title' => 'WÃ„HLEN SIE DAS DOLIBARR-PAKET',
         'pp_intro_simple' => 'einfacher Modus: htdocs wird entpackt und wir leiten Sie zum nativen install/-Assistenten',
         'pp_intro_full' => 'automatische Installation: nach Wahl des Pakets konfigurieren Sie Datenbank und Administrator',
         'dest_title' => 'ZIEL', 'dest_sub' => 'Installations-Unterordner (optional, leer = hier)', 'dest_empty' => '(leer)',
-        'cf_chosen' => 'GEWÄHLTES PAKET', 'cf_dl' => 'dolibarr-{ver}.zip herunterladen', 'cf_undef' => '(nicht definiert)',
-        'cf_destarrow' => '→ Ziel', 'cf_change' => 'Paket ändern',
+        'cf_chosen' => 'GEWÃ„HLTES PAKET', 'cf_dl' => 'dolibarr-{ver}.zip herunterladen', 'cf_undef' => '(nicht definiert)',
+        'cf_destarrow' => 'â†’ Ziel', 'cf_change' => 'Paket Ã¤ndern',
         'cf_db' => 'DATENBANK', 'cf_dbtype' => 'Datenbanktyp', 'cf_host' => 'Server (Host)', 'cf_port' => 'Port',
-        'cf_dbname' => 'Datenbankname', 'cf_prefix' => 'Tabellenpräfix', 'cf_user' => 'Benutzer', 'cf_pass' => 'Passwort',
+        'cf_dbname' => 'Datenbankname', 'cf_prefix' => 'TabellenprÃ¤fix', 'cf_user' => 'Benutzer', 'cf_pass' => 'Passwort',
         'cf_passempty' => '(darf in Tests leer sein)',
         'cf_create' => 'Datenbank automatisch erstellen (erfordert den DBMS-Admin-Benutzer)',
         'cf_rootuser' => 'DBMS-Admin-Benutzer (root / postgres)', 'cf_rootpass' => 'DBMS-Admin-Passwort',
         'cf_admin' => 'DOLIBARR-ADMINISTRATOR', 'cf_login' => 'Login',
         'cf_opts' => 'OPTIONEN', 'cf_deflang' => 'Standardsprache', 'cf_https' => 'HTTPS erzwingen',
-        'cf_baseurl' => 'erkannte Basis-URL', 'cf_baseurl_h' => 'öffentliche URL des Dolibarr-Stamms; normalerweise korrekt.',
-        'cf_review' => 'Prüfen:',
+        'cf_baseurl' => 'erkannte Basis-URL', 'cf_baseurl_h' => 'Ã¶ffentliche URL des Dolibarr-Stamms; normalerweise korrekt.',
+        'cf_review' => 'PrÃ¼fen:',
         'v_dbname' => 'Der Datenbankname ist erforderlich.', 'v_dbuser' => 'Der Datenbankbenutzer ist erforderlich.',
-        'v_prefix' => 'Das Tabellenpräfix muss alphanumerisch sein und mit "_" enden (z. B. llx_).',
-        'v_root' => 'Zum Erstellen der Datenbank benötigen Sie den DBMS-root/admin-Benutzer.',
+        'v_prefix' => 'Das TabellenprÃ¤fix muss alphanumerisch sein und mit "_" enden (z. B. llx_).',
+        'v_root' => 'Zum Erstellen der Datenbank benÃ¶tigen Sie den DBMS-root/admin-Benutzer.',
         'v_alogin' => 'Der Administrator-Login ist erforderlich.',
         'v_apass' => 'Das Administrator-Passwort ist erforderlich (Dolibarr erlaubt es nicht leer).',
-        'v_achars' => 'Das Administrator-Passwort darf keine doppelten Anführungszeichen ("), die Zeichen < > \\, die Sequenz ../ oder HTML-Entitäten (&#..., &quot) enthalten: der Dolibarr-Installer entfernt sie und würde Sie aussperren.',
-        'v_ver' => 'Wählen oder geben Sie eine gültige Version (Format x.y.z) zum Download ein.',
-        'v_nolocal' => 'Es gibt kein lokales ZIP. Laden Sie eine dolibarr-*.zip hoch oder wählen Sie "Version herunterladen".',
-        'v_choosezip' => 'Wählen Sie, welches der {n} ZIP-Pakete Sie verwenden möchten.',
+        'v_achars' => 'Das Administrator-Passwort darf keine doppelten AnfÃ¼hrungszeichen ("), die Zeichen < > \\, die Sequenz ../ oder HTML-EntitÃ¤ten (&#..., &quot) enthalten: der Dolibarr-Installer entfernt sie und wÃ¼rde Sie aussperren.',
+        'v_ver' => 'WÃ¤hlen oder geben Sie eine gÃ¼ltige Version (Format x.y.z) zum Download ein.',
+        'v_nolocal' => 'Es gibt kein lokales ZIP. Laden Sie eine dolibarr-*.zip hoch oder wÃ¤hlen Sie "Version herunterladen".',
+        'v_choosezip' => 'WÃ¤hlen Sie, welches der {n} ZIP-Pakete Sie verwenden mÃ¶chten.',
         'v_badzip' => 'Das ZIP "{s}" sieht nicht wie ein offizielles Dolibarr-Paket aus (kein "*/htdocs/").',
         'ex_title' => 'ENTPACKEN :: {s}',
-        'ex_noscript' => 'Dieser Assistent benötigt JavaScript zum blockweisen Entpacken. Aktivieren Sie es (oder deaktivieren Sie die fetch-blockierende Erweiterung) und laden Sie neu.',
-        'ex_dest' => 'Ziel: {s}', 'ex_opening' => 'öffne {s} ...', 'ex_block' => 'Block', 'ex_files' => 'Dat.',
-        'ex_processed' => '{n} Einträge verarbeitet. verschiebe htdocs -> Stamm ...', 'ex_complete' => 'Entpacken ABGESCHLOSSEN.',
+        'ex_noscript' => 'Dieser Assistent benÃ¶tigt JavaScript zum blockweisen Entpacken. Aktivieren Sie es (oder deaktivieren Sie die fetch-blockierende Erweiterung) und laden Sie neu.',
+        'ex_dest' => 'Ziel: {s}', 'ex_opening' => 'Ã¶ffne {s} ...', 'ex_block' => 'Block', 'ex_files' => 'Dat.',
+        'ex_processed' => '{n} EintrÃ¤ge verarbeitet. verschiebe htdocs -> Stamm ...', 'ex_complete' => 'Entpacken ABGESCHLOSSEN.',
         'ex_retryblock' => 'DIESEN BLOCK WIEDERHOLEN',
         'dl_title' => 'HERUNTERLADEN :: dolibarr-{ver}.zip',
-        'dl_noscript' => 'Dieser Assistent benötigt JavaScript zum blockweisen Herunterladen. Aktivieren Sie es und laden Sie neu.',
+        'dl_noscript' => 'Dieser Assistent benÃ¶tigt JavaScript zum blockweisen Herunterladen. Aktivieren Sie es und laden Sie neu.',
         'dl_origin' => 'Quelle: sourceforge.net', 'dl_connecting' => 'verbinde mit sourceforge.net ...',
-        'dl_complete' => 'Download ABGESCHLOSSEN ({mb}). prüfe ZIP ...', 'dl_ready' => 'Paket bereit.', 'dl_retry' => 'WIEDERHOLEN',
-        'in_title' => 'NATIVER INSTALLER LÄUFT (unbeaufsichtigt)',
-        'in_noscript' => 'Dieser Assistent benötigt JavaScript für die Installation. Aktivieren Sie es und laden Sie neu, oder beenden Sie manuell unter {url}/install/.',
-        'in_tables' => '// der Tabellenschritt kann auf langsamen Hosts mehrere Minuten dauern; Fenster nicht schließen',
+        'dl_complete' => 'Download ABGESCHLOSSEN ({mb}). prÃ¼fe ZIP ...', 'dl_ready' => 'Paket bereit.', 'dl_retry' => 'WIEDERHOLEN',
+        'in_title' => 'NATIVER INSTALLER LÃ„UFT (unbeaufsichtigt)',
+        'in_noscript' => 'Dieser Assistent benÃ¶tigt JavaScript fÃ¼r die Installation. Aktivieren Sie es und laden Sie neu, oder beenden Sie manuell unter {url}/install/.',
+        'in_tables' => '// der Tabellenschritt kann auf langsamen Hosts mehrere Minuten dauern; Fenster nicht schlieÃŸen',
         'in_s1' => 'Konfiguration und Datenbank erstellen', 'in_s2' => 'Tabellen und Referenzdaten erstellen',
         'in_s5' => 'Administrator erstellen und Installation sperren',
         'in_starting' => 'starte Installationssequenz', 'in_resuming' => '(Fortsetzung nach {s})',
         'in_finished' => 'INSTALLATION ABGESCHLOSSEN.', 'in_working' => 'arbeite ({s})',
-        'in_retrystep' => 'DIESEN SCHRITT WIEDERHOLEN', 'in_openinstall' => '/install/ ÖFFNEN',
-        'rd_title' => 'ENTPACKEN ABGESCHLOSSEN — STARTE DEN DOLIBARR-ASSISTENTEN',
+        'in_retrystep' => 'DIESEN SCHRITT WIEDERHOLEN', 'in_openinstall' => '/install/ Ã–FFNEN',
+        'rd_title' => 'ENTPACKEN ABGESCHLOSSEN â€” STARTE DEN DOLIBARR-ASSISTENTEN',
         'rd_deployed' => 'htdocs bereitgestellt und conf.php vorbereitet.', 'rd_removing' => 'entferne Installer und .zip ...',
-        'rd_redir' => 'fertig. leite zum nativen Assistenten weiter ...', 'rd_manual' => '(Aufräumen fehlgeschlagen: Installer manuell löschen) leite weiter ...',
-        'fn_title' => 'INSTALLATION ABGESCHLOSSEN', 'fn_op' => 'dolibarr läuft', 'fn_user' => 'Benutzer:',
-        'fn_sec' => 'Aus Sicherheitsgründen AUFRÄUMEN drücken, um Installer, ZIP und das install/-Verzeichnis zu löschen.',
-        'fn_cleaning' => 'RÄUME AUF...', 'fn_deleting' => 'lösche install/, .zip und Installer ...',
-        'fn_removed' => 'Installer gelöscht. leite weiter ...', 'fn_manual' => '(manuelles Aufräumen nötig)',
+        'rd_redir' => 'fertig. leite zum nativen Assistenten weiter ...', 'rd_manual' => '(AufrÃ¤umen fehlgeschlagen: Installer manuell lÃ¶schen) leite weiter ...',
+        'fn_title' => 'INSTALLATION ABGESCHLOSSEN', 'fn_op' => 'dolibarr lÃ¤uft', 'fn_user' => 'Benutzer:',
+        'fn_sec' => 'Aus SicherheitsgrÃ¼nden AUFRÃ„UMEN drÃ¼cken, um Installer, ZIP und das install/-Verzeichnis zu lÃ¶schen.',
+        'fn_cleaning' => 'RÃ„UME AUF...', 'fn_deleting' => 'lÃ¶sche install/, .zip und Installer ...',
+        'fn_removed' => 'Installer gelÃ¶scht. leite weiter ...', 'fn_manual' => '(manuelles AufrÃ¤umen nÃ¶tig)',
         'gi_title' => 'HINWEIS', 'gi_msg' => 'Dolibarr scheint in diesem Verzeichnis BEREITS installiert zu sein (conf/conf.php mit Daten vorhanden).',
-        'gi_re' => 'Tipp: Löschen Sie easydoliinstaller.php nach Abschluss vom Server.',
+        'gi_re' => 'Tipp: LÃ¶schen Sie easydoliinstaller.php nach Abschluss vom Server.',
         'st_update' => 'aktualisieren', 'st_migrate' => 'migrieren',
         'gi_ver' => 'erkannte Version {s}',
-        'gi_open_h' => 'DOLIBARR ÖFFNEN', 'gi_open_d' => 'Bereits installiert — zur Anwendung.',
-        'gi_upd_h' => 'AKTUALISIEREN / UPGRADE', 'gi_upd_d' => 'Eine neuere Version herunterladen und alle Migrationen automatisch ausführen, mit Live-Protokoll.',
-        'gi_re_h' => 'NEU INSTALLIEREN', 'gi_re_d' => 'Dieses Dolibarr überschreiben und neu installieren. Vorhandene Daten können verloren gehen.',
-        'gi_re_confirm' => 'Dies überschreibt das vorhandene Dolibarr und Daten können verloren gehen. Fortfahren?',
-        'gi_re_warn' => 'Neuinstallation: Die aktuelle Installation wird überschrieben. Erstellen Sie zuerst eine Sicherung.',
+        'gi_open_h' => 'DOLIBARR Ã–FFNEN', 'gi_open_d' => 'Bereits installiert â€” zur Anwendung.',
+        'gi_upd_h' => 'AKTUALISIEREN / UPGRADE', 'gi_upd_d' => 'Eine neuere Version herunterladen und alle Migrationen automatisch ausfÃ¼hren, mit Live-Protokoll.',
+        'gi_re_h' => 'NEU INSTALLIEREN', 'gi_re_d' => 'Dieses Dolibarr Ã¼berschreiben und neu installieren. Vorhandene Daten kÃ¶nnen verloren gehen.',
+        'gi_re_confirm' => 'Dies Ã¼berschreibt das vorhandene Dolibarr und Daten kÃ¶nnen verloren gehen. Fortfahren?',
+        'gi_re_warn' => 'Neuinstallation: Die aktuelle Installation wird Ã¼berschrieben. Erstellen Sie zuerst eine Sicherung.',
         'up_detected' => 'VORHANDENE INSTALLATION ERKANNT',
         'up_curver' => 'aktuelle Version', 'up_files' => 'Dateien', 'up_db' => 'Datenbank',
-        'up_intro' => 'Wählen Sie unten die Zielversion und den Aktualisierungsmodus.',
+        'up_intro' => 'WÃ¤hlen Sie unten die Zielversion und den Aktualisierungsmodus.',
         'up_backup' => 'SICHERUNG (EMPFOHLEN)',
-        'up_warn' => 'Ein Upgrade verändert die Datenbank. Schlägt es mittendrin fehl, können Ihre Daten inkonsistent werden. Sichern Sie vorher.',
-        'up_backup_pg' => 'PostgreSQL: Automatischer Dump ist hier nicht verfügbar. Nutzen Sie pg_dump vor dem Upgrade.',
+        'up_warn' => 'Ein Upgrade verÃ¤ndert die Datenbank. SchlÃ¤gt es mittendrin fehl, kÃ¶nnen Ihre Daten inkonsistent werden. Sichern Sie vorher.',
+        'up_backup_pg' => 'PostgreSQL: Automatischer Dump ist hier nicht verfÃ¼gbar. Nutzen Sie pg_dump vor dem Upgrade.',
         'up_backup_btn' => 'DATENBANK-SICHERUNG HERUNTERLADEN (.sql)',
-        'up_backup_hint' => 'Optionaler logischer MySQL/MariaDB-Dump (Struktur + Daten). Für sehr große Datenbanken Ihr übliches Werkzeug verwenden.',
-        'up_backup_later' => 'Starten Sie die Aktualisierung, um den Download zu aktivieren (benötigt das Installations-Token).',
+        'up_backup_hint' => 'Optionaler logischer MySQL/MariaDB-Dump (Struktur + Daten). FÃ¼r sehr groÃŸe Datenbanken Ihr Ã¼bliches Werkzeug verwenden.',
+        'up_backup_later' => 'Starten Sie die Aktualisierung, um den Download zu aktivieren (benÃ¶tigt das Installations-Token).',
         'up_start' => 'AKTUALISIERUNG STARTEN',
         'up_noconf' => 'Kein installiertes Dolibarr gefunden (conf/conf.php mit Datenbank fehlt).',
-        'up_nodown' => 'Die gewählte Version ({new}) ist älter als die installierte ({cur}). Downgrades werden nicht unterstützt.',
+        'up_nodown' => 'Die gewÃ¤hlte Version ({new}) ist Ã¤lter als die installierte ({cur}). Downgrades werden nicht unterstÃ¼tzt.',
         'up_modet' => 'AKTUALISIERUNGSMODUS',
-        'up_mode_auto_h' => 'Automatisch — N Versionen in einem Durchgang migrieren',
-        'up_mode_auto_d' => 'Dateien ersetzen und alle Zwischen-Migrationen automatisch ausführen, eine Hauptversion nach der anderen, mit vollständigem Live-Protokoll. Empfohlen.',
-        'up_mode_manual_h' => 'Schritt für Schritt — nativer Assistent',
-        'up_mode_manual_d' => 'Dateien ersetzen und an den Upgrade-Assistenten von Dolibarr übergeben, damit Sie jeden Schritt selbst durchklicken.',
+        'up_mode_auto_h' => 'Automatisch â€” N Versionen in einem Durchgang migrieren',
+        'up_mode_auto_d' => 'Dateien ersetzen und alle Zwischen-Migrationen automatisch ausfÃ¼hren, eine Hauptversion nach der anderen, mit vollstÃ¤ndigem Live-Protokoll. Empfohlen.',
+        'up_mode_manual_h' => 'Schritt fÃ¼r Schritt â€” nativer Assistent',
+        'up_mode_manual_d' => 'Dateien ersetzen und an den Upgrade-Assistenten von Dolibarr Ã¼bergeben, damit Sie jeden Schritt selbst durchklicken.',
         'up_httpfail' => 'Der Migrationsschritt {s} lieferte HTTP {code}.',
         'up_migfail' => 'Migration {s} fehlgeschlagen.', 'up_migok' => 'migriert {s}',
         'up_warns' => '({n} SQL-Hinweise, ignoriert wie im nativen Assistenten)',
         'up_done' => 'Upgrade abgeschlossen. Datenbankversion: {s}.',
         'up_doneish' => 'Upgrade beendet (Version konnte nicht aus der Datenbank verifiziert werden).',
         'up_finfail' => 'Upgrade konnte nicht abgeschlossen werden. ',
-        'mg_title' => 'MIGRATION {from} -> {to}', 'mg_note' => 'führe alle Migrationen nacheinander aus ...',
+        'mg_title' => 'MIGRATION {from} -> {to}', 'mg_note' => 'fÃ¼hre alle Migrationen nacheinander aus ...',
         'mg_db' => 'Datenbank migrieren {from} -> {to}', 'mg_data' => 'Daten migrieren {from} -> {to}',
-        'mg_final' => 'abschließen und sperren ({s})', 'mg_starting' => 'starte Migration',
-        'mg_finished' => 'alle Migrationen erledigt', 'mg_openinstall' => 'NATIVEN ASSISTENTEN ÖFFNEN',
+        'mg_final' => 'abschlieÃŸen und sperren ({s})', 'mg_starting' => 'starte Migration',
+        'mg_finished' => 'alle Migrationen erledigt', 'mg_openinstall' => 'NATIVEN ASSISTENTEN Ã–FFNEN',
         'mg_backup' => 'Datenbank sichern (Wiederherstellungspunkt)',
-        'up_bk_ok' => 'Datenbanksicherung gespeichert ({s}, {n} KB)', 'up_bk_warn' => 'DB-Sicherung konnte nicht automatisch gespeichert werden ({s}); es wird fortgefahren — bei Bedarf aus Ihrem manuellen Dump wiederherstellen', 'up_bk_pg' => 'PostgreSQL: Auto-Sicherung übersprungen (pg_dump verwenden); es wird fortgefahren',
-        'up_rollback_hint' => 'Rollback-Punkt: ein DB-Dump wird als {s} im documents-Ordner gespeichert. Zum Zurückrollen: dieses .sql wiederherstellen und die vorherigen Dolibarr-Dateien zurücklegen.',
-        'st_repair' => 'reparieren', 'st_verify' => 'prüfen', 'st_report' => 'bericht',
-        'gi_rep_h' => 'REPARIEREN / INTEGRITÄT PRÜFEN', 'gi_rep_d' => 'Vergleicht Ihre Installation Datei für Datei mit dem offiziellen Paket derselben Version und stellt abweichende Dateien wieder her.',
-        'rp_title' => 'REPARIEREN — INTEGRITÄT PRÜFEN', 'rp_intro' => 'wählen Sie das OFFIZIELLE Paket DERSELBEN Version; es wird Datei für Datei mit Ihrer Installation verglichen.',
-        'rp_samever' => 'Genau die installierte Version verwenden ({s}); eine andere Version würde fast alles als geändert melden.', 'rp_start' => 'PRÜFEN',
-        'rp_noresult' => 'Kein Vergleichsergebnis; führen Sie zuerst die Prüfung aus.', 'rp_applied' => 'Repariert: {ok} wiederhergestellt, {fail} fehlgeschlagen.',
-        'vf_title' => 'INTEGRITÄT WIRD GEPRÜFT', 'vf_note' => 'Vergleich mit dem offiziellen Paket ...',
-        'vf_start' => 'Vergleich startet ...', 'vf_chk' => 'geprüft {c} — geändert {m}, fehlend {k}', 'vf_comp' => 'Vergleich fertig: {m} geändert, {k} fehlend',
-        'ir_title' => 'INTEGRITÄTSBERICHT', 'ir_checked' => '{n} Core-Dateien geprüft', 'ir_summary' => '{m} geändert, {k} fehlend',
-        'ir_clean' => 'Integrität OK — alle Core-Dateien stimmen mit dem offiziellen Paket überein. Nichts zu reparieren.',
-        'ir_more' => 'mehr', 'ir_legend' => '~ geändert (weicht vom Original ab)   + fehlend (lokal nicht vorhanden). conf/, custom/ und documents/ ausgenommen.',
+        'up_bk_ok' => 'Datenbanksicherung gespeichert ({s}, {n} KB)', 'up_bk_warn' => 'DB-Sicherung konnte nicht automatisch gespeichert werden ({s}); es wird fortgefahren â€” bei Bedarf aus Ihrem manuellen Dump wiederherstellen', 'up_bk_pg' => 'PostgreSQL: Auto-Sicherung Ã¼bersprungen (pg_dump verwenden); es wird fortgefahren',
+        'up_rollback_hint' => 'Rollback-Punkt: ein DB-Dump wird als {s} im documents-Ordner gespeichert. Zum ZurÃ¼ckrollen: dieses .sql wiederherstellen und die vorherigen Dolibarr-Dateien zurÃ¼cklegen.',
+        'st_repair' => 'reparieren', 'st_verify' => 'prÃ¼fen', 'st_report' => 'bericht',
+        'gi_rep_h' => 'REPARIEREN / INTEGRITÃ„T PRÃœFEN', 'gi_rep_d' => 'Vergleicht Ihre Installation Datei fÃ¼r Datei mit dem offiziellen Paket derselben Version und stellt abweichende Dateien wieder her.',
+        'rp_title' => 'REPARIEREN â€” INTEGRITÃ„T PRÃœFEN', 'rp_intro' => 'wÃ¤hlen Sie das OFFIZIELLE Paket DERSELBEN Version; es wird Datei fÃ¼r Datei mit Ihrer Installation verglichen.',
+        'rp_samever' => 'Genau die installierte Version verwenden ({s}); eine andere Version wÃ¼rde fast alles als geÃ¤ndert melden.', 'rp_start' => 'PRÃœFEN',
+        'rp_noresult' => 'Kein Vergleichsergebnis; fÃ¼hren Sie zuerst die PrÃ¼fung aus.', 'rp_applied' => 'Repariert: {ok} wiederhergestellt, {fail} fehlgeschlagen.',
+        'vf_title' => 'INTEGRITÃ„T WIRD GEPRÃœFT', 'vf_note' => 'Vergleich mit dem offiziellen Paket ...',
+        'vf_start' => 'Vergleich startet ...', 'vf_chk' => 'geprÃ¼ft {c} â€” geÃ¤ndert {m}, fehlend {k}', 'vf_comp' => 'Vergleich fertig: {m} geÃ¤ndert, {k} fehlend',
+        'ir_title' => 'INTEGRITÃ„TSBERICHT', 'ir_checked' => '{n} Core-Dateien geprÃ¼ft', 'ir_summary' => '{m} geÃ¤ndert, {k} fehlend',
+        'ir_clean' => 'IntegritÃ¤t OK â€” alle Core-Dateien stimmen mit dem offiziellen Paket Ã¼berein. Nichts zu reparieren.',
+        'ir_more' => 'mehr', 'ir_legend' => '~ geÃ¤ndert (weicht vom Original ab)   + fehlend (lokal nicht vorhanden). conf/, custom/ und documents/ ausgenommen.',
         'ir_dlzip' => 'BETROFFENE DATEIEN HERUNTERLADEN (.zip)', 'ir_repair' => '{n} DATEIEN REPARIEREN',
-        'ir_confirm' => '{n} Dateien aus dem offiziellen Paket wiederherstellen (die aktuellen überschreiben)? Zuvor wird ein Backup-Zip der betroffenen Dateien gespeichert.',
+        'ir_confirm' => '{n} Dateien aus dem offiziellen Paket wiederherstellen (die aktuellen Ã¼berschreiben)? Zuvor wird ein Backup-Zip der betroffenen Dateien gespeichert.',
         'ir_working' => 'repariere ...', 'ir_done' => 'Reparatur fertig.', 'ir_fail' => 'Reparatur fehlgeschlagen.', 'ir_clean_btn' => 'INSTALLER ENTFERNEN',
         'vf_extras' => 'suche nach unerwarteten Dateien ...',
         'ir_extrasum' => '{n} unerwartete Dateien im Core (nicht im offiziellen Paket)',
-        'ir_delextra' => '{n} EXTRA-DATEIEN LÖSCHEN', 'ir_confirmdel' => '{n} unerwartete Dateien aus der Installation löschen? Sie sind NICHT im offiziellen Paket (mögliche Manipulation oder lokale Patches). Zuvor wird ein Backup-Zip gespeichert. Nicht rückgängig zu machen.',
-        'ir_deleting' => 'lösche Extra-Dateien ...', 'ir_noextra' => 'keine Extra-Dateien zu löschen.', 'ir_extradel' => 'Gelöscht: {ok} entfernt, {fail} fehlgeschlagen.',
-        'ir_vermismatch' => 'Das gewählte Paket ({pkg}) entspricht nicht der installierten Version ({inst}); der Diff wird aufgebläht. Verwenden Sie dieselbe Version.',
+        'ir_delextra' => '{n} EXTRA-DATEIEN LÃ–SCHEN', 'ir_confirmdel' => '{n} unerwartete Dateien aus der Installation lÃ¶schen? Sie sind NICHT im offiziellen Paket (mÃ¶gliche Manipulation oder lokale Patches). Zuvor wird ein Backup-Zip gespeichert. Nicht rÃ¼ckgÃ¤ngig zu machen.',
+        'ir_deleting' => 'lÃ¶sche Extra-Dateien ...', 'ir_noextra' => 'keine Extra-Dateien zu lÃ¶schen.', 'ir_extradel' => 'GelÃ¶scht: {ok} entfernt, {fail} fehlgeschlagen.',
+        'ir_vermismatch' => 'Das gewÃ¤hlte Paket ({pkg}) entspricht nicht der installierten Version ({inst}); der Diff wird aufgeblÃ¤ht. Verwenden Sie dieselbe Version.',
         'pk_nodown' => '(nur {s} oder neuer)',
-        'e_exists' => 'Hier ist bereits ein Dolibarr installiert. Nutzen Sie Aktualisieren oder bestätigen Sie eine Neuinstallation.',
+        'e_exists' => 'Hier ist bereits ein Dolibarr installiert. Nutzen Sie Aktualisieren oder bestÃ¤tigen Sie eine Neuinstallation.',
         'fn_title_up' => 'UPGRADE ABGESCHLOSSEN', 'fn_op_up' => 'dolibarr aktualisiert', 'fn_upgraded' => 'Version: {s}',
-        'rd_title_up' => 'DATEIEN ERSETZT — STARTE DEN NATIVEN UPGRADE-ASSISTENTEN',
-        'rd_up_warn' => 'Dateien aktualisiert. Übergabe an den nativen Upgrade-Assistenten von Dolibarr für die Migrationen.',
+        'rd_title_up' => 'DATEIEN ERSETZT â€” STARTE DEN NATIVEN UPGRADE-ASSISTENTEN',
+        'rd_up_warn' => 'Dateien aktualisiert. Ãœbergabe an den nativen Upgrade-Assistenten von Dolibarr fÃ¼r die Migrationen.',
         'err' => 'FEHLER:', 'net' => 'Netz:', 'retrying_block' => 'wiederhole Block (Offset {off}, Versuch {try}) ...',
         'net_fail' => 'Netzwerkfehler bei Offset {off}:',
         'ss_nocontact' => '{url} nicht erreichbar ({s}).',
         'ss_single' => ' Wenn Ihr Server eine Anfrage gleichzeitig bearbeitet (php -S, 1 Worker), beenden Sie unter {url}/install/.',
         'ss_s1ok' => 'Konfiguration erstellt und Datenbankverbindung hergestellt.',
         'ss_s1fail' => 'step1 hat conf.php nicht korrekt geschrieben. ', 'ss_s2fail' => 'step2 fehlgeschlagen. ',
-        'ss_s2ok' => '{n} Tabellen erstellt und Referenzdaten geladen.', 'ss_s2nodrv' => 'Tabellen erstellt (per Treiber nicht prüfbar).',
+        'ss_s2ok' => '{n} Tabellen erstellt und Referenzdaten geladen.', 'ss_s2nodrv' => 'Tabellen erstellt (per Treiber nicht prÃ¼fbar).',
         'ss_s2no' => 'Es wurden nicht alle Kerntabellen von Dolibarr erstellt. ',
         'ss_s5ok' => 'Administrator "{s}" erstellt und Installation gesperrt.',
-        'ss_s5warn' => ' (WARNUNG: install.lock nicht gefunden; /install/ manuell prüfen und löschen)',
-        'ss_s5fail' => 'Erstellung des Administrators "{s}" konnte nicht bestätigt werden. ',
-        'ss_blocked' => 'Der Server antwortete HTTP {code} an den nativen Installer (mögliche mod_security/WAF-Sperre oder Serverfehler). Fügen Sie eine Ausnahme für /install/ hinzu oder beenden Sie manuell unter {url}/install/.',
+        'ss_s5warn' => ' (WARNUNG: install.lock nicht gefunden; /install/ manuell prÃ¼fen und lÃ¶schen)',
+        'ss_s5fail' => 'Erstellung des Administrators "{s}" konnte nicht bestÃ¤tigt werden. ',
+        'ss_blocked' => 'Der Server antwortete HTTP {code} an den nativen Installer (mÃ¶gliche mod_security/WAF-Sperre oder Serverfehler). FÃ¼gen Sie eine Ausnahme fÃ¼r /install/ hinzu oder beenden Sie manuell unter {url}/install/.',
         'ss_emptyresp' => 'Leere Antwort vom Server.', 'ss_reported' => 'Dolibarr meldete: {s}',
-        'ss_checklog' => 'Prüfen Sie das Log oder führen Sie /install/ manuell aus.',
-        'ss_phpfatal' => 'PHP-Fatal: {s}. Diese Dolibarr-Version ist wahrscheinlich nicht mit Ihrem PHP ({php}) kompatibel; wählen Sie eine neuere Dolibarr-Version.',
+        'ss_checklog' => 'PrÃ¼fen Sie das Log oder fÃ¼hren Sie /install/ manuell aus.',
+        'ss_phpfatal' => 'PHP-Fatal: {s}. Diese Dolibarr-Version ist wahrscheinlich nicht mit Ihrem PHP ({php}) kompatibel; wÃ¤hlen Sie eine neuere Dolibarr-Version.',
         'e_noinstall' => 'Das install/-Verzeichnis existiert nach dem Entpacken nicht.',
-        'e_cantopen' => 'ZIP konnte nicht geöffnet werden: {s}', 'e_blockfail' => 'Block konnte nicht entpackt werden (Offset {s}). Speicherplatz oder Rechte?',
-        'e_notfound' => 'Entpackter Inhalt nicht gefunden in {s}', 'e_cantread' => 'Temporäres Entpackverzeichnis konnte nicht gelesen werden.',
-        'e_cantmove' => '"{s}" konnte nicht ans Ziel verschoben/kopiert werden. Speicherplatz und Rechte prüfen.',
+        'e_cantopen' => 'ZIP konnte nicht geÃ¶ffnet werden: {s}', 'e_blockfail' => 'Block konnte nicht entpackt werden (Offset {s}). Speicherplatz oder Rechte?',
+        'e_notfound' => 'Entpackter Inhalt nicht gefunden in {s}', 'e_cantread' => 'TemporÃ¤res Entpackverzeichnis konnte nicht gelesen werden.',
+        'e_cantmove' => '"{s}" konnte nicht ans Ziel verschoben/kopiert werden. Speicherplatz und Rechte prÃ¼fen.',
         'e_needcurl' => 'Der automatische Download erfordert die cURL-Erweiterung.', 'e_cantwrite' => 'Download-Datei nicht beschreibbar: {s}',
         'e_dlfail' => 'Download fehlgeschlagen: {s}', 'e_unexpected' => 'Unerwartete Antwort vom Download-Server (HTTP {code}).',
-        'e_noversion' => 'Keine Version zum Download ausgewählt.', 'e_corrupt' => 'Das heruntergeladene ZIP ist kein gültiges Dolibarr-Paket (beschädigter Download). Erneut versuchen.',
-        'e_badhash' => 'Integritätsprüfung des heruntergeladenen Pakets fehlgeschlagen (Version {s}): SHA-256 stimmt nicht überein. Möglicher MITM oder beschädigter Mirror. Erneut versuchen oder ZIP manuell hochladen.',
+        'e_noversion' => 'Keine Version zum Download ausgewÃ¤hlt.', 'e_corrupt' => 'Das heruntergeladene ZIP ist kein gÃ¼ltiges Dolibarr-Paket (beschÃ¤digter Download). Erneut versuchen.',
+        'e_badhash' => 'IntegritÃ¤tsprÃ¼fung des heruntergeladenen Pakets fehlgeschlagen (Version {s}): SHA-256 stimmt nicht Ã¼berein. MÃ¶glicher MITM oder beschÃ¤digter Mirror. Erneut versuchen oder ZIP manuell hochladen.',
         'e_noconfig' => 'Keine gespeicherte Konfiguration.', 'e_unknownajax' => 'unbekannte AJAX-Aktion',
-        'e_forbidden' => 'Verboten: diese Installation ist an den Browser gebunden, der sie gestartet hat. Laden Sie den Installer in diesem Browser neu, oder löschen Sie __doli_installer_tmp__, um neu zu beginnen.',
+        'e_forbidden' => 'Verboten: diese Installation ist an den Browser gebunden, der sie gestartet hat. Laden Sie den Installer in diesem Browser neu, oder lÃ¶schen Sie __doli_installer_tmp__, um neu zu beginnen.',
     ),
     'fr' => array(
         'topbar_sub' => 'terminal d\'installation', 'lang' => 'langue',
         'foot' => 'si vous interrompez le processus, supprimez ce fichier et le .zip manuellement',
-        'st_inicio' => 'début', 'st_paquete' => 'paquet', 'st_requisitos' => 'prérequis',
+        'st_inicio' => 'dÃ©but', 'st_paquete' => 'paquet', 'st_requisitos' => 'prÃ©requis',
         'st_config' => 'config', 'st_extraer' => 'extraire', 'st_instalar' => 'installer',
-        'st_listo' => 'terminé', 'st_lanzar' => 'lancer',
-        'b_back' => '< RETOUR', 'b_continue' => 'CONTINUER >', 'b_retry' => 'RÉESSAYER', 'b_finish' => 'TERMINER >',
+        'st_listo' => 'terminÃ©', 'st_lanzar' => 'lancer',
+        'b_back' => '< RETOUR', 'b_continue' => 'CONTINUER >', 'b_retry' => 'RÃ‰ESSAYER', 'b_finish' => 'TERMINER >',
         'b_extract' => 'EXTRAIRE >', 'b_install' => 'INSTALLER >', 'b_open' => 'OUVRIR DOLIBARR',
-        'b_clean' => 'NETTOYER & ENTRER >', 'b_go' => 'ALLER À L\'ASSISTANT >',
-        'tagline' => '// installateur automatique de Dolibarr — décompresse et configure tout',
-        'w_pkg' => 'PAQUET', 'w_none' => 'Pas de ZIP local : à l\'étape suivante vous pourrez télécharger la version souhaitée automatiquement.',
-        'w_one' => 'détecté : {s} ({mb} Mo) — ou téléchargez une autre version à l\'étape suivante.',
-        'w_many' => '{n} paquets détectés — vous choisirez lequel (ou en téléchargerez un autre) à l\'étape suivante.',
+        'b_clean' => 'NETTOYER & ENTRER >', 'b_go' => 'ALLER Ã€ L\'ASSISTANT >',
+        'tagline' => '// installateur automatique de Dolibarr â€” dÃ©compresse et configure tout',
+        'w_pkg' => 'PAQUET', 'w_none' => 'Pas de ZIP local : Ã  l\'Ã©tape suivante vous pourrez tÃ©lÃ©charger la version souhaitÃ©e automatiquement.',
+        'w_one' => 'dÃ©tectÃ© : {s} ({mb} Mo) â€” ou tÃ©lÃ©chargez une autre version Ã  l\'Ã©tape suivante.',
+        'w_many' => '{n} paquets dÃ©tectÃ©s â€” vous choisirez lequel (ou en tÃ©lÃ©chargerez un autre) Ã  l\'Ã©tape suivante.',
         'w_dest' => 'destination : {s}', 'w_choose' => 'CHOISIR LE MODE',
         'w_auto_h' => '[ 1 ]  INSTALLATION AUTOMATIQUE',
-        'w_auto_d' => 'Choisissez le paquet (local ou téléchargement) → crée base de données + tables + administrateur + verrou. Zéro clic dans l\'assistant Dolibarr. S\'autodétruit à la fin.',
+        'w_auto_d' => 'Choisissez le paquet (local ou tÃ©lÃ©chargement) â†’ crÃ©e base de donnÃ©es + tables + administrateur + verrou. ZÃ©ro clic dans l\'assistant Dolibarr. S\'autodÃ©truit Ã  la fin.',
         'w_simple_h' => '[ 2 ]  EXTRAIRE SEULEMENT  (mode expert)',
-        'w_simple_d' => 'Choisissez le paquet (local ou téléchargement), décompresse htdocs et vous redirige vers l\'assistant natif install/ de Dolibarr pour le configurer vous-même.',
-        'req_title' => 'VÉRIFICATION DU SYSTÈME', 'req_block' => 'Des prérequis obligatoires manquent. Corrigez-les (demandez à votre hébergeur) et réessayez.',
-        'req_php' => 'Version de PHP ≥ {s}', 'req_ext' => 'Extension PHP : {s}', 'req_required' => '(obligatoire)', 'req_recommended' => '(recommandée)',
-        'req_phpver' => 'PHP pour Dolibarr {v} (requiert ≥ {s})', 'req_phpmax' => 'Dolibarr {v} n\'est testé que jusqu\'à PHP {s} ; votre PHP est plus récent (problèmes possibles)', 'req_phpold' => 'Dolibarr {v} est très ancien (ère PHP 5) ; possible incompatibilité avec ce PHP — préférez une version plus récente',
-        'req_dbdrv' => 'Pilote de base de données (MySQL et/ou PostgreSQL)', 'req_http' => 'cURL ou allow_url_fopen (pour exécuter l\'installateur)',
-        'req_writable' => 'Répertoire d\'installation accessible en écriture', 'req_parent' => 'Répertoire parent accessible en écriture (pour ../documents)',
-        'req_zip' => 'Paquet ZIP de Dolibarr présent', 'req_yes' => 'oui', 'req_no' => 'non', 'req_none' => 'introuvable',
+        'w_simple_d' => 'Choisissez le paquet (local ou tÃ©lÃ©chargement), dÃ©compresse htdocs et vous redirige vers l\'assistant natif install/ de Dolibarr pour le configurer vous-mÃªme.',
+        'req_title' => 'VÃ‰RIFICATION DU SYSTÃˆME', 'req_block' => 'Des prÃ©requis obligatoires manquent. Corrigez-les (demandez Ã  votre hÃ©bergeur) et rÃ©essayez.',
+        'req_php' => 'Version de PHP â‰¥ {s}', 'req_ext' => 'Extension PHP : {s}', 'req_required' => '(obligatoire)', 'req_recommended' => '(recommandÃ©e)',
+        'req_phpver' => 'PHP pour Dolibarr {v} (requiert â‰¥ {s})', 'req_phpmax' => 'Dolibarr {v} n\'est testÃ© que jusqu\'Ã  PHP {s} ; votre PHP est plus rÃ©cent (problÃ¨mes possibles)', 'req_phpold' => 'Dolibarr {v} est trÃ¨s ancien (Ã¨re PHP 5) ; possible incompatibilitÃ© avec ce PHP â€” prÃ©fÃ©rez une version plus rÃ©cente',
+        'req_dbdrv' => 'Pilote de base de donnÃ©es (MySQL et/ou PostgreSQL)', 'req_http' => 'cURL ou allow_url_fopen (pour exÃ©cuter l\'installateur)',
+        'req_writable' => 'RÃ©pertoire d\'installation accessible en Ã©criture', 'req_parent' => 'RÃ©pertoire parent accessible en Ã©criture (pour ../documents)',
+        'req_zip' => 'Paquet ZIP de Dolibarr prÃ©sent', 'req_yes' => 'oui', 'req_no' => 'non', 'req_none' => 'introuvable',
         'req_npkg' => '{n} paquets : {s}',
-        'pk_title' => 'PAQUET DOLIBARR', 'pk_uselocal' => 'utiliser un ZIP déjà présent', 'pk_nonehere' => '(aucun disponible)',
-        'pk_download' => 'télécharger une version automatiquement', 'pk_reqcurl' => '(nécessite cURL)',
-        'pk_nozip' => 'Aucun .zip à côté de l\'installateur.', 'pk_locallabel' => 'ZIP local :', 'pk_chooselocal' => 'choisir le ZIP local ({n} détectés)',
-        'pk_verlabel' => 'version à télécharger (paquet officiel de sourceforge.net)',
+        'pk_title' => 'PAQUET DOLIBARR', 'pk_uselocal' => 'utiliser un ZIP dÃ©jÃ  prÃ©sent', 'pk_nonehere' => '(aucun disponible)',
+        'pk_download' => 'tÃ©lÃ©charger une version automatiquement', 'pk_reqcurl' => '(nÃ©cessite cURL)',
+        'pk_nozip' => 'Aucun .zip Ã  cÃ´tÃ© de l\'installateur.', 'pk_locallabel' => 'ZIP local :', 'pk_chooselocal' => 'choisir le ZIP local ({n} dÃ©tectÃ©s)',
+        'pk_verlabel' => 'version Ã  tÃ©lÃ©charger (paquet officiel de sourceforge.net)',
         'pk_vermanual' => 'ou saisissez une version exacte (x.y.z)', 'pk_optional' => '(facultatif)',
-        'pk_dlhint' => '~85 Mo. Téléchargé sur le serveur par blocs, avec une vraie barre de progression.',
+        'pk_dlhint' => '~85 Mo. TÃ©lÃ©chargÃ© sur le serveur par blocs, avec une vraie barre de progression.',
         'pp_title' => 'CHOISISSEZ LE PAQUET DOLIBARR',
-        'pp_intro_simple' => 'mode ultra-simple : htdocs est décompressé et nous vous menons à l\'assistant natif install/',
-        'pp_intro_full' => 'installation automatique : après avoir choisi le paquet, vous configurerez base de données et administrateur',
+        'pp_intro_simple' => 'mode ultra-simple : htdocs est dÃ©compressÃ© et nous vous menons Ã  l\'assistant natif install/',
+        'pp_intro_full' => 'installation automatique : aprÃ¨s avoir choisi le paquet, vous configurerez base de donnÃ©es et administrateur',
         'dest_title' => 'DESTINATION', 'dest_sub' => 'sous-dossier d\'installation (facultatif, vide = ici)', 'dest_empty' => '(vide)',
-        'cf_chosen' => 'PAQUET CHOISI', 'cf_dl' => 'télécharger dolibarr-{ver}.zip', 'cf_undef' => '(non défini)',
-        'cf_destarrow' => '→ destination', 'cf_change' => 'changer de paquet',
-        'cf_db' => 'BASE DE DONNÉES', 'cf_dbtype' => 'type de base de données', 'cf_host' => 'serveur (hôte)', 'cf_port' => 'port',
-        'cf_dbname' => 'nom de la base de données', 'cf_prefix' => 'préfixe des tables', 'cf_user' => 'utilisateur', 'cf_pass' => 'mot de passe',
-        'cf_passempty' => '(peut être vide en test)',
-        'cf_create' => 'créer la base de données automatiquement (nécessite l\'utilisateur admin du SGBD)',
+        'cf_chosen' => 'PAQUET CHOISI', 'cf_dl' => 'tÃ©lÃ©charger dolibarr-{ver}.zip', 'cf_undef' => '(non dÃ©fini)',
+        'cf_destarrow' => 'â†’ destination', 'cf_change' => 'changer de paquet',
+        'cf_db' => 'BASE DE DONNÃ‰ES', 'cf_dbtype' => 'type de base de donnÃ©es', 'cf_host' => 'serveur (hÃ´te)', 'cf_port' => 'port',
+        'cf_dbname' => 'nom de la base de donnÃ©es', 'cf_prefix' => 'prÃ©fixe des tables', 'cf_user' => 'utilisateur', 'cf_pass' => 'mot de passe',
+        'cf_passempty' => '(peut Ãªtre vide en test)',
+        'cf_create' => 'crÃ©er la base de donnÃ©es automatiquement (nÃ©cessite l\'utilisateur admin du SGBD)',
         'cf_rootuser' => 'utilisateur admin du SGBD (root / postgres)', 'cf_rootpass' => 'mot de passe admin du SGBD',
         'cf_admin' => 'ADMINISTRATEUR DOLIBARR', 'cf_login' => 'identifiant',
-        'cf_opts' => 'OPTIONS', 'cf_deflang' => 'langue par défaut', 'cf_https' => 'forcer HTTPS',
-        'cf_baseurl' => 'URL de base détectée', 'cf_baseurl_h' => 'URL publique de la racine de Dolibarr ; normalement correcte.',
-        'cf_review' => 'Vérifiez :',
-        'v_dbname' => 'Le nom de la base de données est obligatoire.', 'v_dbuser' => 'L\'utilisateur de la base de données est obligatoire.',
-        'v_prefix' => 'Le préfixe des tables doit être alphanumérique et finir par "_" (ex. llx_).',
-        'v_root' => 'Pour créer la base de données, vous avez besoin de l\'utilisateur root/admin du SGBD.',
+        'cf_opts' => 'OPTIONS', 'cf_deflang' => 'langue par dÃ©faut', 'cf_https' => 'forcer HTTPS',
+        'cf_baseurl' => 'URL de base dÃ©tectÃ©e', 'cf_baseurl_h' => 'URL publique de la racine de Dolibarr ; normalement correcte.',
+        'cf_review' => 'VÃ©rifiez :',
+        'v_dbname' => 'Le nom de la base de donnÃ©es est obligatoire.', 'v_dbuser' => 'L\'utilisateur de la base de donnÃ©es est obligatoire.',
+        'v_prefix' => 'Le prÃ©fixe des tables doit Ãªtre alphanumÃ©rique et finir par "_" (ex. llx_).',
+        'v_root' => 'Pour crÃ©er la base de donnÃ©es, vous avez besoin de l\'utilisateur root/admin du SGBD.',
         'v_alogin' => 'L\'identifiant de l\'administrateur est obligatoire.',
         'v_apass' => 'Le mot de passe de l\'administrateur est obligatoire (Dolibarr ne l\'autorise pas vide).',
-        'v_achars' => 'Le mot de passe de l\'administrateur ne peut pas contenir de guillemets doubles ("), les caractères < > \\, la séquence ../ ni d\'entités HTML (&#..., &quot) : l\'installateur Dolibarr les supprime et vous bloquerait.',
-        'v_ver' => 'Sélectionnez ou saisissez une version valide (format x.y.z) à télécharger.',
-        'v_nolocal' => 'Il n\'y a pas de ZIP local. Téléversez un dolibarr-*.zip ou choisissez "Télécharger une version".',
-        'v_choosezip' => 'Sélectionnez lequel des {n} paquets ZIP vous voulez utiliser.',
-        'v_badzip' => 'Le ZIP "{s}" ne ressemble pas à un paquet officiel Dolibarr (pas de "*/htdocs/").',
+        'v_achars' => 'Le mot de passe de l\'administrateur ne peut pas contenir de guillemets doubles ("), les caractÃ¨res < > \\, la sÃ©quence ../ ni d\'entitÃ©s HTML (&#..., &quot) : l\'installateur Dolibarr les supprime et vous bloquerait.',
+        'v_ver' => 'SÃ©lectionnez ou saisissez une version valide (format x.y.z) Ã  tÃ©lÃ©charger.',
+        'v_nolocal' => 'Il n\'y a pas de ZIP local. TÃ©lÃ©versez un dolibarr-*.zip ou choisissez "TÃ©lÃ©charger une version".',
+        'v_choosezip' => 'SÃ©lectionnez lequel des {n} paquets ZIP vous voulez utiliser.',
+        'v_badzip' => 'Le ZIP "{s}" ne ressemble pas Ã  un paquet officiel Dolibarr (pas de "*/htdocs/").',
         'ex_title' => 'EXTRACTION :: {s}',
-        'ex_noscript' => 'Cet assistant a besoin de JavaScript pour décompresser par blocs. Activez-le (ou désactivez l\'extension qui bloque fetch) et rechargez.',
+        'ex_noscript' => 'Cet assistant a besoin de JavaScript pour dÃ©compresser par blocs. Activez-le (ou dÃ©sactivez l\'extension qui bloque fetch) et rechargez.',
         'ex_dest' => 'destination : {s}', 'ex_opening' => 'ouverture de {s} ...', 'ex_block' => 'bloc', 'ex_files' => 'fich.',
-        'ex_processed' => '{n} entrées traitées. déplacement htdocs -> racine ...', 'ex_complete' => 'extraction TERMINÉE.',
-        'ex_retryblock' => 'RÉESSAYER CE BLOC',
-        'dl_title' => 'TÉLÉCHARGEMENT :: dolibarr-{ver}.zip',
-        'dl_noscript' => 'Cet assistant a besoin de JavaScript pour télécharger par blocs. Activez-le et rechargez.',
-        'dl_origin' => 'source : sourceforge.net', 'dl_connecting' => 'connexion à sourceforge.net ...',
-        'dl_complete' => 'téléchargement TERMINÉ ({mb}). validation du ZIP ...', 'dl_ready' => 'paquet prêt.', 'dl_retry' => 'RÉESSAYER',
-        'in_title' => 'EXÉCUTION DE L\'INSTALLATEUR NATIF (sans surveillance)',
-        'in_noscript' => 'Cet assistant a besoin de JavaScript pour exécuter l\'installation. Activez-le et rechargez, ou terminez manuellement sur {url}/install/.',
-        'in_tables' => '// l\'étape des tables peut prendre plusieurs minutes sur les hébergements lents ; ne fermez pas la fenêtre',
-        'in_s1' => 'créer la configuration et la base de données', 'in_s2' => 'créer les tables et les données de référence',
-        'in_s5' => 'créer l\'administrateur et verrouiller l\'installation',
-        'in_starting' => 'démarrage de la séquence d\'installation', 'in_resuming' => '(reprise après {s})',
-        'in_finished' => 'INSTALLATION TERMINÉE.', 'in_working' => 'en cours ({s})',
-        'in_retrystep' => 'RÉESSAYER CETTE ÉTAPE', 'in_openinstall' => 'OUVRIR /install/',
-        'rd_title' => 'EXTRACTION TERMINÉE — LANCEMENT DE L\'ASSISTANT DOLIBARR',
-        'rd_deployed' => 'htdocs déployé et conf.php préparé.', 'rd_removing' => 'suppression de l\'installateur et du .zip ...',
-        'rd_redir' => 'prêt. redirection vers l\'assistant natif ...', 'rd_manual' => '(nettoyage impossible : supprimez l\'installateur manuellement) redirection ...',
-        'fn_title' => 'INSTALLATION TERMINÉE', 'fn_op' => 'dolibarr opérationnel', 'fn_user' => 'utilisateur :',
-        'fn_sec' => 'Par sécurité, appuyez sur NETTOYER pour supprimer l\'installateur, le ZIP et le répertoire install/.',
+        'ex_processed' => '{n} entrÃ©es traitÃ©es. dÃ©placement htdocs -> racine ...', 'ex_complete' => 'extraction TERMINÃ‰E.',
+        'ex_retryblock' => 'RÃ‰ESSAYER CE BLOC',
+        'dl_title' => 'TÃ‰LÃ‰CHARGEMENT :: dolibarr-{ver}.zip',
+        'dl_noscript' => 'Cet assistant a besoin de JavaScript pour tÃ©lÃ©charger par blocs. Activez-le et rechargez.',
+        'dl_origin' => 'source : sourceforge.net', 'dl_connecting' => 'connexion Ã  sourceforge.net ...',
+        'dl_complete' => 'tÃ©lÃ©chargement TERMINÃ‰ ({mb}). validation du ZIP ...', 'dl_ready' => 'paquet prÃªt.', 'dl_retry' => 'RÃ‰ESSAYER',
+        'in_title' => 'EXÃ‰CUTION DE L\'INSTALLATEUR NATIF (sans surveillance)',
+        'in_noscript' => 'Cet assistant a besoin de JavaScript pour exÃ©cuter l\'installation. Activez-le et rechargez, ou terminez manuellement sur {url}/install/.',
+        'in_tables' => '// l\'Ã©tape des tables peut prendre plusieurs minutes sur les hÃ©bergements lents ; ne fermez pas la fenÃªtre',
+        'in_s1' => 'crÃ©er la configuration et la base de donnÃ©es', 'in_s2' => 'crÃ©er les tables et les donnÃ©es de rÃ©fÃ©rence',
+        'in_s5' => 'crÃ©er l\'administrateur et verrouiller l\'installation',
+        'in_starting' => 'dÃ©marrage de la sÃ©quence d\'installation', 'in_resuming' => '(reprise aprÃ¨s {s})',
+        'in_finished' => 'INSTALLATION TERMINÃ‰E.', 'in_working' => 'en cours ({s})',
+        'in_retrystep' => 'RÃ‰ESSAYER CETTE Ã‰TAPE', 'in_openinstall' => 'OUVRIR /install/',
+        'rd_title' => 'EXTRACTION TERMINÃ‰E â€” LANCEMENT DE L\'ASSISTANT DOLIBARR',
+        'rd_deployed' => 'htdocs dÃ©ployÃ© et conf.php prÃ©parÃ©.', 'rd_removing' => 'suppression de l\'installateur et du .zip ...',
+        'rd_redir' => 'prÃªt. redirection vers l\'assistant natif ...', 'rd_manual' => '(nettoyage impossible : supprimez l\'installateur manuellement) redirection ...',
+        'fn_title' => 'INSTALLATION TERMINÃ‰E', 'fn_op' => 'dolibarr opÃ©rationnel', 'fn_user' => 'utilisateur :',
+        'fn_sec' => 'Par sÃ©curitÃ©, appuyez sur NETTOYER pour supprimer l\'installateur, le ZIP et le rÃ©pertoire install/.',
         'fn_cleaning' => 'NETTOYAGE...', 'fn_deleting' => 'suppression de install/, .zip et installateur ...',
-        'fn_removed' => 'installateur supprimé. redirection ...', 'fn_manual' => '(nettoyage manuel nécessaire)',
-        'gi_title' => 'AVIS', 'gi_msg' => 'Dolibarr semble DÉJÀ installé dans ce répertoire (conf/conf.php avec données existe).',
-        'gi_re' => 'Astuce : une fois terminé, supprimez easydoliinstaller.php du serveur.',
-        'st_update' => 'mettre à jour', 'st_migrate' => 'migrer',
-        'gi_ver' => 'version détectée {s}',
-        'gi_open_h' => 'OUVRIR DOLIBARR', 'gi_open_d' => 'Déjà installé — aller à l\'application.',
-        'gi_upd_h' => 'METTRE À JOUR', 'gi_upd_d' => 'Téléchargez une version supérieure et exécutez toutes les migrations automatiquement, avec journal en direct.',
-        'gi_re_h' => 'RÉINSTALLER DE ZÉRO', 'gi_re_d' => 'Écraser ce Dolibarr et réinstaller. Les données existantes peuvent être détruites.',
-        'gi_re_confirm' => 'Cela écrasera le Dolibarr existant et ses données peuvent être perdues. Continuer ?',
-        'gi_re_warn' => 'Mode réinstallation : l\'installation actuelle sera écrasée. Faites une sauvegarde avant.',
-        'up_detected' => 'INSTALLATION EXISTANTE DÉTECTÉE',
-        'up_curver' => 'version actuelle', 'up_files' => 'fichiers', 'up_db' => 'base de données',
-        'up_intro' => 'choisissez la version cible et le mode de mise à jour ci-dessous.',
-        'up_backup' => 'SAUVEGARDE (RECOMMANDÉ)',
-        'up_warn' => 'Une mise à jour modifie la base de données. En cas d\'échec en cours de route, vos données peuvent rester incohérentes. Sauvegardez avant de continuer.',
-        'up_backup_pg' => 'PostgreSQL : le dump automatique n\'est pas disponible ici. Utilisez pg_dump avant la mise à jour.',
-        'up_backup_btn' => 'TÉLÉCHARGER LA SAUVEGARDE DE LA BASE (.sql)',
-        'up_backup_hint' => 'Dump logique MySQL/MariaDB optionnel (structure + données). Pour de très grosses bases, utilisez votre outil habituel.',
-        'up_backup_later' => 'Démarrez la mise à jour pour activer le téléchargement (nécessite le jeton d\'installation).',
-        'up_start' => 'DÉMARRER LA MISE À JOUR',
-        'up_noconf' => 'Aucun Dolibarr installé trouvé ici (conf/conf.php avec une base manquant).',
-        'up_nodown' => 'La version choisie ({new}) est antérieure à celle installée ({cur}). Les rétrogradations ne sont pas prises en charge.',
-        'up_modet' => 'MODE DE MISE À JOUR',
-        'up_mode_auto_h' => 'Automatique — migrer N versions d\'un coup',
-        'up_mode_auto_d' => 'Remplacer les fichiers et exécuter toutes les migrations intermédiaires automatiquement, une version majeure à la fois, avec journal complet en direct. Recommandé.',
-        'up_mode_manual_h' => 'Pas à pas — assistant natif',
-        'up_mode_manual_d' => 'Remplacer les fichiers et passer la main à l\'assistant de mise à jour de Dolibarr pour avancer étape par étape.',
-        'up_httpfail' => 'L\'étape de migration {s} a renvoyé HTTP {code}.',
-        'up_migfail' => 'La migration {s} a échoué.', 'up_migok' => 'migré {s}',
-        'up_warns' => '({n} avis SQL, ignorés comme le fait l\'assistant natif)',
-        'up_done' => 'Mise à jour terminée. Version en base : {s}.',
-        'up_doneish' => 'Mise à jour terminée (impossible de vérifier la version depuis la base).',
-        'up_finfail' => 'Impossible de finaliser la mise à jour. ',
-        'mg_title' => 'MIGRATION {from} -> {to}', 'mg_note' => 'exécution de toutes les migrations en séquence ...',
-        'mg_db' => 'migrer la base {from} -> {to}', 'mg_data' => 'migrer les données {from} -> {to}',
-        'mg_final' => 'finaliser et verrouiller ({s})', 'mg_starting' => 'démarrage de la migration',
-        'mg_finished' => 'toutes les migrations effectuées', 'mg_openinstall' => 'OUVRIR L\'ASSISTANT NATIF',
+        'fn_removed' => 'installateur supprimÃ©. redirection ...', 'fn_manual' => '(nettoyage manuel nÃ©cessaire)',
+        'gi_title' => 'AVIS', 'gi_msg' => 'Dolibarr semble DÃ‰JÃ€ installÃ© dans ce rÃ©pertoire (conf/conf.php avec donnÃ©es existe).',
+        'gi_re' => 'Astuce : une fois terminÃ©, supprimez easydoliinstaller.php du serveur.',
+        'st_update' => 'mettre Ã  jour', 'st_migrate' => 'migrer',
+        'gi_ver' => 'version dÃ©tectÃ©e {s}',
+        'gi_open_h' => 'OUVRIR DOLIBARR', 'gi_open_d' => 'DÃ©jÃ  installÃ© â€” aller Ã  l\'application.',
+        'gi_upd_h' => 'METTRE Ã€ JOUR', 'gi_upd_d' => 'TÃ©lÃ©chargez une version supÃ©rieure et exÃ©cutez toutes les migrations automatiquement, avec journal en direct.',
+        'gi_re_h' => 'RÃ‰INSTALLER DE ZÃ‰RO', 'gi_re_d' => 'Ã‰craser ce Dolibarr et rÃ©installer. Les donnÃ©es existantes peuvent Ãªtre dÃ©truites.',
+        'gi_re_confirm' => 'Cela Ã©crasera le Dolibarr existant et ses donnÃ©es peuvent Ãªtre perdues. Continuer ?',
+        'gi_re_warn' => 'Mode rÃ©installation : l\'installation actuelle sera Ã©crasÃ©e. Faites une sauvegarde avant.',
+        'up_detected' => 'INSTALLATION EXISTANTE DÃ‰TECTÃ‰E',
+        'up_curver' => 'version actuelle', 'up_files' => 'fichiers', 'up_db' => 'base de donnÃ©es',
+        'up_intro' => 'choisissez la version cible et le mode de mise Ã  jour ci-dessous.',
+        'up_backup' => 'SAUVEGARDE (RECOMMANDÃ‰)',
+        'up_warn' => 'Une mise Ã  jour modifie la base de donnÃ©es. En cas d\'Ã©chec en cours de route, vos donnÃ©es peuvent rester incohÃ©rentes. Sauvegardez avant de continuer.',
+        'up_backup_pg' => 'PostgreSQL : le dump automatique n\'est pas disponible ici. Utilisez pg_dump avant la mise Ã  jour.',
+        'up_backup_btn' => 'TÃ‰LÃ‰CHARGER LA SAUVEGARDE DE LA BASE (.sql)',
+        'up_backup_hint' => 'Dump logique MySQL/MariaDB optionnel (structure + donnÃ©es). Pour de trÃ¨s grosses bases, utilisez votre outil habituel.',
+        'up_backup_later' => 'DÃ©marrez la mise Ã  jour pour activer le tÃ©lÃ©chargement (nÃ©cessite le jeton d\'installation).',
+        'up_start' => 'DÃ‰MARRER LA MISE Ã€ JOUR',
+        'up_noconf' => 'Aucun Dolibarr installÃ© trouvÃ© ici (conf/conf.php avec une base manquant).',
+        'up_nodown' => 'La version choisie ({new}) est antÃ©rieure Ã  celle installÃ©e ({cur}). Les rÃ©trogradations ne sont pas prises en charge.',
+        'up_modet' => 'MODE DE MISE Ã€ JOUR',
+        'up_mode_auto_h' => 'Automatique â€” migrer N versions d\'un coup',
+        'up_mode_auto_d' => 'Remplacer les fichiers et exÃ©cuter toutes les migrations intermÃ©diaires automatiquement, une version majeure Ã  la fois, avec journal complet en direct. RecommandÃ©.',
+        'up_mode_manual_h' => 'Pas Ã  pas â€” assistant natif',
+        'up_mode_manual_d' => 'Remplacer les fichiers et passer la main Ã  l\'assistant de mise Ã  jour de Dolibarr pour avancer Ã©tape par Ã©tape.',
+        'up_httpfail' => 'L\'Ã©tape de migration {s} a renvoyÃ© HTTP {code}.',
+        'up_migfail' => 'La migration {s} a Ã©chouÃ©.', 'up_migok' => 'migrÃ© {s}',
+        'up_warns' => '({n} avis SQL, ignorÃ©s comme le fait l\'assistant natif)',
+        'up_done' => 'Mise Ã  jour terminÃ©e. Version en base : {s}.',
+        'up_doneish' => 'Mise Ã  jour terminÃ©e (impossible de vÃ©rifier la version depuis la base).',
+        'up_finfail' => 'Impossible de finaliser la mise Ã  jour. ',
+        'mg_title' => 'MIGRATION {from} -> {to}', 'mg_note' => 'exÃ©cution de toutes les migrations en sÃ©quence ...',
+        'mg_db' => 'migrer la base {from} -> {to}', 'mg_data' => 'migrer les donnÃ©es {from} -> {to}',
+        'mg_final' => 'finaliser et verrouiller ({s})', 'mg_starting' => 'dÃ©marrage de la migration',
+        'mg_finished' => 'toutes les migrations effectuÃ©es', 'mg_openinstall' => 'OUVRIR L\'ASSISTANT NATIF',
         'mg_backup' => 'sauvegarde de la base (point de restauration)',
-        'up_bk_ok' => 'sauvegarde de la base enregistrée ({s}, {n} Ko)', 'up_bk_warn' => 'impossible d\'enregistrer automatiquement la sauvegarde ({s}) ; on continue — restaurez depuis votre dump manuel si nécessaire', 'up_bk_pg' => 'PostgreSQL : sauvegarde auto ignorée (utilisez pg_dump) ; on continue',
-        'up_rollback_hint' => 'Point de rollback : un dump de la base est enregistré sous {s} dans votre dossier documents. Pour revenir en arrière : restaurez ce .sql et remettez les fichiers de la version précédente.',
-        'st_repair' => 'réparer', 'st_verify' => 'vérifier', 'st_report' => 'rapport',
-        'gi_rep_h' => 'RÉPARER / VÉRIFIER L\'INTÉGRITÉ', 'gi_rep_d' => 'Compare votre installation fichier par fichier avec le paquet officiel de la même version et restaure ceux qui diffèrent.',
-        'rp_title' => 'RÉPARER — VÉRIFIER L\'INTÉGRITÉ', 'rp_intro' => 'choisissez le paquet OFFICIEL de la MÊME version ; il sera comparé fichier par fichier à votre installation.',
-        'rp_samever' => 'Utilisez exactement la version installée ({s}) ; une autre version signalerait presque tout comme modifié.', 'rp_start' => 'VÉRIFIER',
-        'rp_noresult' => 'Aucun résultat de comparaison ; lancez d\'abord la vérification.', 'rp_applied' => 'Réparé : {ok} restaurés, {fail} échoués.',
-        'vf_title' => 'VÉRIFICATION DE L\'INTÉGRITÉ', 'vf_note' => 'comparaison avec le paquet officiel ...',
-        'vf_start' => 'démarrage de la comparaison ...', 'vf_chk' => 'vérifiés {c} — modifiés {m}, manquants {k}', 'vf_comp' => 'comparaison terminée : {m} modifiés, {k} manquants',
-        'ir_title' => 'RAPPORT D\'INTÉGRITÉ', 'ir_checked' => '{n} fichiers du cœur vérifiés', 'ir_summary' => '{m} modifiés, {k} manquants',
-        'ir_clean' => 'Intégrité OK — tous les fichiers du cœur correspondent au paquet officiel. Rien à réparer.',
-        'ir_more' => 'de plus', 'ir_legend' => '~ modifié (diffère de l\'officiel)   + manquant (absent en local). conf/, custom/ et documents/ sont exclus.',
-        'ir_dlzip' => 'TÉLÉCHARGER LES FICHIERS CONCERNÉS (.zip)', 'ir_repair' => 'RÉPARER {n} FICHIERS',
-        'ir_confirm' => 'Restaurer {n} fichiers depuis le paquet officiel (en écrasant les actuels) ? Un zip de sauvegarde des fichiers concernés est conservé au préalable.',
-        'ir_working' => 'réparation ...', 'ir_done' => 'réparation terminée.', 'ir_fail' => 'échec de la réparation.', 'ir_clean_btn' => 'SUPPRIMER L\'INSTALLATEUR',
+        'up_bk_ok' => 'sauvegarde de la base enregistrÃ©e ({s}, {n} Ko)', 'up_bk_warn' => 'impossible d\'enregistrer automatiquement la sauvegarde ({s}) ; on continue â€” restaurez depuis votre dump manuel si nÃ©cessaire', 'up_bk_pg' => 'PostgreSQL : sauvegarde auto ignorÃ©e (utilisez pg_dump) ; on continue',
+        'up_rollback_hint' => 'Point de rollback : un dump de la base est enregistrÃ© sous {s} dans votre dossier documents. Pour revenir en arriÃ¨re : restaurez ce .sql et remettez les fichiers de la version prÃ©cÃ©dente.',
+        'st_repair' => 'rÃ©parer', 'st_verify' => 'vÃ©rifier', 'st_report' => 'rapport',
+        'gi_rep_h' => 'RÃ‰PARER / VÃ‰RIFIER L\'INTÃ‰GRITÃ‰', 'gi_rep_d' => 'Compare votre installation fichier par fichier avec le paquet officiel de la mÃªme version et restaure ceux qui diffÃ¨rent.',
+        'rp_title' => 'RÃ‰PARER â€” VÃ‰RIFIER L\'INTÃ‰GRITÃ‰', 'rp_intro' => 'choisissez le paquet OFFICIEL de la MÃŠME version ; il sera comparÃ© fichier par fichier Ã  votre installation.',
+        'rp_samever' => 'Utilisez exactement la version installÃ©e ({s}) ; une autre version signalerait presque tout comme modifiÃ©.', 'rp_start' => 'VÃ‰RIFIER',
+        'rp_noresult' => 'Aucun rÃ©sultat de comparaison ; lancez d\'abord la vÃ©rification.', 'rp_applied' => 'RÃ©parÃ© : {ok} restaurÃ©s, {fail} Ã©chouÃ©s.',
+        'vf_title' => 'VÃ‰RIFICATION DE L\'INTÃ‰GRITÃ‰', 'vf_note' => 'comparaison avec le paquet officiel ...',
+        'vf_start' => 'dÃ©marrage de la comparaison ...', 'vf_chk' => 'vÃ©rifiÃ©s {c} â€” modifiÃ©s {m}, manquants {k}', 'vf_comp' => 'comparaison terminÃ©e : {m} modifiÃ©s, {k} manquants',
+        'ir_title' => 'RAPPORT D\'INTÃ‰GRITÃ‰', 'ir_checked' => '{n} fichiers du cÅ“ur vÃ©rifiÃ©s', 'ir_summary' => '{m} modifiÃ©s, {k} manquants',
+        'ir_clean' => 'IntÃ©gritÃ© OK â€” tous les fichiers du cÅ“ur correspondent au paquet officiel. Rien Ã  rÃ©parer.',
+        'ir_more' => 'de plus', 'ir_legend' => '~ modifiÃ© (diffÃ¨re de l\'officiel)   + manquant (absent en local). conf/, custom/ et documents/ sont exclus.',
+        'ir_dlzip' => 'TÃ‰LÃ‰CHARGER LES FICHIERS CONCERNÃ‰S (.zip)', 'ir_repair' => 'RÃ‰PARER {n} FICHIERS',
+        'ir_confirm' => 'Restaurer {n} fichiers depuis le paquet officiel (en Ã©crasant les actuels) ? Un zip de sauvegarde des fichiers concernÃ©s est conservÃ© au prÃ©alable.',
+        'ir_working' => 'rÃ©paration ...', 'ir_done' => 'rÃ©paration terminÃ©e.', 'ir_fail' => 'Ã©chec de la rÃ©paration.', 'ir_clean_btn' => 'SUPPRIMER L\'INSTALLATEUR',
         'vf_extras' => 'recherche de fichiers inattendus ...',
-        'ir_extrasum' => '{n} fichiers inattendus dans le cœur (absents du paquet officiel)',
-        'ir_delextra' => 'SUPPRIMER {n} FICHIERS EN TROP', 'ir_confirmdel' => 'Supprimer {n} fichiers inattendus de l\'installation ? Ils ne sont PAS dans le paquet officiel (manipulation possible ou correctifs locaux). Un zip de sauvegarde est conservé au préalable. Irréversible.',
-        'ir_deleting' => 'suppression des fichiers en trop ...', 'ir_noextra' => 'aucun fichier en trop à supprimer.', 'ir_extradel' => 'Supprimés : {ok} retirés, {fail} échoués.',
-        'ir_vermismatch' => 'Le paquet choisi ({pkg}) ne correspond pas à la version installée ({inst}) ; le diff sera gonflé. Utilisez la même version.',
-        'pk_nodown' => '(seulement {s} ou plus récent)',
-        'e_exists' => 'Un Dolibarr est déjà installé ici. Utilisez Mettre à jour, ou confirmez une réinstallation.',
-        'fn_title_up' => 'MISE À JOUR TERMINÉE', 'fn_op_up' => 'dolibarr mis à jour', 'fn_upgraded' => 'version : {s}',
-        'rd_title_up' => 'FICHIERS REMPLACÉS — LANCEMENT DE L\'ASSISTANT NATIF DE MISE À JOUR',
-        'rd_up_warn' => 'Fichiers mis à jour. Passage à l\'assistant natif de Dolibarr pour exécuter les migrations.',
-        'err' => 'ERREUR :', 'net' => 'réseau :', 'retrying_block' => 'nouvelle tentative du bloc (offset {off}, essai {try}) ...',
-        'net_fail' => 'Échec réseau à l\'offset {off} :',
+        'ir_extrasum' => '{n} fichiers inattendus dans le cÅ“ur (absents du paquet officiel)',
+        'ir_delextra' => 'SUPPRIMER {n} FICHIERS EN TROP', 'ir_confirmdel' => 'Supprimer {n} fichiers inattendus de l\'installation ? Ils ne sont PAS dans le paquet officiel (manipulation possible ou correctifs locaux). Un zip de sauvegarde est conservÃ© au prÃ©alable. IrrÃ©versible.',
+        'ir_deleting' => 'suppression des fichiers en trop ...', 'ir_noextra' => 'aucun fichier en trop Ã  supprimer.', 'ir_extradel' => 'SupprimÃ©s : {ok} retirÃ©s, {fail} Ã©chouÃ©s.',
+        'ir_vermismatch' => 'Le paquet choisi ({pkg}) ne correspond pas Ã  la version installÃ©e ({inst}) ; le diff sera gonflÃ©. Utilisez la mÃªme version.',
+        'pk_nodown' => '(seulement {s} ou plus rÃ©cent)',
+        'e_exists' => 'Un Dolibarr est dÃ©jÃ  installÃ© ici. Utilisez Mettre Ã  jour, ou confirmez une rÃ©installation.',
+        'fn_title_up' => 'MISE Ã€ JOUR TERMINÃ‰E', 'fn_op_up' => 'dolibarr mis Ã  jour', 'fn_upgraded' => 'version : {s}',
+        'rd_title_up' => 'FICHIERS REMPLACÃ‰S â€” LANCEMENT DE L\'ASSISTANT NATIF DE MISE Ã€ JOUR',
+        'rd_up_warn' => 'Fichiers mis Ã  jour. Passage Ã  l\'assistant natif de Dolibarr pour exÃ©cuter les migrations.',
+        'err' => 'ERREUR :', 'net' => 'rÃ©seau :', 'retrying_block' => 'nouvelle tentative du bloc (offset {off}, essai {try}) ...',
+        'net_fail' => 'Ã‰chec rÃ©seau Ã  l\'offset {off} :',
         'ss_nocontact' => 'Impossible de joindre {url} ({s}).',
-        'ss_single' => ' Si votre serveur traite une requête à la fois (php -S, 1 worker), terminez sur {url}/install/.',
-        'ss_s1ok' => 'Configuration créée et connexion à la base de données établie.',
-        'ss_s1fail' => 'step1 n\'a pas écrit conf.php correctement. ', 'ss_s2fail' => 'step2 a échoué. ',
-        'ss_s2ok' => '{n} tables créées et données de référence chargées.', 'ss_s2nodrv' => 'Tables créées (non vérifiable par pilote).',
-        'ss_s2no' => 'Toutes les tables de base de Dolibarr n\'ont pas été créées. ',
-        'ss_s5ok' => 'Administrateur "{s}" créé et installation verrouillée.',
-        'ss_s5warn' => ' (AVERTISSEMENT : install.lock introuvable ; vérifiez et supprimez /install/ manuellement)',
-        'ss_s5fail' => 'Impossible de confirmer la création de l\'administrateur "{s}". ',
-        'ss_blocked' => 'Le serveur a répondu HTTP {code} à l\'installateur natif (blocage mod_security/WAF possible ou erreur serveur). Ajoutez une exception pour /install/ ou terminez manuellement sur {url}/install/.',
-        'ss_emptyresp' => 'Réponse vide du serveur.', 'ss_reported' => 'Dolibarr a signalé : {s}',
-        'ss_checklog' => 'Consultez le log ou exécutez /install/ manuellement.',
-        'ss_phpfatal' => 'Erreur fatale PHP : {s}. Cette version de Dolibarr est probablement incompatible avec votre PHP ({php}) ; choisissez une version plus récente.',
-        'e_noinstall' => 'Le répertoire install/ n\'existe pas après l\'extraction.',
-        'e_cantopen' => 'Impossible d\'ouvrir le ZIP : {s}', 'e_blockfail' => 'Échec d\'extraction du bloc (offset {s}). Espace disque ou permissions ?',
-        'e_notfound' => 'Contenu extrait introuvable dans {s}', 'e_cantread' => 'Impossible de lire le répertoire temporaire d\'extraction.',
-        'e_cantmove' => 'Impossible de déplacer/copier "{s}" vers la destination. Vérifiez l\'espace disque et les permissions.',
-        'e_needcurl' => 'Le téléchargement automatique nécessite l\'extension cURL.', 'e_cantwrite' => 'Impossible d\'écrire le fichier de téléchargement : {s}',
-        'e_dlfail' => 'Échec du téléchargement : {s}', 'e_unexpected' => 'Réponse inattendue du serveur de téléchargement (HTTP {code}).',
-        'e_noversion' => 'Aucune version sélectionnée à télécharger.', 'e_corrupt' => 'Le ZIP téléchargé n\'est pas un paquet Dolibarr valide (téléchargement corrompu). Réessayez.',
-        'e_badhash' => 'Échec de la vérification d\'intégrité du paquet téléchargé (version {s}) : le SHA-256 ne correspond pas. MITM possible ou miroir corrompu. Réessayez ou téléversez le ZIP manuellement.',
-        'e_noconfig' => 'Aucune configuration enregistrée.', 'e_unknownajax' => 'action AJAX inconnue',
-        'e_forbidden' => 'Interdit : cette installation est liée au navigateur qui l\'a lancée. Rechargez l\'installateur dans ce navigateur, ou supprimez __doli_installer_tmp__ pour recommencer.',
+        'ss_single' => ' Si votre serveur traite une requÃªte Ã  la fois (php -S, 1 worker), terminez sur {url}/install/.',
+        'ss_s1ok' => 'Configuration crÃ©Ã©e et connexion Ã  la base de donnÃ©es Ã©tablie.',
+        'ss_s1fail' => 'step1 n\'a pas Ã©crit conf.php correctement. ', 'ss_s2fail' => 'step2 a Ã©chouÃ©. ',
+        'ss_s2ok' => '{n} tables crÃ©Ã©es et donnÃ©es de rÃ©fÃ©rence chargÃ©es.', 'ss_s2nodrv' => 'Tables crÃ©Ã©es (non vÃ©rifiable par pilote).',
+        'ss_s2no' => 'Toutes les tables de base de Dolibarr n\'ont pas Ã©tÃ© crÃ©Ã©es. ',
+        'ss_s5ok' => 'Administrateur "{s}" crÃ©Ã© et installation verrouillÃ©e.',
+        'ss_s5warn' => ' (AVERTISSEMENT : install.lock introuvable ; vÃ©rifiez et supprimez /install/ manuellement)',
+        'ss_s5fail' => 'Impossible de confirmer la crÃ©ation de l\'administrateur "{s}". ',
+        'ss_blocked' => 'Le serveur a rÃ©pondu HTTP {code} Ã  l\'installateur natif (blocage mod_security/WAF possible ou erreur serveur). Ajoutez une exception pour /install/ ou terminez manuellement sur {url}/install/.',
+        'ss_emptyresp' => 'RÃ©ponse vide du serveur.', 'ss_reported' => 'Dolibarr a signalÃ© : {s}',
+        'ss_checklog' => 'Consultez le log ou exÃ©cutez /install/ manuellement.',
+        'ss_phpfatal' => 'Erreur fatale PHP : {s}. Cette version de Dolibarr est probablement incompatible avec votre PHP ({php}) ; choisissez une version plus rÃ©cente.',
+        'e_noinstall' => 'Le rÃ©pertoire install/ n\'existe pas aprÃ¨s l\'extraction.',
+        'e_cantopen' => 'Impossible d\'ouvrir le ZIP : {s}', 'e_blockfail' => 'Ã‰chec d\'extraction du bloc (offset {s}). Espace disque ou permissions ?',
+        'e_notfound' => 'Contenu extrait introuvable dans {s}', 'e_cantread' => 'Impossible de lire le rÃ©pertoire temporaire d\'extraction.',
+        'e_cantmove' => 'Impossible de dÃ©placer/copier "{s}" vers la destination. VÃ©rifiez l\'espace disque et les permissions.',
+        'e_needcurl' => 'Le tÃ©lÃ©chargement automatique nÃ©cessite l\'extension cURL.', 'e_cantwrite' => 'Impossible d\'Ã©crire le fichier de tÃ©lÃ©chargement : {s}',
+        'e_dlfail' => 'Ã‰chec du tÃ©lÃ©chargement : {s}', 'e_unexpected' => 'RÃ©ponse inattendue du serveur de tÃ©lÃ©chargement (HTTP {code}).',
+        'e_noversion' => 'Aucune version sÃ©lectionnÃ©e Ã  tÃ©lÃ©charger.', 'e_corrupt' => 'Le ZIP tÃ©lÃ©chargÃ© n\'est pas un paquet Dolibarr valide (tÃ©lÃ©chargement corrompu). RÃ©essayez.',
+        'e_badhash' => 'Ã‰chec de la vÃ©rification d\'intÃ©gritÃ© du paquet tÃ©lÃ©chargÃ© (version {s}) : le SHA-256 ne correspond pas. MITM possible ou miroir corrompu. RÃ©essayez ou tÃ©lÃ©versez le ZIP manuellement.',
+        'e_noconfig' => 'Aucune configuration enregistrÃ©e.', 'e_unknownajax' => 'action AJAX inconnue',
+        'e_forbidden' => 'Interdit : cette installation est liÃ©e au navigateur qui l\'a lancÃ©e. Rechargez l\'installateur dans ce navigateur, ou supprimez __doli_installer_tmp__ pour recommencer.',
     ),
     'it' => array(
         'topbar_sub' => 'terminale di installazione', 'lang' => 'lingua',
@@ -807,51 +807,51 @@ function di_dict()
         'b_back' => '< INDIETRO', 'b_continue' => 'CONTINUA >', 'b_retry' => 'RIPROVA', 'b_finish' => 'FINE >',
         'b_extract' => 'ESTRAI >', 'b_install' => 'INSTALLA >', 'b_open' => 'APRI DOLIBARR',
         'b_clean' => 'PULISCI ED ENTRA >', 'b_go' => 'VAI ALLA PROCEDURA >',
-        'tagline' => '// installer automatico di Dolibarr — decomprime e configura tutto',
+        'tagline' => '// installer automatico di Dolibarr â€” decomprime e configura tutto',
         'w_pkg' => 'PACCHETTO', 'w_none' => 'Nessuno ZIP locale: nel passaggio successivo potrai scaricare automaticamente la versione che vuoi.',
-        'w_one' => 'rilevato: {s} ({mb} MB) — oppure scarica un\'altra versione nel passaggio successivo.',
-        'w_many' => '{n} pacchetti rilevati — sceglierai quale (o ne scaricherai un altro) nel passaggio successivo.',
-        'w_dest' => 'destinazione: {s}', 'w_choose' => 'SCEGLI MODALITÀ',
+        'w_one' => 'rilevato: {s} ({mb} MB) â€” oppure scarica un\'altra versione nel passaggio successivo.',
+        'w_many' => '{n} pacchetti rilevati â€” sceglierai quale (o ne scaricherai un altro) nel passaggio successivo.',
+        'w_dest' => 'destinazione: {s}', 'w_choose' => 'SCEGLI MODALITÃ€',
         'w_auto_h' => '[ 1 ]  INSTALLAZIONE AUTOMATICA',
-        'w_auto_d' => 'Scegli il pacchetto (locale o download) → crea database + tabelle + amministratore + blocco. Zero clic nella procedura Dolibarr. Si autodistrugge alla fine.',
-        'w_simple_h' => '[ 2 ]  SOLO ESTRAI  (modalità esperto)',
+        'w_auto_d' => 'Scegli il pacchetto (locale o download) â†’ crea database + tabelle + amministratore + blocco. Zero clic nella procedura Dolibarr. Si autodistrugge alla fine.',
+        'w_simple_h' => '[ 2 ]  SOLO ESTRAI  (modalitÃ  esperto)',
         'w_simple_d' => 'Scegli il pacchetto (locale o download), decomprime htdocs e ti reindirizza alla procedura nativa install/ di Dolibarr per configurarla tu.',
         'req_title' => 'CONTROLLO DEL SISTEMA', 'req_block' => 'Mancano requisiti obbligatori. Correggili (chiedi al tuo host) e riprova.',
-        'req_php' => 'Versione di PHP ≥ {s}', 'req_ext' => 'Estensione PHP: {s}', 'req_required' => '(obbligatoria)', 'req_recommended' => '(consigliata)',
-        'req_phpver' => 'PHP per Dolibarr {v} (richiede ≥ {s})', 'req_phpmax' => 'Dolibarr {v} è testato solo fino a PHP {s}; il tuo PHP è più recente (possibili problemi)', 'req_phpold' => 'Dolibarr {v} è molto vecchio (era PHP 5); potrebbe essere incompatibile con questo PHP — preferisci una versione più recente',
+        'req_php' => 'Versione di PHP â‰¥ {s}', 'req_ext' => 'Estensione PHP: {s}', 'req_required' => '(obbligatoria)', 'req_recommended' => '(consigliata)',
+        'req_phpver' => 'PHP per Dolibarr {v} (richiede â‰¥ {s})', 'req_phpmax' => 'Dolibarr {v} Ã¨ testato solo fino a PHP {s}; il tuo PHP Ã¨ piÃ¹ recente (possibili problemi)', 'req_phpold' => 'Dolibarr {v} Ã¨ molto vecchio (era PHP 5); potrebbe essere incompatibile con questo PHP â€” preferisci una versione piÃ¹ recente',
         'req_dbdrv' => 'Driver del database (MySQL e/o PostgreSQL)', 'req_http' => 'cURL o allow_url_fopen (per eseguire l\'installer)',
         'req_writable' => 'Directory di installazione scrivibile', 'req_parent' => 'Directory superiore scrivibile (per ../documents)',
-        'req_zip' => 'Pacchetto ZIP di Dolibarr presente', 'req_yes' => 'sì', 'req_no' => 'no', 'req_none' => 'non trovato',
+        'req_zip' => 'Pacchetto ZIP di Dolibarr presente', 'req_yes' => 'sÃ¬', 'req_no' => 'no', 'req_none' => 'non trovato',
         'req_npkg' => '{n} pacchetti: {s}',
-        'pk_title' => 'PACCHETTO DOLIBARR', 'pk_uselocal' => 'usa uno ZIP già presente', 'pk_nonehere' => '(nessuno disponibile)',
+        'pk_title' => 'PACCHETTO DOLIBARR', 'pk_uselocal' => 'usa uno ZIP giÃ  presente', 'pk_nonehere' => '(nessuno disponibile)',
         'pk_download' => 'scarica una versione automaticamente', 'pk_reqcurl' => '(richiede cURL)',
         'pk_nozip' => 'Nessuno .zip accanto all\'installer.', 'pk_locallabel' => 'ZIP locale:', 'pk_chooselocal' => 'scegli ZIP locale ({n} rilevati)',
         'pk_verlabel' => 'versione da scaricare (pacchetto ufficiale da sourceforge.net)',
         'pk_vermanual' => 'oppure scrivi una versione esatta (x.y.z)', 'pk_optional' => '(facoltativo)',
         'pk_dlhint' => '~85 MB. Scaricato sul server a blocchi, con barra di avanzamento reale.',
         'pp_title' => 'SCEGLI IL PACCHETTO DOLIBARR',
-        'pp_intro_simple' => 'modalità ultrasemplice: htdocs viene decompresso e ti portiamo alla procedura nativa install/',
+        'pp_intro_simple' => 'modalitÃ  ultrasemplice: htdocs viene decompresso e ti portiamo alla procedura nativa install/',
         'pp_intro_full' => 'installazione automatica: dopo aver scelto il pacchetto configurerai database e amministratore',
         'dest_title' => 'DESTINAZIONE', 'dest_sub' => 'sottocartella di installazione (facoltativa, vuota = qui)', 'dest_empty' => '(vuota)',
         'cf_chosen' => 'PACCHETTO SCELTO', 'cf_dl' => 'scarica dolibarr-{ver}.zip', 'cf_undef' => '(non definito)',
-        'cf_destarrow' => '→ destinazione', 'cf_change' => 'cambia pacchetto',
+        'cf_destarrow' => 'â†’ destinazione', 'cf_change' => 'cambia pacchetto',
         'cf_db' => 'DATABASE', 'cf_dbtype' => 'tipo di database', 'cf_host' => 'server (host)', 'cf_port' => 'porta',
         'cf_dbname' => 'nome del database', 'cf_prefix' => 'prefisso tabelle', 'cf_user' => 'utente', 'cf_pass' => 'password',
-        'cf_passempty' => '(può essere vuota in test)',
+        'cf_passempty' => '(puÃ² essere vuota in test)',
         'cf_create' => 'crea il database automaticamente (richiede l\'utente amministratore del DBMS)',
         'cf_rootuser' => 'utente admin del DBMS (root / postgres)', 'cf_rootpass' => 'password admin del DBMS',
         'cf_admin' => 'AMMINISTRATORE DOLIBARR', 'cf_login' => 'login',
         'cf_opts' => 'OPZIONI', 'cf_deflang' => 'lingua predefinita', 'cf_https' => 'forza HTTPS',
         'cf_baseurl' => 'URL base rilevato', 'cf_baseurl_h' => 'URL pubblico della radice di Dolibarr; di solito corretto.',
         'cf_review' => 'Controlla:',
-        'v_dbname' => 'Il nome del database è obbligatorio.', 'v_dbuser' => 'L\'utente del database è obbligatorio.',
+        'v_dbname' => 'Il nome del database Ã¨ obbligatorio.', 'v_dbuser' => 'L\'utente del database Ã¨ obbligatorio.',
         'v_prefix' => 'Il prefisso delle tabelle deve essere alfanumerico e finire con "_" (es. llx_).',
         'v_root' => 'Per creare il database serve l\'utente root/admin del DBMS.',
-        'v_alogin' => 'Il login dell\'amministratore è obbligatorio.',
-        'v_apass' => 'La password dell\'amministratore è obbligatoria (Dolibarr non la consente vuota).',
-        'v_achars' => 'La password dell\'amministratore non può contenere virgolette doppie ("), i caratteri < > \\, la sequenza ../ né entità HTML (&#..., &quot): l\'installer di Dolibarr le rimuove e ti escluderebbe.',
+        'v_alogin' => 'Il login dell\'amministratore Ã¨ obbligatorio.',
+        'v_apass' => 'La password dell\'amministratore Ã¨ obbligatoria (Dolibarr non la consente vuota).',
+        'v_achars' => 'La password dell\'amministratore non puÃ² contenere virgolette doppie ("), i caratteri < > \\, la sequenza ../ nÃ© entitÃ  HTML (&#..., &quot): l\'installer di Dolibarr le rimuove e ti escluderebbe.',
         'v_ver' => 'Seleziona o scrivi una versione valida (formato x.y.z) da scaricare.',
-        'v_nolocal' => 'Non c\'è nessuno ZIP locale. Carica un dolibarr-*.zip o scegli "Scarica versione".',
+        'v_nolocal' => 'Non c\'Ã¨ nessuno ZIP locale. Carica un dolibarr-*.zip o scegli "Scarica versione".',
         'v_choosezip' => 'Seleziona quale dei {n} pacchetti ZIP vuoi usare.',
         'v_badzip' => 'Lo ZIP "{s}" non sembra un pacchetto ufficiale Dolibarr (manca "*/htdocs/").',
         'ex_title' => 'DECOMPRESSIONE :: {s}',
@@ -865,47 +865,47 @@ function di_dict()
         'dl_complete' => 'download COMPLETATO ({mb}). validazione ZIP ...', 'dl_ready' => 'pacchetto pronto.', 'dl_retry' => 'RIPROVA',
         'in_title' => 'ESECUZIONE INSTALLER NATIVO (non presidiata)',
         'in_noscript' => 'Questa procedura ha bisogno di JavaScript per eseguire l\'installazione. Attivalo e ricarica, oppure termina manualmente su {url}/install/.',
-        'in_tables' => '// il passaggio delle tabelle può richiedere alcuni minuti su host lenti; non chiudere la finestra',
+        'in_tables' => '// il passaggio delle tabelle puÃ² richiedere alcuni minuti su host lenti; non chiudere la finestra',
         'in_s1' => 'crea configurazione e database', 'in_s2' => 'crea tabelle e dati di riferimento',
         'in_s5' => 'crea amministratore e blocca installazione',
         'in_starting' => 'avvio della sequenza di installazione', 'in_resuming' => '(ripresa dopo {s})',
         'in_finished' => 'INSTALLAZIONE TERMINATA.', 'in_working' => 'in corso ({s})',
         'in_retrystep' => 'RIPROVA QUESTO PASSAGGIO', 'in_openinstall' => 'APRI /install/',
-        'rd_title' => 'DECOMPRESSIONE COMPLETATA — AVVIO DELLA PROCEDURA DOLIBARR',
+        'rd_title' => 'DECOMPRESSIONE COMPLETATA â€” AVVIO DELLA PROCEDURA DOLIBARR',
         'rd_deployed' => 'htdocs distribuito e conf.php preparato.', 'rd_removing' => 'rimozione dell\'installer e dello .zip ...',
         'rd_redir' => 'fatto. reindirizzamento alla procedura nativa ...', 'rd_manual' => '(impossibile pulire: elimina l\'installer a mano) reindirizzamento ...',
         'fn_title' => 'INSTALLAZIONE COMPLETATA', 'fn_op' => 'dolibarr operativo', 'fn_user' => 'utente:',
         'fn_sec' => 'Per sicurezza, premi PULISCI per eliminare l\'installer, lo ZIP e la directory install/.',
         'fn_cleaning' => 'PULIZIA...', 'fn_deleting' => 'eliminazione di install/, .zip e installer ...',
         'fn_removed' => 'installer eliminato. reindirizzamento ...', 'fn_manual' => '(pulizia manuale necessaria)',
-        'gi_title' => 'AVVISO', 'gi_msg' => 'Dolibarr sembra GIÀ installato in questa directory (esiste conf/conf.php con dati).',
+        'gi_title' => 'AVVISO', 'gi_msg' => 'Dolibarr sembra GIÃ€ installato in questa directory (esiste conf/conf.php con dati).',
         'gi_re' => 'Suggerimento: al termine, elimina easydoliinstaller.php dal server.',
         'st_update' => 'aggiorna', 'st_migrate' => 'migra',
         'gi_ver' => 'versione rilevata {s}',
-        'gi_open_h' => 'APRI DOLIBARR', 'gi_open_d' => 'Già installato — vai all\'applicazione.',
+        'gi_open_h' => 'APRI DOLIBARR', 'gi_open_d' => 'GiÃ  installato â€” vai all\'applicazione.',
         'gi_upd_h' => 'AGGIORNA', 'gi_upd_d' => 'Scarica una versione superiore ed esegui tutte le migrazioni automaticamente, con log in tempo reale.',
         'gi_re_h' => 'REINSTALLA DA ZERO', 'gi_re_d' => 'Sovrascrivi questo Dolibarr e reinstalla. I dati esistenti possono essere distrutti.',
-        'gi_re_confirm' => 'Questo sovrascriverà il Dolibarr esistente e i suoi dati potrebbero andare persi. Continuare?',
-        'gi_re_warn' => 'Modalità reinstalla: l\'installazione attuale verrà sovrascritta. Fai prima un backup.',
+        'gi_re_confirm' => 'Questo sovrascriverÃ  il Dolibarr esistente e i suoi dati potrebbero andare persi. Continuare?',
+        'gi_re_warn' => 'ModalitÃ  reinstalla: l\'installazione attuale verrÃ  sovrascritta. Fai prima un backup.',
         'up_detected' => 'INSTALLAZIONE ESISTENTE RILEVATA',
         'up_curver' => 'versione attuale', 'up_files' => 'file', 'up_db' => 'database',
-        'up_intro' => 'scegli la versione di destinazione e la modalità di aggiornamento qui sotto.',
+        'up_intro' => 'scegli la versione di destinazione e la modalitÃ  di aggiornamento qui sotto.',
         'up_backup' => 'BACKUP (CONSIGLIATO)',
-        'up_warn' => 'Un aggiornamento modifica il database. Se fallisce a metà i tuoi dati possono restare incoerenti. Fai un backup prima di continuare.',
-        'up_backup_pg' => 'PostgreSQL: il dump automatico non è disponibile qui. Usa pg_dump prima dell\'aggiornamento.',
+        'up_warn' => 'Un aggiornamento modifica il database. Se fallisce a metÃ  i tuoi dati possono restare incoerenti. Fai un backup prima di continuare.',
+        'up_backup_pg' => 'PostgreSQL: il dump automatico non Ã¨ disponibile qui. Usa pg_dump prima dell\'aggiornamento.',
         'up_backup_btn' => 'SCARICA BACKUP DEL DATABASE (.sql)',
         'up_backup_hint' => 'Dump logico MySQL/MariaDB opzionale (struttura + dati). Per database molto grandi usa il tuo strumento abituale.',
         'up_backup_later' => 'Avvia l\'aggiornamento per abilitare il download del backup (richiede il token di installazione).',
         'up_start' => 'AVVIA AGGIORNAMENTO',
         'up_noconf' => 'Nessun Dolibarr installato qui (manca conf/conf.php con un database).',
-        'up_nodown' => 'La versione scelta ({new}) è precedente a quella installata ({cur}). I downgrade non sono supportati.',
-        'up_modet' => 'MODALITÀ DI AGGIORNAMENTO',
-        'up_mode_auto_h' => 'Automatico — migra N versioni in un colpo solo',
+        'up_nodown' => 'La versione scelta ({new}) Ã¨ precedente a quella installata ({cur}). I downgrade non sono supportati.',
+        'up_modet' => 'MODALITÃ€ DI AGGIORNAMENTO',
+        'up_mode_auto_h' => 'Automatico â€” migra N versioni in un colpo solo',
         'up_mode_auto_d' => 'Sostituisce i file ed esegue tutte le migrazioni intermedie automaticamente, una major alla volta, con log completo in tempo reale. Consigliato.',
-        'up_mode_manual_h' => 'Passo passo — assistente nativo',
+        'up_mode_manual_h' => 'Passo passo â€” assistente nativo',
         'up_mode_manual_d' => 'Sostituisce i file e passa all\'assistente di aggiornamento di Dolibarr per procedere passo passo.',
         'up_httpfail' => 'Il passo di migrazione {s} ha restituito HTTP {code}.',
-        'up_migfail' => 'La migrazione {s} è fallita.', 'up_migok' => 'migrato {s}',
+        'up_migfail' => 'La migrazione {s} Ã¨ fallita.', 'up_migok' => 'migrato {s}',
         'up_warns' => '({n} avvisi SQL, ignorati come fa l\'assistente nativo)',
         'up_done' => 'Aggiornamento completato. Versione nel DB: {s}.',
         'up_doneish' => 'Aggiornamento terminato (impossibile verificare la versione dal database).',
@@ -915,17 +915,17 @@ function di_dict()
         'mg_final' => 'finalizza e blocca ({s})', 'mg_starting' => 'avvio migrazione',
         'mg_finished' => 'tutte le migrazioni eseguite', 'mg_openinstall' => 'APRI ASSISTENTE NATIVO',
         'mg_backup' => 'backup del database (punto di ripristino)',
-        'up_bk_ok' => 'backup del database salvato ({s}, {n} KB)', 'up_bk_warn' => 'impossibile salvare automaticamente il backup ({s}); si continua — ripristina dal tuo dump manuale se necessario', 'up_bk_pg' => 'PostgreSQL: backup automatico saltato (usa pg_dump); si continua',
+        'up_bk_ok' => 'backup del database salvato ({s}, {n} KB)', 'up_bk_warn' => 'impossibile salvare automaticamente il backup ({s}); si continua â€” ripristina dal tuo dump manuale se necessario', 'up_bk_pg' => 'PostgreSQL: backup automatico saltato (usa pg_dump); si continua',
         'up_rollback_hint' => 'Punto di rollback: un dump del DB viene salvato come {s} nella cartella documents. Per ripristinare: ripristina quel .sql e rimetti i file della versione precedente.',
         'st_repair' => 'ripara', 'st_verify' => 'verifica', 'st_report' => 'rapporto',
-        'gi_rep_h' => 'RIPARA / VERIFICA INTEGRITÀ', 'gi_rep_d' => 'Confronta la tua installazione file per file con il pacchetto ufficiale della stessa versione e ripristina quelli che differiscono.',
-        'rp_title' => 'RIPARA — VERIFICA INTEGRITÀ', 'rp_intro' => 'scegli il pacchetto UFFICIALE della STESSA versione; verrà confrontato file per file con la tua installazione.',
+        'gi_rep_h' => 'RIPARA / VERIFICA INTEGRITÃ€', 'gi_rep_d' => 'Confronta la tua installazione file per file con il pacchetto ufficiale della stessa versione e ripristina quelli che differiscono.',
+        'rp_title' => 'RIPARA â€” VERIFICA INTEGRITÃ€', 'rp_intro' => 'scegli il pacchetto UFFICIALE della STESSA versione; verrÃ  confrontato file per file con la tua installazione.',
         'rp_samever' => 'Usa esattamente la versione installata ({s}); una versione diversa segnalerebbe quasi tutto come modificato.', 'rp_start' => 'VERIFICA',
         'rp_noresult' => 'Nessun risultato di confronto; esegui prima la verifica.', 'rp_applied' => 'Riparato: {ok} ripristinati, {fail} falliti.',
-        'vf_title' => 'VERIFICA INTEGRITÀ', 'vf_note' => 'confronto con il pacchetto ufficiale ...',
-        'vf_start' => 'avvio confronto ...', 'vf_chk' => 'controllati {c} — modificati {m}, mancanti {k}', 'vf_comp' => 'confronto completato: {m} modificati, {k} mancanti',
-        'ir_title' => 'RAPPORTO DI INTEGRITÀ', 'ir_checked' => '{n} file del core controllati', 'ir_summary' => '{m} modificati, {k} mancanti',
-        'ir_clean' => 'Integrità OK — tutti i file del core corrispondono al pacchetto ufficiale. Niente da riparare.',
+        'vf_title' => 'VERIFICA INTEGRITÃ€', 'vf_note' => 'confronto con il pacchetto ufficiale ...',
+        'vf_start' => 'avvio confronto ...', 'vf_chk' => 'controllati {c} â€” modificati {m}, mancanti {k}', 'vf_comp' => 'confronto completato: {m} modificati, {k} mancanti',
+        'ir_title' => 'RAPPORTO DI INTEGRITÃ€', 'ir_checked' => '{n} file del core controllati', 'ir_summary' => '{m} modificati, {k} mancanti',
+        'ir_clean' => 'IntegritÃ  OK â€” tutti i file del core corrispondono al pacchetto ufficiale. Niente da riparare.',
         'ir_more' => 'altri', 'ir_legend' => '~ modificato (differisce dall\'ufficiale)   + mancante (assente in locale). conf/, custom/ e documents/ sono esclusi.',
         'ir_dlzip' => 'SCARICA I FILE INTERESSATI (.zip)', 'ir_repair' => 'RIPARA {n} FILE',
         'ir_confirm' => 'Ripristinare {n} file dal pacchetto ufficiale (sovrascrivendo quelli attuali)? Prima viene salvato uno zip di backup dei file interessati.',
@@ -934,11 +934,11 @@ function di_dict()
         'ir_extrasum' => '{n} file inattesi nel core (non presenti nel pacchetto ufficiale)',
         'ir_delextra' => 'ELIMINA {n} FILE IN ECCESSO', 'ir_confirmdel' => 'Eliminare {n} file inattesi dall\'installazione? NON sono nel pacchetto ufficiale (possibile manomissione o patch locali). Prima viene salvato uno zip di backup. Irreversibile.',
         'ir_deleting' => 'eliminazione file in eccesso ...', 'ir_noextra' => 'nessun file in eccesso da eliminare.', 'ir_extradel' => 'Eliminati: {ok} rimossi, {fail} falliti.',
-        'ir_vermismatch' => 'Il pacchetto scelto ({pkg}) non corrisponde alla versione installata ({inst}); il diff sarà gonfiato. Usa la stessa versione.',
+        'ir_vermismatch' => 'Il pacchetto scelto ({pkg}) non corrisponde alla versione installata ({inst}); il diff sarÃ  gonfiato. Usa la stessa versione.',
         'pk_nodown' => '(solo {s} o superiore)',
-        'e_exists' => 'Qui è già installato un Dolibarr. Usa Aggiorna, oppure conferma una reinstallazione.',
+        'e_exists' => 'Qui Ã¨ giÃ  installato un Dolibarr. Usa Aggiorna, oppure conferma una reinstallazione.',
         'fn_title_up' => 'AGGIORNAMENTO COMPLETATO', 'fn_op_up' => 'dolibarr aggiornato', 'fn_upgraded' => 'versione: {s}',
-        'rd_title_up' => 'FILE SOSTITUITI — AVVIO DELL\'ASSISTENTE NATIVO DI AGGIORNAMENTO',
+        'rd_title_up' => 'FILE SOSTITUITI â€” AVVIO DELL\'ASSISTENTE NATIVO DI AGGIORNAMENTO',
         'rd_up_warn' => 'File aggiornati. Passaggio all\'assistente nativo di Dolibarr per eseguire le migrazioni.',
         'err' => 'ERRORE:', 'net' => 'rete:', 'retrying_block' => 'nuovo tentativo blocco (offset {off}, tentativo {try}) ...',
         'net_fail' => 'Errore di rete all\'offset {off}:',
@@ -954,17 +954,17 @@ function di_dict()
         'ss_blocked' => 'Il server ha risposto HTTP {code} all\'installer nativo (possibile blocco mod_security/WAF o errore del server). Aggiungi un\'eccezione per /install/ o termina manualmente su {url}/install/.',
         'ss_emptyresp' => 'Risposta vuota dal server.', 'ss_reported' => 'Dolibarr ha segnalato: {s}',
         'ss_checklog' => 'Controlla il log o esegui /install/ manualmente.',
-        'ss_phpfatal' => 'Errore fatale PHP: {s}. Questa versione di Dolibarr probabilmente non è compatibile con il tuo PHP ({php}); scegli una versione di Dolibarr più recente.',
+        'ss_phpfatal' => 'Errore fatale PHP: {s}. Questa versione di Dolibarr probabilmente non Ã¨ compatibile con il tuo PHP ({php}); scegli una versione di Dolibarr piÃ¹ recente.',
         'e_noinstall' => 'La directory install/ non esiste dopo l\'estrazione.',
         'e_cantopen' => 'Impossibile aprire lo ZIP: {s}', 'e_blockfail' => 'Estrazione del blocco non riuscita (offset {s}). Spazio su disco o permessi?',
         'e_notfound' => 'Contenuto estratto non trovato in {s}', 'e_cantread' => 'Impossibile leggere la directory temporanea di estrazione.',
         'e_cantmove' => 'Impossibile spostare/copiare "{s}" nella destinazione. Controlla spazio su disco e permessi.',
         'e_needcurl' => 'Il download automatico richiede l\'estensione cURL.', 'e_cantwrite' => 'Impossibile scrivere il file di download: {s}',
         'e_dlfail' => 'Download non riuscito: {s}', 'e_unexpected' => 'Risposta inattesa dal server di download (HTTP {code}).',
-        'e_noversion' => 'Nessuna versione selezionata da scaricare.', 'e_corrupt' => 'Lo ZIP scaricato non è un pacchetto Dolibarr valido (download corrotto). Riprova.',
-        'e_badhash' => 'Verifica di integrità fallita per il pacchetto scaricato (versione {s}): lo SHA-256 non corrisponde. Possibile MITM o mirror corrotto. Riprova o carica lo ZIP manualmente.',
+        'e_noversion' => 'Nessuna versione selezionata da scaricare.', 'e_corrupt' => 'Lo ZIP scaricato non Ã¨ un pacchetto Dolibarr valido (download corrotto). Riprova.',
+        'e_badhash' => 'Verifica di integritÃ  fallita per il pacchetto scaricato (versione {s}): lo SHA-256 non corrisponde. Possibile MITM o mirror corrotto. Riprova o carica lo ZIP manualmente.',
         'e_noconfig' => 'Nessuna configurazione salvata.', 'e_unknownajax' => 'azione AJAX sconosciuta',
-        'e_forbidden' => 'Vietato: questa installazione è legata al browser che l\'ha avviata. Ricarica l\'installer in quel browser, o elimina __doli_installer_tmp__ per ricominciare.',
+        'e_forbidden' => 'Vietato: questa installazione Ã¨ legata al browser che l\'ha avviata. Ricarica l\'installer in quel browser, o elimina __doli_installer_tmp__ per ricominciare.',
     ),
     );
     return $d;
@@ -998,14 +998,14 @@ function di_ensure_tmp()
     }
 }
 
-/** .htaccess de denegación tolerante a Apache 2.2 y 2.4 (envuelto en IfModule). */
+/** .htaccess de denegaciÃ³n tolerante a Apache 2.2 y 2.4 (envuelto en IfModule). */
 function di_deny_htaccess()
 {
     return "<IfModule mod_authz_core.c>\nRequire all denied\n</IfModule>\n"
         . "<IfModule !mod_authz_core.c>\nOrder allow,deny\nDeny from all\n</IfModule>\n";
 }
 
-/** web.config (IIS) de denegación. */
+/** web.config (IIS) de denegaciÃ³n. */
 function di_deny_webconfig()
 {
     return "<?xml version=\"1.0\"?>\n<configuration><system.webServer><security><authorization>"
@@ -1032,7 +1032,7 @@ function di_security_headers()
 /**
  * Devuelve TODOS los ZIP candidatos junto al instalador.
  * Prioriza los que empiezan por "dolibarr-"; si no hay ninguno, usa cualquier .zip.
- * Ordena por versión descendente (el más nuevo primero).
+ * Ordena por versiÃ³n descendente (el mÃ¡s nuevo primero).
  */
 function di_find_zips()
 {
@@ -1079,10 +1079,10 @@ function di_resolve_zip($name)
 /**
  * Detecta el prefijo del contenido de Dolibarr dentro del ZIP. Cascada:
  *   1) "<topdir>/htdocs/"  (paquete oficial)         -> devuelve ese prefijo
- *   2) "htdocs/" en la raíz del ZIP                  -> devuelve "htdocs/"
- *   3) el ZIP YA es el contenido de htdocs (>=2 marcadores Dolibarr en la raíz) -> devuelve ""
+ *   2) "htdocs/" en la raÃ­z del ZIP                  -> devuelve "htdocs/"
+ *   3) el ZIP YA es el contenido de htdocs (>=2 marcadores Dolibarr en la raÃ­z) -> devuelve ""
  *   4) no reconocible                                -> devuelve null
- * Nota: '' (cadena vacía) es un prefijo VÁLIDO; distíngalo de null con === null.
+ * Nota: '' (cadena vacÃ­a) es un prefijo VÃLIDO; distÃ­ngalo de null con === null.
  */
 function di_detect_prefix($zipPath)
 {
@@ -1104,12 +1104,12 @@ function di_detect_prefix($zipPath)
         }
         if (preg_match('#^([^/]+/htdocs/)#', $name, $m)) {
             $zip->close();
-            return $m[1]; // caso 1 (el más común)
+            return $m[1]; // caso 1 (el mÃ¡s comÃºn)
         }
         if (strncmp($name, 'htdocs/', 7) === 0) {
             $hasHtdocsRoot = true;
         }
-        // marcadores en la raíz del ZIP (sin barra previa)
+        // marcadores en la raÃ­z del ZIP (sin barra previa)
         if (strpos($name, '/') === false || preg_match('#^(conf|install|core|public)/#', $name)) {
             $top = preg_match('#^([^/]+/)#', $name, $mm) ? $mm[1] : $name;
             if (isset($markerSet[$top]) && empty($seenRoot[$top])) {
@@ -1130,7 +1130,7 @@ function di_detect_prefix($zipPath)
 }
 
 /* ===========================================================================
- *  DESCARGA AUTOMÁTICA DE DOLIBARR (SourceForge) + LISTADO DE VERSIONES (GitHub)
+ *  DESCARGA AUTOMÃTICA DE DOLIBARR (SourceForge) + LISTADO DE VERSIONES (GitHub)
  * ======================================================================== */
 
 /** GET remoto sencillo (GitHub API, etc.). Devuelve el body o null. */
@@ -1164,9 +1164,9 @@ function di_remote_get($url, $timeout = 8)
 }
 
 /**
- * SHA-256 conocidos de paquetes oficiales (verificación de integridad de la descarga).
- * Si la versión está aquí, la descarga debe coincidir o se rechaza. Versiones no
- * listadas se aceptan solo con TLS verificado + ZIP válido. Ampliable.
+ * SHA-256 conocidos de paquetes oficiales (verificaciÃ³n de integridad de la descarga).
+ * Si la versiÃ³n estÃ¡ aquÃ­, la descarga debe coincidir o se rechaza. Versiones no
+ * listadas se aceptan solo con TLS verificado + ZIP vÃ¡lido. Ampliable.
  */
 function di_known_hashes()
 {
@@ -1176,7 +1176,7 @@ function di_known_hashes()
     );
 }
 
-/** Lista de versiones estables (desc). Fuente: GitHub releases, con caché 1h y fallback. */
+/** Lista de versiones estables (desc). Fuente: GitHub releases, con cachÃ© 1h y fallback. */
 function di_fetch_versions()
 {
     di_ensure_tmp();
@@ -1220,7 +1220,7 @@ function di_fallback_versions()
     return array('23.0.3', '22.0.5', '21.0.1', '20.0.3', '19.0.4', '18.0.10');
 }
 
-/** Versión saneada -> x.y.z o null. */
+/** VersiÃ³n saneada -> x.y.z o null. */
 function di_sanitize_version($v)
 {
     $v = preg_replace('#[^0-9.]#', '', (string) $v);
@@ -1241,7 +1241,7 @@ function di_download_target($cfg)
 }
 
 /**
- * Descarga un bloque del ZIP por HTTP Range y lo añade al archivo. Devuelve
+ * Descarga un bloque del ZIP por HTTP Range y lo aÃ±ade al archivo. Devuelve
  * [next,total,done,received] o ['error'=>...]. Requiere cURL.
  */
 function di_download_chunk($cfg, $offset)
@@ -1251,7 +1251,7 @@ function di_download_chunk($cfg, $offset)
     }
     $url = di_download_url($cfg['download_version']);
     $file = di_download_target($cfg);
-    $chunkSize = 4 * 1024 * 1024; // 4 MB por petición
+    $chunkSize = 4 * 1024 * 1024; // 4 MB por peticiÃ³n
     $end = $offset + $chunkSize - 1;
 
     $fp = @fopen($file, $offset === 0 ? 'wb' : 'ab');
@@ -1267,7 +1267,7 @@ function di_download_chunk($cfg, $offset)
         CURLOPT_FILE => $fp,
         CURLOPT_CONNECTTIMEOUT => 20, CURLOPT_TIMEOUT => 300,
         // TLS estricto (descarga externa) + redirecciones solo HTTPS: evita que un
-        // MITM/mirror sustituya el paquete (lo que sería ejecución de código en el server).
+        // MITM/mirror sustituya el paquete (lo que serÃ­a ejecuciÃ³n de cÃ³digo en el server).
         CURLOPT_SSL_VERIFYPEER => true, CURLOPT_SSL_VERIFYHOST => 2,
         CURLOPT_PROTOCOLS => CURLPROTO_HTTPS, CURLOPT_REDIR_PROTOCOLS => CURLPROTO_HTTPS,
         CURLOPT_USERAGENT => 'EasyDoliInstaller/' . DI_VERSION,
@@ -1289,7 +1289,7 @@ function di_download_chunk($cfg, $offset)
         return array('error' => di_t('e_dlfail', array('{s}' => $err)));
     }
     if ($code === 200) {
-        // El mirror ignoró el Range y envió el archivo completo en esta petición.
+        // El mirror ignorÃ³ el Range y enviÃ³ el archivo completo en esta peticiÃ³n.
         clearstatcache(true, $file);
         $sz = filesize($file);
         return array('next' => $sz, 'total' => $sz, 'done' => true, 'received' => $dl);
@@ -1313,8 +1313,8 @@ function di_self_base_url()
         || (!empty($_SERVER['SERVER_PORT']) && $_SERVER['SERVER_PORT'] == 443);
     $scheme = $https ? 'https' : 'http';
     // Anti Host-header poisoning: el host acaba grabado en conf.php (dolibarr_main_url_root)
-    // y guía las autollamadas. Solo aceptamos un host con forma válida; si HTTP_HOST llega
-    // manipulado, caemos a SERVER_NAME y, en último término, a localhost.
+    // y guÃ­a las autollamadas. Solo aceptamos un host con forma vÃ¡lida; si HTTP_HOST llega
+    // manipulado, caemos a SERVER_NAME y, en Ãºltimo tÃ©rmino, a localhost.
     $host = (string) ($_SERVER['HTTP_HOST'] ?? '');
     if ($host === '' || !preg_match('/^[A-Za-z0-9._\-]+(:[0-9]{1,5})?$/', $host)) {
         $host = (string) ($_SERVER['SERVER_NAME'] ?? '');
@@ -1364,9 +1364,9 @@ function di_load_config()
     if (!is_array($data)) {
         return null;
     }
-    // Caducidad: una config olvidada (instalador abandonado) deja de ser válida.
-    // Además del null lógico, BORRAMOS físicamente los artefactos con secretos para que
-    // no sobrevivan en disco más allá del TTL.
+    // Caducidad: una config olvidada (instalador abandonado) deja de ser vÃ¡lida.
+    // AdemÃ¡s del null lÃ³gico, BORRAMOS fÃ­sicamente los artefactos con secretos para que
+    // no sobrevivan en disco mÃ¡s allÃ¡ del TTL.
     if (!empty($data['ts']) && (time() - (int) $data['ts']) > DI_CONFIG_TTL) {
         if (!empty($data['target'])) {
             @unlink($data['target'] . '/install/install.forced.php');
@@ -1383,8 +1383,8 @@ function di_save_config($cfg)
     if (!isset($cfg['ts'])) {
         $cfg['ts'] = time();
     }
-    // Token por instalación: ata las operaciones mutantes al navegador que la inició
-    // (anti-CSRF y anti-secuestro de una instalación en curso por un tercero).
+    // Token por instalaciÃ³n: ata las operaciones mutantes al navegador que la iniciÃ³
+    // (anti-CSRF y anti-secuestro de una instalaciÃ³n en curso por un tercero).
     if (empty($cfg['tok'])) {
         $cfg['tok'] = function_exists('random_bytes') ? bin2hex(random_bytes(16)) : sha1(uniqid('', true) . mt_rand());
     }
@@ -1397,7 +1397,7 @@ function di_save_config($cfg)
     @chmod(DI_CONFIG, 0600);
 }
 
-/** Emite la cookie con el token de la instalación (HttpOnly, SameSite=Lax). */
+/** Emite la cookie con el token de la instalaciÃ³n (HttpOnly, SameSite=Lax). */
 function di_set_token_cookie($tok)
 {
     if (!$tok || headers_sent()) {
@@ -1413,13 +1413,13 @@ function di_set_token_cookie($tok)
 }
 
 /**
- * ¿La petición porta el token de ESTA instalación? true si no hay token aún
+ * Â¿La peticiÃ³n porta el token de ESTA instalaciÃ³n? true si no hay token aÃºn
  * (fase de arranque) o si coincide; false si hay token y no coincide.
  */
 function di_token_ok($cfg)
 {
     if (!$cfg || empty($cfg['tok'])) {
-        return true; // aún no hay instalación atada a un navegador
+        return true; // aÃºn no hay instalaciÃ³n atada a un navegador
     }
     $given = $_COOKIE['edi_tok'] ?? ($_POST['tok'] ?? ($_GET['tok'] ?? ''));
     return is_string($given) && hash_equals($cfg['tok'], $given);
@@ -1456,10 +1456,10 @@ function di_rrmdir($dir)
 }
 
 /* ===========================================================================
- *  ESTADO DE LA INSTALACIÓN
+ *  ESTADO DE LA INSTALACIÃ“N
  * ======================================================================== */
 
-/** ¿Ya hay un Dolibarr instalado en la raíz de destino? */
+/** Â¿Ya hay un Dolibarr instalado en la raÃ­z de destino? */
 function di_already_installed($cfg = null)
 {
     $target = $cfg && !empty($cfg['target']) ? $cfg['target'] : DI_DIR;
@@ -1474,7 +1474,7 @@ function di_already_installed($cfg = null)
 }
 
 /**
- * Lee los parámetros de conexión del conf.php de un Dolibarr ya instalado.
+ * Lee los parÃ¡metros de conexiÃ³n del conf.php de un Dolibarr ya instalado.
  * Devuelve un array tipo $cfg['db'] (+ data_root/url_root) o null si no hay BD configurada.
  */
 function di_read_installed_conf($target)
@@ -1488,7 +1488,7 @@ function di_read_installed_conf($target)
         if (preg_match('/\$dolibarr_main_' . preg_quote($name, '/') . '\s*=\s*([\'"])(.*?)\1\s*;/s', $c, $m)) {
             return $m[2];
         }
-        // valor numérico sin comillas
+        // valor numÃ©rico sin comillas
         if (preg_match('/\$dolibarr_main_' . preg_quote($name, '/') . '\s*=\s*([0-9]+)\s*;/', $c, $m)) {
             return $m[1];
         }
@@ -1518,7 +1518,7 @@ function di_read_installed_conf($target)
 }
 
 /**
- * Versión de Dolibarr en los ficheros. Soporta los dos formatos:
+ * VersiÃ³n de Dolibarr en los ficheros. Soporta los dos formatos:
  *  - moderno (>= v?): version.inc.php con DOL_MAJOR_VERSION + DOL_MINOR_VERSION
  *  - antiguo: define('DOL_VERSION', 'x.y.z') en filefunc.inc.php
  */
@@ -1542,7 +1542,7 @@ function di_fs_version($target)
     return null;
 }
 
-/** Versión registrada en la BD (último upgrade, o instalación si no hay upgrade). */
+/** VersiÃ³n registrada en la BD (Ãºltimo upgrade, o instalaciÃ³n si no hay upgrade). */
 function di_db_version($cfg)
 {
     if (empty($cfg['db']) || empty($cfg['db']['name'])) {
@@ -1558,7 +1558,7 @@ function di_db_version($cfg)
     return null;
 }
 
-/** Número de versión mayor (major) de una cadena tipo "18.0.5". */
+/** NÃºmero de versiÃ³n mayor (major) de una cadena tipo "18.0.5". */
 function di_ver_major($v)
 {
     return preg_match('/^(\d+)/', (string) $v, $m) ? (int) $m[1] : 0;
@@ -1596,7 +1596,7 @@ function di_zip_version($zipPath, $prefix)
 
 /**
  * Lee los requisitos de PHP que el PROPIO paquete declara en install/check.php:
- * mínimo (error), mínimo soportado (warning) y, en versiones modernas, máximo (maj.min).
+ * mÃ­nimo (error), mÃ­nimo soportado (warning) y, en versiones modernas, mÃ¡ximo (maj.min).
  * Soporta el formato moderno ($arrayphpminversionerror = array(7,0,0);) y el antiguo
  * (versioncompare(versionphparray(), array(5,3,0))). Devuelve ['min','minwarn','max'] o null.
  */
@@ -1624,7 +1624,7 @@ function di_pkg_php_range($zipPath, $prefix)
         $minwarn = $m[1] . '.' . $m[2] . '.' . $m[3];
     }
     if (preg_match('/arrayphpmaxversionwarning\s*=\s*array\(\s*(\d+)\s*,\s*(\d+)/', $c, $m)) {
-        $max = $m[1] . '.' . $m[2]; // precisión maj.min (como hace el propio Dolibarr)
+        $max = $m[1] . '.' . $m[2]; // precisiÃ³n maj.min (como hace el propio Dolibarr)
     }
     // Formato antiguo (<= 3.x): las dos primeras versioncompare(versionphparray(), array(...)).
     if ($min === null && preg_match_all('/versioncompare\(\s*versionphparray\(\)\s*,\s*array\(\s*(\d+)\s*,\s*(\d+)\s*,\s*(\d+)/', $c, $mm, PREG_SET_ORDER)) {
@@ -1650,7 +1650,7 @@ function di_http($url, $post = null, $timeout = 0)
     $parts = parse_url($url);
     $host = isset($parts['host']) ? $parts['host'] : 'localhost';
 
-    // Intento directo y, si el host público no resuelve desde el propio
+    // Intento directo y, si el host pÃºblico no resuelve desde el propio
     // servidor, reintento contra 127.0.0.1 enviando la cabecera Host original.
     $attempts = array(array('url' => $url, 'hostheader' => null));
     $isIp = filter_var($host, FILTER_VALIDATE_IP) !== false;
@@ -1754,11 +1754,11 @@ function di_http_once($url, $post, $timeout, $hostheader)
             }
         }
     }
-    return array('code' => $code, 'body' => $resp === false ? '' : $resp, 'error' => $resp === false ? 'fallo de conexión' : '');
+    return array('code' => $code, 'body' => $resp === false ? '' : $resp, 'error' => $resp === false ? 'fallo de conexiÃ³n' : '');
 }
 
 /* ===========================================================================
- *  BASE DE DATOS (verificación independiente del resultado)
+ *  BASE DE DATOS (verificaciÃ³n independiente del resultado)
  * ======================================================================== */
 
 /** Devuelve [ok, error, rows] tras ejecutar un SELECT. Soporta MySQL y PostgreSQL. */
@@ -1897,7 +1897,7 @@ function di_write_install_files($cfg)
     if (!is_dir($confDir)) {
         @mkdir($confDir, 0755, true);
     }
-    // conf.php vacío y escribible: el instalador nativo lo rellenará.
+    // conf.php vacÃ­o y escribible: el instalador nativo lo rellenarÃ¡.
     $confFile = $confDir . '/conf.php';
     @file_put_contents($confFile, "<?php\n");
     @chmod($confFile, 0644); // el propietario (PHP) conserva escritura; sin escritura para grupo/otros
@@ -1906,7 +1906,7 @@ function di_write_install_files($cfg)
         return array(false, di_t('e_noinstall'));
     }
 
-    // Modo ultrasencillo: solo dejamos un conf.php vacío y escribible; del resto
+    // Modo ultrasencillo: solo dejamos un conf.php vacÃ­o y escribible; del resto
     // se encarga el asistente nativo de Dolibarr (install/).
     if (($cfg['mode'] ?? 'full') === 'simple') {
         return array(true, '');
@@ -1919,20 +1919,20 @@ function di_write_install_files($cfg)
     };
 
     // Directorio de documentos robusto: por defecto Dolibarr usa el hermano de la
-    // raíz (../documents). Si el padre no es escribible (o open_basedir lo impide),
-    // lo ubicamos DENTRO de la raíz, protegido con .htaccess/web.config.
-    $dataRoot = di_compute_dataroot($cfg);   // null = autodetección estándar de Dolibarr
-    // Crear el usuario de BD solo si creamos la BD Y hay contraseña: Dolibarr aborta la
-    // creación de usuario con contraseña vacía, y en pruebas se usa un usuario ya existente
-    // (p. ej. root sin contraseña), donde basta con crear la base.
+    // raÃ­z (../documents). Si el padre no es escribible (o open_basedir lo impide),
+    // lo ubicamos DENTRO de la raÃ­z, protegido con .htaccess/web.config.
+    $dataRoot = di_compute_dataroot($cfg);   // null = autodetecciÃ³n estÃ¡ndar de Dolibarr
+    // Crear el usuario de BD solo si creamos la BD Y hay contraseÃ±a: Dolibarr aborta la
+    // creaciÃ³n de usuario con contraseÃ±a vacÃ­a, y en pruebas se usa un usuario ya existente
+    // (p. ej. root sin contraseÃ±a), donde basta con crear la base.
     $createUser = (!empty($db['create']) && $db['pass'] !== '');
 
     // NOTA: NO ponemos un .htaccess "deny" en install/ porque el propio instalador
-    // conduce install/step*.php por HTTP (lo bloquearía). La protección del forced es
+    // conduce install/step*.php por HTTP (lo bloquearÃ­a). La protecciÃ³n del forced es
     // chmod 0600 + borrado inmediato tras step5; install/ se elimina al finalizar.
 
     $forced = "<?php\n"
-        . "/* Generado por DoliInstaller " . DI_VERSION . " - instalación desatendida */\n"
+        . "/* Generado por DoliInstaller " . DI_VERSION . " - instalaciÃ³n desatendida */\n"
         . "\$force_install_distrib = 'custom';\n"
         . "\$force_install_nophpinfo = true;\n"
         . "\$force_install_noedit = 2;\n"
@@ -1966,9 +1966,9 @@ function di_write_install_files($cfg)
 
 /**
  * Decide el directorio de documentos de Dolibarr.
- *  - null  => dejar la autodetección estándar (hermano de la raíz: ../documents),
- *             válida cuando el directorio padre es escribible y accesible.
- *  - ruta  => documents DENTRO de la raíz (cuando el padre no sirve), ya creado
+ *  - null  => dejar la autodetecciÃ³n estÃ¡ndar (hermano de la raÃ­z: ../documents),
+ *             vÃ¡lida cuando el directorio padre es escribible y accesible.
+ *  - ruta  => documents DENTRO de la raÃ­z (cuando el padre no sirve), ya creado
  *             y protegido con .htaccess/web.config para que no sea accesible por web.
  */
 function di_compute_dataroot($cfg)
@@ -1976,7 +1976,7 @@ function di_compute_dataroot($cfg)
     $target = $cfg['target'];
     $parent = dirname($target);
 
-    // ¿open_basedir deja ver el padre?
+    // Â¿open_basedir deja ver el padre?
     $parentBlocked = false;
     $obd = trim((string) ini_get('open_basedir'));
     if ($obd !== '') {
@@ -1992,10 +1992,10 @@ function di_compute_dataroot($cfg)
     }
 
     if (!$parentBlocked && @is_writable($parent)) {
-        return null; // hermano ../documents (comportamiento nativo, más seguro)
+        return null; // hermano ../documents (comportamiento nativo, mÃ¡s seguro)
     }
 
-    // Fallback: documents dentro de la raíz, protegido.
+    // Fallback: documents dentro de la raÃ­z, protegido.
     $docs = $target . '/documents';
     @mkdir($docs, 0755, true);
     @file_put_contents($docs . '/.htaccess', di_deny_htaccess());
@@ -2005,11 +2005,11 @@ function di_compute_dataroot($cfg)
 }
 
 /* ===========================================================================
- *  EXTRACCIÓN POR BLOQUES (nativa, rápida como 7zip)
+ *  EXTRACCIÃ“N POR BLOQUES (nativa, rÃ¡pida como 7zip)
  *
  *  Estrategia: ZipArchive::extractTo() en C (una pasada por bloque grande) hacia
  *  un directorio temporal, y al terminar se mueven los hijos de "htdocs/" a la
- *  raíz con rename() (instantáneo en el mismo volumen). Mucho más rápido que
+ *  raÃ­z con rename() (instantÃ¡neo en el mismo volumen). Mucho mÃ¡s rÃ¡pido que
  *  escribir archivo a archivo desde PHP.
  * ======================================================================== */
 
@@ -2034,7 +2034,7 @@ function di_extract_chunk($cfg, $offset)
         @mkdir($tmp, 0755, true);
     }
 
-    // Nombres de las entradas de este bloque que están bajo htdocs/.
+    // Nombres de las entradas de este bloque que estÃ¡n bajo htdocs/.
     $names = array();
     for ($i = $offset; $i < $end; $i++) {
         $name = $zip->getNameIndex($i);
@@ -2043,8 +2043,8 @@ function di_extract_chunk($cfg, $offset)
         }
     }
 
-    // Extracción NATIVA del bloque (en C). Cuidado: extractTo() con array vacío
-    // extraería TODO el ZIP, así que solo llamamos si hay nombres.
+    // ExtracciÃ³n NATIVA del bloque (en C). Cuidado: extractTo() con array vacÃ­o
+    // extraerÃ­a TODO el ZIP, asÃ­ que solo llamamos si hay nombres.
     if (!empty($names)) {
         if (!$zip->extractTo($tmp, $names)) {
             $zip->close();
@@ -2063,13 +2063,13 @@ function di_extract_chunk($cfg, $offset)
 
 /**
  * Tras extraer todo a __doli_extract__/<root>/htdocs/, mueve los hijos de htdocs
- * a la raíz de destino (rename, instantáneo) y elimina el temporal.
+ * a la raÃ­z de destino (rename, instantÃ¡neo) y elimina el temporal.
  */
 function di_finalize_extraction($cfg)
 {
     $tmp = di_extract_tmpdir($cfg);
     $prefix = isset($cfg['prefix']) ? $cfg['prefix'] : '';
-    // Prefijo '' = el ZIP ya era htdocs (extraído directamente en $tmp).
+    // Prefijo '' = el ZIP ya era htdocs (extraÃ­do directamente en $tmp).
     $src = ($prefix === '' || $prefix === null) ? $tmp : $tmp . '/' . rtrim($prefix, '/');
     if (!is_dir($src)) {
         return array(false, di_t('e_notfound', array('{s}' => $src)));
@@ -2087,7 +2087,7 @@ function di_finalize_extraction($cfg)
         if ($it === '.' || $it === '..') {
             continue;
         }
-        // Cuando $src === $tmp, no movemos el propio temporal sobre sí mismo.
+        // Cuando $src === $tmp, no movemos el propio temporal sobre sÃ­ mismo.
         if ($src === $tmp && $it === basename($tmp)) {
             continue;
         }
@@ -2098,7 +2098,7 @@ function di_finalize_extraction($cfg)
                 return array(false, di_t('e_cantmove', array('{s}' => $it)));
             }
         } else {
-            // Ya existe (reintento/instalación previa): fusionar contenidos.
+            // Ya existe (reintento/instalaciÃ³n previa): fusionar contenidos.
             di_move_merge($from, $to);
         }
     }
@@ -2130,8 +2130,8 @@ function di_move_merge($from, $to)
 }
 
 /**
- * Copia recursiva (solo si rename falla, p. ej. volúmenes distintos).
- * Devuelve bool de éxito y BORRA el origen ya copiado (copy+unlink real).
+ * Copia recursiva (solo si rename falla, p. ej. volÃºmenes distintos).
+ * Devuelve bool de Ã©xito y BORRA el origen ya copiado (copy+unlink real).
  */
 function di_copy_recursive($from, $to)
 {
@@ -2158,7 +2158,7 @@ function di_copy_recursive($from, $to)
 }
 
 /* ===========================================================================
- *  EJECUCIÓN DE LOS PASOS NATIVOS DE DOLIBARR
+ *  EJECUCIÃ“N DE LOS PASOS NATIVOS DE DOLIBARR
  * ======================================================================== */
 
 function di_install_url($cfg, $script)
@@ -2167,9 +2167,9 @@ function di_install_url($cfg, $script)
 }
 
 /**
- * Resuelve el nombre real del script de instalación nativo. Dolibarr renombró los
- * pasos de "etapeN.php" (francés, <= 3.6) a "stepN.php" (>= 3.7/3.9). Detecta cuál
- * existe en el destino para soportar también paquetes muy antiguos.
+ * Resuelve el nombre real del script de instalaciÃ³n nativo. Dolibarr renombrÃ³ los
+ * pasos de "etapeN.php" (francÃ©s, <= 3.6) a "stepN.php" (>= 3.7/3.9). Detecta cuÃ¡l
+ * existe en el destino para soportar tambiÃ©n paquetes muy antiguos.
  * $logical: 'step1' | 'step2' | 'step4' | 'step5'
  */
 function di_install_script($cfg, $logical)
@@ -2201,7 +2201,7 @@ function di_blocked_hint($cfg, $res)
     return di_extract_error($res['body']);
 }
 
-/** ¿Existen las tablas núcleo de Dolibarr? true/false, o null si no se puede verificar. */
+/** Â¿Existen las tablas nÃºcleo de Dolibarr? true/false, o null si no se puede verificar. */
 function di_core_tables_ok($cfg)
 {
     $names = di_list_tables($cfg);
@@ -2218,7 +2218,7 @@ function di_core_tables_ok($cfg)
     return true;
 }
 
-/** Corrige dolibarr_main_url_root en conf.php si Dolibarr lo grabó con 127.0.0.1/localhost. */
+/** Corrige dolibarr_main_url_root en conf.php si Dolibarr lo grabÃ³ con 127.0.0.1/localhost. */
 function di_fix_main_url($cfg, $conf, $c)
 {
     $want = rtrim($cfg['baseurl'], '/');
@@ -2258,13 +2258,13 @@ function di_run_substep($cfg, $sub)
 
     if ($sub === 'step1') {
         $db = $cfg['db'];
-        // Crear usuario de BD solo si creamos la base Y hay contraseña (igual que en el forced).
+        // Crear usuario de BD solo si creamos la base Y hay contraseÃ±a (igual que en el forced).
         $createUser = (!empty($db['create']) && isset($db['pass']) && $db['pass'] !== '');
         // Enviamos el conjunto COMPLETO de campos. Las versiones ANTIGUAS de Dolibarr
-        // (p. ej. 3.x–4.x) leen los datos de conexión SOLO del POST: su install.forced.php
-        // únicamente PRE-RELLENA el formulario, no aplica valores server-side. Las versiones
+        // (p. ej. 3.xâ€“4.x) leen los datos de conexiÃ³n SOLO del POST: su install.forced.php
+        // Ãºnicamente PRE-RELLENA el formulario, no aplica valores server-side. Las versiones
         // modernas leen el POST y, si falta, recurren al forced; el filtro 'alpha' conserva
-        // puntos/dígitos (db_host=127.0.0.1 es seguro). Así el paso funciona en ambas.
+        // puntos/dÃ­gitos (db_host=127.0.0.1 es seguro). AsÃ­ el paso funciona en ambas.
         $post = array(
             'action' => 'set',
             'selectlang' => $lang,
@@ -2289,7 +2289,7 @@ function di_run_substep($cfg, $sub)
             return array('ok' => false, 'msg' => di_t('ss_nocontact', array('{url}' => $url, '{s}' => $res['error']))
                 . di_t('ss_single', array('{url}' => $cfg['baseurl'])));
         }
-        // Verificación: conf.php ahora contiene los datos de conexión.
+        // VerificaciÃ³n: conf.php ahora contiene los datos de conexiÃ³n.
         $conf = $cfg['target'] . '/conf/conf.php';
         $c = @file_get_contents($conf);
         if ($c && preg_match('/dolibarr_main_db_name\s*=\s*[\'"]' . preg_quote($cfg['db']['name'], '/') . '/', $c)) {
@@ -2316,7 +2316,7 @@ function di_run_substep($cfg, $sub)
             return array('ok' => true, 'msg' => di_t('ss_s2ok', array('{n}' => $n)));
         }
         if ($core === null) {
-            // Sin driver para verificar: confiamos en la señal del HTML.
+            // Sin driver para verificar: confiamos en la seÃ±al del HTML.
             if (stripos($res['body'], 'step4') !== false || stripos($res['body'], 'etape4') !== false || stripos($res['body'], 'CreateDatabaseObjects') !== false) {
                 return array('ok' => true, 'msg' => di_t('ss_s2nodrv'));
             }
@@ -2340,21 +2340,21 @@ function di_run_substep($cfg, $sub)
         if ($res['code'] === 0) {
             return array('ok' => false, 'msg' => di_t('ss_nocontact', array('{url}' => $url, '{s}' => $res['error'])));
         }
-        // Verificación 1: existe EL administrador solicitado (no cualquier fila previa).
+        // VerificaciÃ³n 1: existe EL administrador solicitado (no cualquier fila previa).
         list($ok, $err, $rows) = di_db_query(
             $cfg,
             'SELECT COUNT(*) FROM ' . $cfg['db']['prefix'] . 'user WHERE login = ' . di_sql_str($login)
         );
         $adminOk = ($ok && isset($rows[0][0]) && (int) $rows[0][0] >= 1);
-        // Verificación 2: install.lock recién creado (no heredado).
+        // VerificaciÃ³n 2: install.lock reciÃ©n creado (no heredado).
         $lock = di_find_lock($cfg);
         $lockFresh = ($lock && @filemtime($lock) >= $t0 - 5);
 
-        // Borramos el forced (contiene la contraseña root del SGBD) PASE LO QUE PASE:
-        // ya no se necesita tras intentar step5, ni en éxito ni en fallo.
+        // Borramos el forced (contiene la contraseÃ±a root del SGBD) PASE LO QUE PASE:
+        // ya no se necesita tras intentar step5, ni en Ã©xito ni en fallo.
         @unlink($cfg['target'] . '/install/install.forced.php');
         if ($adminOk || $lockFresh || (!$ok && $lock)) {
-            // Éxito: retiramos cookies/log del instalador nativo (la purga de secretos
+            // Ã‰xito: retiramos cookies/log del instalador nativo (la purga de secretos
             // de config.php se hace en el handler AJAX, que es quien posee $cfg).
             @unlink(DI_COOKIES);
             @unlink(DI_LOG);
@@ -2377,9 +2377,9 @@ function di_find_lock($cfg)
     if ($c && preg_match('/dolibarr_main_data_root\s*=\s*[\'"]([^\'"]+)[\'"]/', $c, $m)) {
         $candidates[] = $m[1] . '/install.lock';
     }
-    // 2) Detección estándar: hermano de la raíz.
+    // 2) DetecciÃ³n estÃ¡ndar: hermano de la raÃ­z.
     $candidates[] = preg_replace('#/[^/]+$#', '/documents', $cfg['target']) . '/install.lock';
-    // 3) Dentro de la raíz.
+    // 3) Dentro de la raÃ­z.
     $candidates[] = $cfg['target'] . '/documents/install.lock';
     foreach ($candidates as $p) {
         if (is_file($p)) {
@@ -2390,20 +2390,20 @@ function di_find_lock($cfg)
 }
 
 /* ===========================================================================
- *  ACTUALIZACIÓN (UPGRADE) — descarga una versión superior, sustituye los
+ *  ACTUALIZACIÃ“N (UPGRADE) â€” descarga una versiÃ³n superior, sustituye los
  *  ficheros preservando datos/config y ejecuta las migraciones nativas de
  *  Dolibarr una major a la vez (upgrade.php + upgrade2.php por salto, step5 al
- *  final). Es la misma técnica de autollamada HTTP que la instalación.
+ *  final). Es la misma tÃ©cnica de autollamada HTTP que la instalaciÃ³n.
  * ======================================================================== */
 
 /**
- * Construye la cadena de subpasos de migración entre dos majors.
- * Cada salto X→X+1 ejecuta upgrade.php y upgrade2.php; al final, step5 fija la
- * versión (MAIN_VERSION_LAST_UPGRADE) y recrea install.lock.
+ * Construye la cadena de subpasos de migraciÃ³n entre dos majors.
+ * Cada salto Xâ†’X+1 ejecuta upgrade.php y upgrade2.php; al final, step5 fija la
+ * versiÃ³n (MAIN_VERSION_LAST_UPGRADE) y recrea install.lock.
  */
 function di_upgrade_chain($fromMajor, $toMajor, $targetFull)
 {
-    $subs = array('backup'); // punto de restauración (dump de BD) ANTES de tocar nada
+    $subs = array('backup'); // punto de restauraciÃ³n (dump de BD) ANTES de tocar nada
     for ($v = $fromMajor; $v < $toMajor; $v++) {
         $range = $v . '.0.0-' . ($v + 1) . '.0.0';
         $subs[] = 'up:' . $range;
@@ -2413,7 +2413,7 @@ function di_upgrade_chain($fromMajor, $toMajor, $targetFull)
     return $subs;
 }
 
-/** Rutas candidatas del fichero upgrade.unlock (desbloquea las páginas de upgrade). */
+/** Rutas candidatas del fichero upgrade.unlock (desbloquea las pÃ¡ginas de upgrade). */
 function di_upgrade_unlock_paths($cfg)
 {
     $paths = array();
@@ -2448,10 +2448,10 @@ function di_remove_upgrade_unlock($cfg)
 }
 
 /**
- * Detecta un error FATAL de PHP en el HTML de una página de migración.
- * OJO: los errores SQL por sentencia (DB_ERROR_*, "ya existe", FK/índice) NO son
- * fatales — Dolibarr los registra y CONTINÚA, igual que su asistente nativo. Solo un
- * fatal de PHP (o un fallo de transporte HTTP, tratado aparte) aborta la migración.
+ * Detecta un error FATAL de PHP en el HTML de una pÃ¡gina de migraciÃ³n.
+ * OJO: los errores SQL por sentencia (DB_ERROR_*, "ya existe", FK/Ã­ndice) NO son
+ * fatales â€” Dolibarr los registra y CONTINÃšA, igual que su asistente nativo. Solo un
+ * fatal de PHP (o un fallo de transporte HTTP, tratado aparte) aborta la migraciÃ³n.
  */
 function di_upgrade_fatal($html)
 {
@@ -2467,7 +2467,7 @@ function di_upgrade_warn_count($html)
     return $html ? (int) preg_match_all('#class="error"#i', $html, $m) : 0;
 }
 
-/** Ejecuta un subpaso de migración contra las páginas nativas de Dolibarr. */
+/** Ejecuta un subpaso de migraciÃ³n contra las pÃ¡ginas nativas de Dolibarr. */
 function di_run_upgrade_substep($cfg, $sub)
 {
     $lang = !empty($cfg['lang']) ? $cfg['lang'] : 'auto';
@@ -2475,14 +2475,14 @@ function di_run_upgrade_substep($cfg, $sub)
     list($from, $to) = array_pad(explode('-', $range, 2), 2, '');
 
     if ($kind === 'backup') {
-        // Punto de restauración: vuelca la BD a un fichero protegido que sobrevive a la
+        // Punto de restauraciÃ³n: vuelca la BD a un fichero protegido que sobrevive a la
         // limpieza. Es best-effort: si falla, avisamos pero NO abortamos (el usuario
-        // también pudo descargar el dump manualmente en el paso anterior).
+        // tambiÃ©n pudo descargar el dump manualmente en el paso anterior).
         $path = di_rollback_dump_path($cfg);
         list($ok, $bytes, $err) = di_dump_db_file($cfg, $path);
         if (!$ok) {
             di_log('backup rollback FAIL: ' . $err);
-            // PostgreSQL sin pg_dump: aviso específico; cualquier otro fallo, aviso genérico.
+            // PostgreSQL sin pg_dump: aviso especÃ­fico; cualquier otro fallo, aviso genÃ©rico.
             return array('ok' => true, 'msg' => ($err === 'pgsql-nodump') ? di_t('up_bk_pg') : di_t('up_bk_warn', array('{s}' => $err)));
         }
         di_log('backup rollback OK: ' . $path . ' (' . $bytes . ' bytes)');
@@ -2508,7 +2508,7 @@ function di_run_upgrade_substep($cfg, $sub)
         if ($fatal !== '') {
             return array('ok' => false, 'msg' => di_t('up_migfail', array('{s}' => $from . ' -> ' . $to)) . ' ' . $fatal);
         }
-        // Los errores SQL por sentencia se reportan como AVISOS (Dolibarr continúa).
+        // Los errores SQL por sentencia se reportan como AVISOS (Dolibarr continÃºa).
         $warn = di_upgrade_warn_count($res['body']);
         $msg = di_t('up_migok', array('{s}' => $from . ' -> ' . $to));
         if ($warn > 0) {
@@ -2527,11 +2527,11 @@ function di_run_upgrade_substep($cfg, $sub)
         $dbver = di_db_version($cfg);
         $lock = di_find_lock($cfg);
         di_remove_upgrade_unlock($cfg);
-        // Verificación autoritativa: la versión registrada en BD alcanzó el destino.
+        // VerificaciÃ³n autoritativa: la versiÃ³n registrada en BD alcanzÃ³ el destino.
         if ($dbver !== null && di_ver_major($dbver) >= di_ver_major($to)) {
             return array('ok' => true, 'msg' => di_t('up_done', array('{s}' => $dbver)) . ($lock ? '' : di_t('ss_s5warn')));
         }
-        // Sin verificación por BD pero sin error HTTP ni fatal PHP: lo damos por bueno con aviso.
+        // Sin verificaciÃ³n por BD pero sin error HTTP ni fatal PHP: lo damos por bueno con aviso.
         if ((int) $res['code'] > 0 && (int) $res['code'] < 400 && di_upgrade_fatal($res['body']) === '') {
             return array('ok' => true, 'msg' => di_t('up_doneish') . ($lock ? '' : di_t('ss_s5warn')));
         }
@@ -2542,9 +2542,9 @@ function di_run_upgrade_substep($cfg, $sub)
 }
 
 /**
- * Finaliza la extracción en modo ACTUALIZAR: sustituye el core por la versión
- * nueva pero PRESERVA conf/ (conf.php), custom/ (módulos del usuario) y
- * documents/ (datos). install/ SÍ se reemplaza (trae las nuevas migraciones).
+ * Finaliza la extracciÃ³n en modo ACTUALIZAR: sustituye el core por la versiÃ³n
+ * nueva pero PRESERVA conf/ (conf.php), custom/ (mÃ³dulos del usuario) y
+ * documents/ (datos). install/ SÃ se reemplaza (trae las nuevas migraciones).
  */
 function di_finalize_upgrade($cfg)
 {
@@ -2556,8 +2556,8 @@ function di_finalize_upgrade($cfg)
     }
     $target = $cfg['target'];
 
-    // Se conservan los datos/config del usuario; conf/ y custom/ además se fusionan
-    // (se añaden ficheros nuevos del paquete sin pisar los existentes).
+    // Se conservan los datos/config del usuario; conf/ y custom/ ademÃ¡s se fusionan
+    // (se aÃ±aden ficheros nuevos del paquete sin pisar los existentes).
     $preserve = array('conf' => 'merge', 'custom' => 'merge', 'documents' => 'keep');
     $preserve[basename(DI_TMPDIR)] = 'keep';
     $preserve['__doli_extract__'] = 'keep';
@@ -2579,14 +2579,14 @@ function di_finalize_upgrade($cfg)
 
         if (isset($preserve[$it])) {
             if ($preserve[$it] === 'merge' && is_dir($from)) {
-                di_merge_keep($from, $to);  // añade lo nuevo sin sobrescribir
+                di_merge_keep($from, $to);  // aÃ±ade lo nuevo sin sobrescribir
             }
             @di_rrmdir($from);  // descartar la copia del paquete de lo preservado
             continue;
         }
 
-        // Reemplazo limpio del core: fuera lo viejo, dentro lo nuevo (así desaparecen
-        // los ficheros que la nueva versión ya no incluye).
+        // Reemplazo limpio del core: fuera lo viejo, dentro lo nuevo (asÃ­ desaparecen
+        // los ficheros que la nueva versiÃ³n ya no incluye).
         if (file_exists($to)) {
             @di_rrmdir($to);
         }
@@ -2621,7 +2621,7 @@ function di_merge_keep($from, $to)
 }
 
 /**
- * Núcleo del volcado MySQL/MariaDB: escribe estructura + datos en el handle dado
+ * NÃºcleo del volcado MySQL/MariaDB: escribe estructura + datos en el handle dado
  * (php://output para descarga, o un fichero). Devuelve [ok, error, bytes].
  */
 function di_dump_mysql_to($cfg, $fh)
@@ -2768,8 +2768,8 @@ function di_dump_db_to($cfg, $fh)
 }
 
 /**
- * Vuelca un backup lógico de la base de datos como DESCARGA .sql (best-effort).
- * MySQL/MariaDB: PHP. PostgreSQL: pg_dump si está disponible; si no, aviso.
+ * Vuelca un backup lÃ³gico de la base de datos como DESCARGA .sql (best-effort).
+ * MySQL/MariaDB: PHP. PostgreSQL: pg_dump si estÃ¡ disponible; si no, aviso.
  */
 function di_stream_backup($cfg)
 {
@@ -2796,10 +2796,10 @@ function di_stream_backup($cfg)
 }
 
 /**
- * Ruta del dump de rollback automático. Se guarda en el directorio de documentos
- * (data root): está protegido por web (.htaccess de Dolibarr) y SOBREVIVE a la
+ * Ruta del dump de rollback automÃ¡tico. Se guarda en el directorio de documentos
+ * (data root): estÃ¡ protegido por web (.htaccess de Dolibarr) y SOBREVIVE a la
  * autolimpieza del instalador (que borra el temporal), por lo que sigue disponible
- * como punto de restauración tras la actualización.
+ * como punto de restauraciÃ³n tras la actualizaciÃ³n.
  */
 function di_rollback_dump_path($cfg)
 {
@@ -2820,7 +2820,7 @@ function di_rollback_dump_path($cfg)
     return $dataRoot . '/easydoliinstaller-rollback-' . $safe . '.sql';
 }
 
-/** Vuelca la BD a un fichero protegido del servidor (punto de restauración). [ok, bytes, error]. */
+/** Vuelca la BD a un fichero protegido del servidor (punto de restauraciÃ³n). [ok, bytes, error]. */
 function di_dump_db_file($cfg, $path)
 {
     $type = isset($cfg['db']['type']) ? $cfg['db']['type'] : 'mysqli';
@@ -2841,18 +2841,18 @@ function di_dump_db_file($cfg, $path)
 }
 
 /* ===========================================================================
- *  REPARAR — verifica la integridad de un Dolibarr instalado comparándolo
- *  fichero a fichero con el paquete OFICIAL de la MISMA versión, informa de las
+ *  REPARAR â€” verifica la integridad de un Dolibarr instalado comparÃ¡ndolo
+ *  fichero a fichero con el paquete OFICIAL de la MISMA versiÃ³n, informa de las
  *  diferencias, hace una copia de los afectados y los restaura desde el oficial.
  * ======================================================================== */
 
-/** Fichero (temporal) donde se acumula el resultado de la comparación. */
+/** Fichero (temporal) donde se acumula el resultado de la comparaciÃ³n. */
 function di_repair_state_path()
 {
     return DI_TMPDIR . '/repair.json';
 }
 
-/** ¿Se excluye esta ruta del cotejo? (datos/config del usuario, no del core). */
+/** Â¿Se excluye esta ruta del cotejo? (datos/config del usuario, no del core). */
 function di_repair_skip($rel)
 {
     foreach (array('conf/', 'custom/', 'documents/') as $p) {
@@ -2915,7 +2915,7 @@ function di_compare_chunk($cfg, $offset)
     }
     $zip->close();
 
-    $state['next'] = $end;       // para reanudar la verificación tras un F5
+    $state['next'] = $end;       // para reanudar la verificaciÃ³n tras un F5
     $state['total'] = $num;
     di_ensure_tmp();
     @file_put_contents(di_repair_state_path(), json_encode($state));
@@ -2929,7 +2929,7 @@ function di_compare_chunk($cfg, $offset)
     );
 }
 
-/** Devuelve el resultado acumulado de la comparación (o null). */
+/** Devuelve el resultado acumulado de la comparaciÃ³n (o null). */
 function di_repair_result()
 {
     if (!is_file(di_repair_state_path())) {
@@ -2939,7 +2939,7 @@ function di_repair_result()
     return is_array($r) ? $r : null;
 }
 
-/** Crea un ZIP con los ficheros AFECTADOS tal como están AHORA (copia previa). [path|null]. */
+/** Crea un ZIP con los ficheros AFECTADOS tal como estÃ¡n AHORA (copia previa). [path|null]. */
 function di_repair_backup_zip($cfg, $files)
 {
     if (empty($files) || !class_exists('ZipArchive')) {
@@ -3019,8 +3019,8 @@ function di_official_pathset($cfg)
 }
 
 /**
- * Escanea la instalación en busca de ficheros que NO están en el paquete oficial
- * (posible manipulación / inyección). Excluye datos y config del usuario, el propio
+ * Escanea la instalaciÃ³n en busca de ficheros que NO estÃ¡n en el paquete oficial
+ * (posible manipulaciÃ³n / inyecciÃ³n). Excluye datos y config del usuario, el propio
  * instalador y sus temporales. Devuelve la lista de rutas relativas "sobrantes".
  */
 function di_scan_extras($cfg)
@@ -3035,7 +3035,7 @@ function di_scan_extras($cfg)
     $skipTop = array('conf', 'custom', 'documents', 'install',
         basename(DI_TMPDIR), '__doli_extract__');
     $extras = array();
-    $cap = 5000; // límite de seguridad para no desbordar
+    $cap = 5000; // lÃ­mite de seguridad para no desbordar
     try {
         $it = new RecursiveIteratorIterator(
             new RecursiveDirectoryIterator($rt, FilesystemIterator::SKIP_DOTS | FilesystemIterator::UNIX_PATHS),
@@ -3063,7 +3063,7 @@ function di_scan_extras($cfg)
         if (strpos($rel, 'easydoliinstaller-rollback-') !== false) {
             continue; // nuestro propio dump
         }
-        // Artefactos del propio instalador, no "manipulación": el paquete .zip y copias.
+        // Artefactos del propio instalador, no "manipulaciÃ³n": el paquete .zip y copias.
         if (strpos($rel, '/') === false && (preg_match('/^dolibarr-.*\.zip$/i', $rel) || preg_match('/\.zip$/i', $rel) && $rel === basename((string) ($cfg['zip'] ?? '')))) {
             continue;
         }
@@ -3118,11 +3118,11 @@ function di_extract_error($html)
             return di_t('ss_reported', array('{s}' => implode(' | ', array_slice(array_unique($msgs), 0, 3))));
         }
     }
-    // Fatal de PHP: limpiamos etiquetas para capturar el mensaje completo (fichero:línea).
+    // Fatal de PHP: limpiamos etiquetas para capturar el mensaje completo (fichero:lÃ­nea).
     $plain = trim(preg_replace('/\s+/', ' ', strip_tags($html)));
     if (preg_match('/(Fatal error|Parse error|Uncaught[^:]*)\s*:?\s*(.{0,200})/i', $plain, $m)) {
         $detail = trim($m[1] . (isset($m[2]) && $m[2] !== '' ? ': ' . $m[2] : ''));
-        // Síntoma típico de paquete demasiado antiguo para el PHP del servidor.
+        // SÃ­ntoma tÃ­pico de paquete demasiado antiguo para el PHP del servidor.
         return di_t('ss_phpfatal', array('{s}' => $detail, '{php}' => PHP_VERSION));
     }
     return di_t('ss_checklog');
@@ -3139,7 +3139,7 @@ if (isset($_GET['ajax'])) {
     $ajax = $_GET['ajax'];
     $cfg = di_load_config();
 
-    // Backup de BD: descarga .sql (no es JSON). Exige el token de la instalación.
+    // Backup de BD: descarga .sql (no es JSON). Exige el token de la instalaciÃ³n.
     if ($ajax === 'backup') {
         if (!di_token_ok($cfg)) {
             http_response_code(403);
@@ -3151,7 +3151,7 @@ if (isset($_GET['ajax'])) {
         exit;
     }
 
-    // Descarga del ZIP con los ficheros afectados (copia previa a la reparación).
+    // Descarga del ZIP con los ficheros afectados (copia previa a la reparaciÃ³n).
     if ($ajax === 'repairzip') {
         if (!di_token_ok($cfg)) {
             http_response_code(403);
@@ -3181,7 +3181,7 @@ if (isset($_GET['ajax'])) {
 
     header('Content-Type: application/json; charset=utf-8');
 
-    // Anti-CSRF / anti-secuestro: las acciones mutantes exigen el token de la instalación
+    // Anti-CSRF / anti-secuestro: las acciones mutantes exigen el token de la instalaciÃ³n
     // (cookie puesta en el arranque). 'versiones' no toca estado y queda exenta.
     if (in_array($ajax, array('extraer', 'instalar', 'descargar', 'limpiar', 'migrar', 'comparar', 'reparar', 'extras', 'delextras'), true) && !di_token_ok($cfg)) {
         http_response_code(403);
@@ -3189,8 +3189,8 @@ if (isset($_GET['ajax'])) {
         exit;
     }
 
-    // No machacar una instalación existente con extraer/descargar salvo que sea un
-    // flujo de ACTUALIZACIÓN o una reinstalación explícitamente confirmada.
+    // No machacar una instalaciÃ³n existente con extraer/descargar salvo que sea un
+    // flujo de ACTUALIZACIÃ“N o una reinstalaciÃ³n explÃ­citamente confirmada.
     if (in_array($ajax, array('extraer', 'descargar'), true) && $cfg
         && !in_array($cfg['mode'] ?? 'full', array('update', 'repair'), true)
         && empty($cfg['confirm_reinstall'])
@@ -3217,7 +3217,7 @@ if (isset($_GET['ajax'])) {
             exit;
         }
         if ($r['done']) {
-            // El ZIP ya está local: verificamos integridad (SHA-256 si la versión es conocida),
+            // El ZIP ya estÃ¡ local: verificamos integridad (SHA-256 si la versiÃ³n es conocida),
             // validamos estructura y fijamos zip + prefix en la config.
             $file = di_download_target($cfg);
             $known = di_known_hashes();
@@ -3258,13 +3258,13 @@ if (isset($_GET['ajax'])) {
         if ($r['done']) {
             if (($cfg['mode'] ?? 'full') === 'update') {
                 // ACTUALIZAR: sustituir core preservando conf/custom/documents y
-                // dejar las páginas de upgrade desbloqueadas (upgrade.unlock).
+                // dejar las pÃ¡ginas de upgrade desbloqueadas (upgrade.unlock).
                 list($fok, $ferr) = di_finalize_upgrade($cfg);
                 if (!$fok) {
                     echo json_encode(array('error' => $ferr));
                     exit;
                 }
-                @unlink($cfg['target'] . '/install/install.forced.php'); // por si quedó de un install previo
+                @unlink($cfg['target'] . '/install/install.forced.php'); // por si quedÃ³ de un install previo
                 di_write_upgrade_unlock($cfg);
             } else {
                 list($fok, $ferr) = di_finalize_extraction($cfg);
@@ -3291,7 +3291,7 @@ if (isset($_GET['ajax'])) {
         $sub = isset($_GET['sub']) ? $_GET['sub'] : '';
         $r = di_run_upgrade_substep($cfg, $sub);
         if (!empty($r['ok'])) {
-            $cfg['uprogress'] = $sub; // reanudación tras F5
+            $cfg['uprogress'] = $sub; // reanudaciÃ³n tras F5
             di_save_config($cfg);
         }
         echo json_encode($r);
@@ -3385,7 +3385,7 @@ if (isset($_GET['ajax'])) {
     }
 
     if ($ajax === 'limpiar') {
-        // Solo POST: una limpieza es destructiva; rechazar GET corta el CSRF por <img>/navegación.
+        // Solo POST: una limpieza es destructiva; rechazar GET corta el CSRF por <img>/navegaciÃ³n.
         if (($_SERVER['REQUEST_METHOD'] ?? 'GET') !== 'POST') {
             http_response_code(405);
             echo json_encode(array('error' => 'method'));
@@ -3414,23 +3414,23 @@ if (isset($_GET['ajax'])) {
             }
             $appurl = $base . '/install/index.php';
         } elseif ($mode === 'simple') {
-            // Conservamos install/ y conf.php: el usuario terminará con el asistente nativo.
+            // Conservamos install/ y conf.php: el usuario terminarÃ¡ con el asistente nativo.
             $appurl = $base . '/install/index.php';
         } elseif ($mode === 'repair') {
-            // Reparación: NO tocamos el install/ del Dolibarr existente; solo retiramos
+            // ReparaciÃ³n: NO tocamos el install/ del Dolibarr existente; solo retiramos
             // el instalador, el ZIP oficial y el temporal (abajo).
             $appurl = $base . '/';
         } else {
-            // Modo automático / actualización del tirón: install/ ya no hace falta.
+            // Modo automÃ¡tico / actualizaciÃ³n del tirÃ³n: install/ ya no hace falta.
             if ($inside) {
                 @di_rrmdir($target . '/install');
             }
             if ($mode === 'update' && $cfg) {
-                di_remove_upgrade_unlock($cfg);  // por si step5 no llegó a borrarlo
+                di_remove_upgrade_unlock($cfg);  // por si step5 no llegÃ³ a borrarlo
             }
             $appurl = $base . '/';
         }
-        // En ambos casos borramos el ZIP (siempre dentro de DI_DIR por construcción),
+        // En ambos casos borramos el ZIP (siempre dentro de DI_DIR por construcciÃ³n),
         // los temporales y el propio instalador.
         if ($cfg && !empty($cfg['zip']) && is_file($cfg['zip']) && dirname((string) realpath($cfg['zip'])) === $bdir) {
             @unlink($cfg['zip']);
@@ -3449,11 +3449,11 @@ if (isset($_GET['ajax'])) {
 }
 
 /* ===========================================================================
- *  PROCESADO DEL FORMULARIO DE CONFIGURACIÓN
+ *  PROCESADO DEL FORMULARIO DE CONFIGURACIÃ“N
  * ======================================================================== */
 
 $formError = null;
-// ---- PASO PAQUETE: elegir ZIP local o descargar versión (común a ambos modos) ----
+// ---- PASO PAQUETE: elegir ZIP local o descargar versiÃ³n (comÃºn a ambos modos) ----
 if (($_SERVER['REQUEST_METHOD'] ?? 'GET') === 'POST' && ($_POST['accion'] ?? '') === 'paquete') {
     $modo = (($_POST['modo'] ?? 'full') === 'simple') ? 'simple' : 'full';
     $allZips = di_find_zips();
@@ -3490,7 +3490,7 @@ if (($_SERVER['REQUEST_METHOD'] ?? 'GET') === 'POST' && ($_POST['accion'] ?? '')
     }
 
     if ($errs) {
-        $formError = $errs;  // se re-renderiza la página 'paquete' (paso ya = paquete)
+        $formError = $errs;  // se re-renderiza la pÃ¡gina 'paquete' (paso ya = paquete)
     } else {
         di_save_config(array(
             'mode' => $modo,
@@ -3500,11 +3500,11 @@ if (($_SERVER['REQUEST_METHOD'] ?? 'GET') === 'POST' && ($_POST['accion'] ?? '')
             'subpath' => $subpath,
             'target' => $target,
             'baseurl' => $baseurl,
-            // Reinstalación explícita sobre un Dolibarr existente: que las acciones
-            // mutantes no la bloqueen (se machacará la instalación previa a sabiendas).
+            // ReinstalaciÃ³n explÃ­cita sobre un Dolibarr existente: que las acciones
+            // mutantes no la bloqueen (se machacarÃ¡ la instalaciÃ³n previa a sabiendas).
             'confirm_reinstall' => ((($_POST['confirm'] ?? $_GET['confirm'] ?? '') === 'reinstall')) ? true : null,
         ));
-        // Arranque de la instalación: emitimos la cookie con el token recién generado.
+        // Arranque de la instalaciÃ³n: emitimos la cookie con el token reciÃ©n generado.
         $saved = di_load_config();
         if ($saved) {
             di_set_token_cookie($saved['tok'] ?? '');
@@ -3564,7 +3564,7 @@ if (($_SERVER['REQUEST_METHOD'] ?? 'GET') === 'POST' && ($_POST['accion'] ?? '')
     }
 
     if ($errs) {
-        $formError = $errs;  // se re-renderiza la página 'actualizar'
+        $formError = $errs;  // se re-renderiza la pÃ¡gina 'actualizar'
     } else {
         $db = $installedDb;
         unset($db['data_root'], $db['url_root']);
@@ -3590,7 +3590,7 @@ if (($_SERVER['REQUEST_METHOD'] ?? 'GET') === 'POST' && ($_POST['accion'] ?? '')
     }
 }
 
-// ---- PASO REPARAR: elige el paquete OFICIAL de la misma versión y arranca la verificación ----
+// ---- PASO REPARAR: elige el paquete OFICIAL de la misma versiÃ³n y arranca la verificaciÃ³n ----
 if (($_SERVER['REQUEST_METHOD'] ?? 'GET') === 'POST' && ($_POST['accion'] ?? '') === 'reparar') {
     $allZips = di_find_zips();
     $pkgsource = (($_POST['pkgsource'] ?? '') === 'download') ? 'download' : 'local';
@@ -3638,7 +3638,7 @@ if (($_SERVER['REQUEST_METHOD'] ?? 'GET') === 'POST' && ($_POST['accion'] ?? '')
         if ($saved) {
             di_set_token_cookie($saved['tok'] ?? '');
         }
-        @unlink(di_repair_state_path()); // nueva verificación desde cero
+        @unlink(di_repair_state_path()); // nueva verificaciÃ³n desde cero
         header('Location: ' . DI_SELF . '?paso=' . ($pkgsource === 'download' ? 'descargar' : 'verificar'));
         exit;
     }
@@ -3700,7 +3700,7 @@ if (($_SERVER['REQUEST_METHOD'] ?? 'GET') === 'POST' && ($_POST['accion'] ?? '')
     if ($cfg['db']['create'] && $cfg['db']['rootuser'] === '') {
         $errs[] = di_t('v_root');
     }
-    // Nota: la contraseña de la BD PUEDE ir vacía (común en entornos de prueba, p. ej. root local).
+    // Nota: la contraseÃ±a de la BD PUEDE ir vacÃ­a (comÃºn en entornos de prueba, p. ej. root local).
     if ($cfg['admin']['login'] === '') {
         $errs[] = di_t('v_alogin');
     }
@@ -3708,8 +3708,8 @@ if (($_SERVER['REQUEST_METHOD'] ?? 'GET') === 'POST' && ($_POST['accion'] ?? '')
         $errs[] = di_t('v_apass');
     }
     // El instalador nativo de Dolibarr lee 'pass' con GETPOST('pass','alpha'), que ELIMINA
-    // "  < > \  ../  y entidades HTML. Si la contraseña los contiene, Dolibarr crearía el
-    // admin con OTRA contraseña y no podrías entrar. La rechazamos aquí.
+    // "  < > \  ../  y entidades HTML. Si la contraseÃ±a los contiene, Dolibarr crearÃ­a el
+    // admin con OTRA contraseÃ±a y no podrÃ­as entrar. La rechazamos aquÃ­.
     if (preg_match('#["\\\\<>]|\.\./#', $cfg['admin']['pass'])
         || stripos($cfg['admin']['pass'], '&#') !== false
         || stripos($cfg['admin']['pass'], '&quot') !== false) {
@@ -3735,7 +3735,7 @@ function di_requisitos($cfg = null)
     $no = di_t('req_no');
     $r = array();
 
-    // Requisitos de PHP ESPECÍFICOS de la versión elegida (leídos de su install/check.php).
+    // Requisitos de PHP ESPECÃFICOS de la versiÃ³n elegida (leÃ­dos de su install/check.php).
     $range = null;
     $pkgVer = null;
     if ($cfg) {
@@ -3751,7 +3751,7 @@ function di_requisitos($cfg = null)
     }
 
     if ($range && !empty($range['min'])) {
-        // PHP mínimo que exige el paquete elegido (bloqueante si el servidor está por debajo).
+        // PHP mÃ­nimo que exige el paquete elegido (bloqueante si el servidor estÃ¡ por debajo).
         $r[] = array(
             'ok' => version_compare(PHP_VERSION, $range['min'], '>='),
             'label' => di_t('req_phpver', array('{v}' => $pkgVer ?: '?', '{s}' => $range['min'])),
@@ -3760,14 +3760,14 @@ function di_requisitos($cfg = null)
         );
         $phpMM = implode('.', array_slice(explode('.', PHP_VERSION), 0, 2));
         if (!empty($range['max']) && version_compare($phpMM, $range['max'], '>')) {
-            // El paquete declara un máximo (versiones modernas) y el PHP es más nuevo: aviso.
+            // El paquete declara un mÃ¡ximo (versiones modernas) y el PHP es mÃ¡s nuevo: aviso.
             $r[] = array('ok' => false, 'label' => di_t('req_phpmax', array('{v}' => $pkgVer ?: '?', '{s}' => $range['max'])), 'val' => PHP_VERSION, 'crit' => false);
         } elseif (empty($range['max']) && di_ver_major($range['min']) <= 5 && (int) PHP_VERSION >= 7) {
-            // Paquete muy antiguo (era PHP 5) sin máximo declarado, sobre PHP 7/8: aviso heurístico.
+            // Paquete muy antiguo (era PHP 5) sin mÃ¡ximo declarado, sobre PHP 7/8: aviso heurÃ­stico.
             $r[] = array('ok' => false, 'label' => di_t('req_phpold', array('{v}' => $pkgVer ?: '?')), 'val' => 'PHP ' . PHP_VERSION, 'crit' => false);
         }
     } else {
-        // Sin paquete legible aún: mínimo genérico del instalador.
+        // Sin paquete legible aÃºn: mÃ­nimo genÃ©rico del instalador.
         $r[] = array(
             'ok' => version_compare(PHP_VERSION, DI_PHP_MIN, '>='),
             'label' => di_t('req_php', array('{s}' => DI_PHP_MIN)),
@@ -3828,7 +3828,7 @@ function di_requisitos($cfg = null)
 $paso = $_GET['paso'] ?? 'bienvenida';
 
 /* ===========================================================================
- *  VISTA (HTML) — Estética "terminal CRT" (verde fósforo sobre negro)
+ *  VISTA (HTML) â€” EstÃ©tica "terminal CRT" (verde fÃ³sforo sobre negro)
  * ======================================================================== */
 
 function di_steps_for_mode($mode)
@@ -3853,7 +3853,7 @@ function di_steps_for_mode($mode)
 
 /**
  * Pantalla mostrada cuando se detecta un Dolibarr YA instalado: ofrece abrir la
- * aplicación, actualizar (upgrade) o reinstalar desde cero (con confirmación).
+ * aplicaciÃ³n, actualizar (upgrade) o reinstalar desde cero (con confirmaciÃ³n).
  */
 function di_already_installed_screen($cfg)
 {
@@ -3908,7 +3908,7 @@ function di_header($title, $current = null)
     text-shadow:var(--glow);
     padding:26px 14px 60px;
   }
-  /* Scanlines + viñeta sobre toda la pantalla */
+  /* Scanlines + viÃ±eta sobre toda la pantalla */
   body::before{
     content:""; position:fixed; inset:0; z-index:9; pointer-events:none;
     background:repeating-linear-gradient(0deg, rgba(0,0,0,0) 0px, rgba(0,0,0,0) 2px, rgba(0,0,0,.16) 3px, rgba(0,0,0,.16) 4px);
@@ -3940,7 +3940,7 @@ function di_header($title, $current = null)
   /* "Ventana" estilo terminal */
   .win{border:1px solid var(--line);background:var(--panel);margin:0 0 16px;box-shadow:inset 0 0 24px rgba(67,255,125,.04)}
   .win>.t{border-bottom:1px solid var(--line);padding:7px 12px;color:var(--grn);font-size:12px;letter-spacing:1px;background:rgba(67,255,125,.04)}
-  .win>.t::before{content:"┌─ ";color:var(--grn-dim)}
+  .win>.t::before{content:"â”Œâ”€ ";color:var(--grn-dim)}
   .win>.b{padding:14px 16px}
 
   .steps{display:flex;flex-wrap:wrap;gap:4px 14px;margin:0 0 16px;font-size:12px;color:var(--grn-dim);text-shadow:none}
@@ -3965,7 +3965,7 @@ function di_header($title, $current = null)
   .chk{display:flex;align-items:center;gap:9px;margin-top:14px;font-size:13px;cursor:pointer}
   .chk input{width:auto}
   .chk input[type=radio],.chk input[type=checkbox]{width:18px;height:18px;accent-color:var(--grn);cursor:pointer;flex:0 0 auto}
-  /* Opciones de origen del paquete: más grandes y toda la fila clicable */
+  /* Opciones de origen del paquete: mÃ¡s grandes y toda la fila clicable */
   .pkgopt{font-size:16px;padding:12px 14px;border:1px solid var(--line);background:var(--panel);margin-top:10px}
   .pkgopt:hover{border-color:var(--grn);background:rgba(67,255,125,.05)}
   .pkgopt input[type=radio]{width:22px;height:22px}
@@ -4045,28 +4045,31 @@ function di_header($title, $current = null)
 function di_footer()
 {
     ?>
-<div class="foot">// EasyDoliInstaller v<?php echo DI_VERSION; ?> · Easysoft Tech S.L. · MIT · <?php echo di_h(di_t('foot')); ?></div>
+<div class="foot">// EasyDoliInstaller v<?php echo DI_VERSION; ?> Â· Easysoft Tech S.L. Â· MIT Â· <?php echo di_h(di_t('foot')); ?></div>
 </div></body></html>
 <?php
 }
 
 /**
  * Selector de origen del paquete (compartido por los dos formularios):
- * usar un ZIP local o descargar una versión de Dolibarr. Emite su propio <div class="win">.
+ * usar un ZIP local o descargar una versiÃ³n de Dolibarr. Emite su propio <div class="win">.
  */
 function di_package_picker($prev, $zips, $minVer = '')
 {
-    // Si venimos de un envío con error, repoblamos con lo enviado ($_POST), no con la config.
+    // Si venimos de un envÃ­o con error, repoblamos con lo enviado ($_POST), no con la config.
     $prevZip = isset($_POST['zipfile']) ? basename((string) $_POST['zipfile']) : basename((string) (($prev['zip'] ?? '')));
-    $prevVer = isset($_POST['download_version_manual']) && $_POST['download_version_manual'] !== ''
-        ? (string) $_POST['download_version_manual']
-        : (isset($_POST['download_version']) ? (string) $_POST['download_version'] : (string) ($prev['download_version'] ?? ''));
+    // VersiÃ³n SELECCIONADA en el desplegable (envÃ­o anterior o preselecciÃ³n de la config).
+    $prevSelect = isset($_POST['download_version']) ? (string) $_POST['download_version'] : (string) ($prev['download_version'] ?? '');
+    // VersiÃ³n MANUAL: solo lo que el usuario escribiÃ³ a mano (vacÃ­o por defecto). Es un
+    // override; el handler le da prioridad si no estÃ¡ vacÃ­o, asÃ­ que NO se pre-rellena
+    // (si no, cambiar el desplegable no tendrÃ­a efecto).
+    $prevManual = isset($_POST['download_version_manual']) ? (string) $_POST['download_version_manual'] : '';
     $hasCurl = function_exists('curl_init');
-    // Origen por defecto: lo enviado, o local si hay ZIPs y no había versión; si no, descargar.
+    // Origen por defecto: lo enviado, o local si hay ZIPs y no habÃ­a versiÃ³n; si no, descargar.
     if (isset($_POST['pkgsource'])) {
         $src = ($_POST['pkgsource'] === 'download') ? 'download' : 'local';
     } else {
-        $src = (!empty($zips) && $prevVer === '') ? 'local' : 'download';
+        $src = (!empty($zips) && $prevSelect === '' && $prevManual === '') ? 'local' : 'download';
     }
     if (empty($zips) && !$hasCurl) {
         $src = 'local';
@@ -4087,7 +4090,7 @@ function di_package_picker($prev, $zips, $minVer = '')
         <select name="zipfile">
             <?php foreach ($zips as $z) {
                 $bn = basename($z);
-                echo '<option value="' . di_h($bn) . '"' . ($prevZip === $bn ? ' selected' : '') . '>' . di_h($bn) . ' — ' . round(filesize($z) / 1048576) . ' MB</option>';
+                echo '<option value="' . di_h($bn) . '"' . ($prevZip === $bn ? ' selected' : '') . '>' . di_h($bn) . ' â€” ' . round(filesize($z) / 1048576) . ' MB</option>';
             } ?>
         </select>
     <?php } ?>
@@ -4096,15 +4099,26 @@ function di_package_picker($prev, $zips, $minVer = '')
     <div id="blk_dl" style="margin-top:12px">
         <label class="f"><?php echo di_h(di_t('pk_verlabel')); ?></label>
         <select name="download_version" id="dlver">
-            <?php foreach (di_fallback_versions() as $v) {
+            <?php
+            $opts = array();
+            foreach (di_fallback_versions() as $v) {
                 if ($minVer !== '' && version_compare($v, $minVer, '<')) {
                     continue; // sin downgrade: ocultar versiones inferiores a la instalada
                 }
-                echo '<option value="' . di_h($v) . '"' . ($prevVer === $v ? ' selected' : '') . '>' . di_h($v) . '</option>';
-            } ?>
+                $opts[$v] = 1;
+            }
+            // Inyecta la versiÃ³n preseleccionada (p. ej. la instalada en reparar) si no
+            // estÃ¡ en la lista, para que sea seleccionable.
+            if ($prevSelect !== '' && !isset($opts[$prevSelect])) {
+                echo '<option value="' . di_h($prevSelect) . '" selected>' . di_h($prevSelect) . '</option>';
+            }
+            foreach (array_keys($opts) as $v) {
+                echo '<option value="' . di_h($v) . '"' . ($prevSelect === $v ? ' selected' : '') . '>' . di_h($v) . '</option>';
+            }
+            ?>
         </select>
         <label class="f"><?php echo di_h(di_t('pk_vermanual')); ?></label>
-        <input type="text" name="download_version_manual" value="<?php echo di_h($prevVer); ?>" placeholder="<?php echo di_h(di_t('pk_optional')); ?>">
+        <input type="text" name="download_version_manual" value="<?php echo di_h($prevManual); ?>" placeholder="<?php echo di_h(di_t('pk_optional')); ?>">
         <div class="hint"><?php echo di_h(di_t('pk_dlhint')); ?><?php echo $minVer !== '' ? ' ' . di_h(di_t('pk_nodown', array('{s}' => $minVer))) : ''; ?></div>
     </div>
 </div></div>
@@ -4120,12 +4134,13 @@ function di_package_picker($prev, $zips, $minVer = '')
     }
     function tog(){var dl=rd.checked;bd.style.display=dl?'block':'none';bl.style.display=dl?'none':'block';}
     rl.addEventListener('change',tog);rd.addEventListener('change',tog);tog();
-    // Refresca la lista de versiones en vivo desde GitHub (no bloquea la página).
+    // Refresca la lista de versiones en vivo desde GitHub (no bloquea la pÃ¡gina).
     fetch('<?php echo DI_SELF; ?>?ajax=versiones',{cache:'no-store'})
       .then(function(r){return r.json();})
       .then(function(d){ if(!d||!d.versions||!d.versions.length)return;
-        var s=document.getElementById('dlver'),cur=s.value;s.innerHTML='';
-        d.versions.forEach(function(v){ if(MINVER && vc(v,MINVER)<0) return; var o=document.createElement('option');o.value=v;o.textContent=v;if(v===cur)o.selected=true;s.appendChild(o);});
+        var s=document.getElementById('dlver'),cur=s.value;s.innerHTML='';var have=false;
+        d.versions.forEach(function(v){ if(MINVER && vc(v,MINVER)<0) return; var o=document.createElement('option');o.value=v;o.textContent=v;if(v===cur){o.selected=true;have=true;}s.appendChild(o);});
+        if(cur && !have){ var o=document.createElement('option');o.value=cur;o.textContent=cur;o.selected=true;s.insertBefore(o,s.firstChild); }
       }).catch(function(){});
   })();
 </script>
@@ -4135,20 +4150,20 @@ function di_package_picker($prev, $zips, $minVer = '')
 /* ----- Guarda de "ya instalado" ----- */
 $cfgExisting = di_load_config();
 
-// ¿Estamos en un flujo intencional sobre una instalación existente?
+// Â¿Estamos en un flujo intencional sobre una instalaciÃ³n existente?
 $ediMode = $cfgExisting['mode'] ?? '';
-$ediInUpdate = ($ediMode === 'update');                                   // actualización en curso
-$ediReinstall = !empty($cfgExisting['confirm_reinstall'])                 // reinstalación confirmada
+$ediInUpdate = ($ediMode === 'update');                                   // actualizaciÃ³n en curso
+$ediReinstall = !empty($cfgExisting['confirm_reinstall'])                 // reinstalaciÃ³n confirmada
     || (($_GET['confirm'] ?? '') === 'reinstall')
     || (($_POST['confirm'] ?? '') === 'reinstall');
 $ediIntentional = $ediInUpdate || $ediReinstall;
 
-// Pasos que pertenecen a un flujo ya iniciado: no deben mostrar la pantalla de elección.
+// Pasos que pertenecen a un flujo ya iniciado: no deben mostrar la pantalla de elecciÃ³n.
 $ediFlowSteps = array('finalizar', 'redir', 'instalar', 'extraer', 'descargar', 'migrar', 'actualizar', 'reparar', 'verificar', 'informe');
 
-// Autolimpieza: solo si una instalación NUESTRA (full/simple) terminó y el instalador
-// quedó abandonado, se autodestruye. NO se aplica a flujos de actualización/reinstalación
-// (ahí el instalador debe seguir operando sobre un Dolibarr ya instalado).
+// Autolimpieza: solo si una instalaciÃ³n NUESTRA (full/simple) terminÃ³ y el instalador
+// quedÃ³ abandonado, se autodestruye. NO se aplica a flujos de actualizaciÃ³n/reinstalaciÃ³n
+// (ahÃ­ el instalador debe seguir operando sobre un Dolibarr ya instalado).
 if ($cfgExisting && di_already_installed($cfgExisting) && di_find_lock($cfgExisting)
     && in_array($ediMode, array('full', 'simple'), true) && !$ediIntentional
     && !in_array($paso, array('finalizar', 'redir'), true)) {
@@ -4160,14 +4175,14 @@ if ($cfgExisting && di_already_installed($cfgExisting) && di_find_lock($cfgExist
     @unlink(__FILE__);
 }
 
-// Pantalla de elección: si hay un Dolibarr instalado y NO estamos ya dentro de un flujo
+// Pantalla de elecciÃ³n: si hay un Dolibarr instalado y NO estamos ya dentro de un flujo
 // intencional, ofrecemos Abrir / Actualizar / Reinstalar (en vez de machacar a ciegas).
 if (di_already_installed($cfgExisting) && !$ediIntentional && !in_array($paso, $ediFlowSteps, true)) {
     di_already_installed_screen($cfgExisting);
 }
 
 /* ===========================================================================
- *  PÁGINAS
+ *  PÃGINAS
  * ======================================================================== */
 
 if ($paso === 'bienvenida') {
@@ -4251,7 +4266,7 @@ if ($paso === 'paquete') {
 <?php if (!empty($GLOBALS['formError'])) {
         echo '<div class="msg err" style="margin-top:10px">';
         foreach ($GLOBALS['formError'] as $e) {
-            echo '· ' . di_h($e) . '<br>';
+            echo 'Â· ' . di_h($e) . '<br>';
         }
         echo '</div>';
     } ?>
@@ -4285,14 +4300,14 @@ if ($paso === 'actualizar') {
     $GLOBALS['di_force_mode'] = 'update';
     $installedDb = di_read_installed_conf(DI_DIR);
     if (!$installedDb) {
-        // No hay un Dolibarr instalado aquí: no hay nada que actualizar.
+        // No hay un Dolibarr instalado aquÃ­: no hay nada que actualizar.
         header('Location: ' . DI_SELF . '?paso=bienvenida');
         exit;
     }
-    // Sembramos YA un token de instalación junto con los datos de BD del Dolibarr
-    // existente (leídos de conf.php) ANTES de cualquier salida HTML, para que la
-    // DESCARGA DEL BACKUP funcione aquí (la cookie del token debe emitirse antes de
-    // que di_header() envíe cabeceras; sin token, ?ajax=backup devolvería 403).
+    // Sembramos YA un token de instalaciÃ³n junto con los datos de BD del Dolibarr
+    // existente (leÃ­dos de conf.php) ANTES de cualquier salida HTML, para que la
+    // DESCARGA DEL BACKUP funcione aquÃ­ (la cookie del token debe emitirse antes de
+    // que di_header() envÃ­e cabeceras; sin token, ?ajax=backup devolverÃ­a 403).
     $prev = di_load_config();
     $needSeed = !$prev || empty($prev['tok']) || empty($prev['db']['name']);
     if ($needSeed) {
@@ -4341,7 +4356,7 @@ if ($paso === 'actualizar') {
 <?php if (!empty($GLOBALS['formError'])) {
         echo '<div class="msg err">';
         foreach ($GLOBALS['formError'] as $e) {
-            echo '· ' . di_h($e) . '<br>';
+            echo 'Â· ' . di_h($e) . '<br>';
         }
         echo '</div>';
     } ?>
@@ -4374,7 +4389,7 @@ if ($paso === 'reparar') {
     $instVer = $fsVer ?: ($dbVer ?: '');
     $zips = di_find_zips();
     $prev = di_load_config();
-    // Prefijamos la versión a descargar con la INSTALADA (la reparación coteja la misma versión).
+    // Prefijamos la versiÃ³n a descargar con la INSTALADA (la reparaciÃ³n coteja la misma versiÃ³n).
     $pp = is_array($prev) ? $prev : array();
     if (empty($pp['download_version']) && $instVer) {
         $pp['download_version'] = $instVer;
@@ -4390,7 +4405,7 @@ if ($paso === 'reparar') {
 <?php if (!empty($GLOBALS['formError'])) {
         echo '<div class="msg err">';
         foreach ($GLOBALS['formError'] as $e) {
-            echo '· ' . di_h($e) . '<br>';
+            echo 'Â· ' . di_h($e) . '<br>';
         }
         echo '</div>';
     } ?>
@@ -4414,7 +4429,7 @@ if ($paso === 'verificar') {
         exit;
     }
     $GLOBALS['di_force_mode'] = 'repair';
-    // Reanudación tras F5: si ya hay progreso parcial, continuar desde ahí.
+    // ReanudaciÃ³n tras F5: si ya hay progreso parcial, continuar desde ahÃ­.
     $rs = di_repair_result();
     $startOff = 0;
     if (is_array($rs) && isset($rs['next'], $rs['total']) && (int) $rs['total'] > 0) {
@@ -4486,7 +4501,7 @@ if ($paso === 'informe') {
     $restore = count($modified) + count($missing);
     $nExtra = count($extra);
     $base = rtrim($cfg['baseurl'] ?? di_self_base_url(), '/');
-    // Aviso si el paquete elegido NO coincide con la versión instalada (inflaría el diff).
+    // Aviso si el paquete elegido NO coincide con la versiÃ³n instalada (inflarÃ­a el diff).
     $pkgVer = di_zip_version($cfg['zip'] ?? '', $cfg['prefix'] ?? '');
     if (!$pkgVer && !empty($cfg['download_version'])) {
         $pkgVer = $cfg['download_version'];
@@ -4584,7 +4599,7 @@ if ($paso === 'config') {
         header('Location: ' . DI_SELF . '?paso=bienvenida');
         exit;
     }
-    di_header('Configuración');
+    di_header('ConfiguraciÃ³n');
     $g = function ($path, $def = '') use ($prev) {
         if (!$prev) {
             return $def;
@@ -4598,8 +4613,8 @@ if ($paso === 'config') {
         }
         return $v;
     };
-    // Tras un envío con error NO redirigimos: hay que repoblar los campos con lo que
-    // el usuario escribió ($_POST), no con la config guardada. $fv prioriza $_POST.
+    // Tras un envÃ­o con error NO redirigimos: hay que repoblar los campos con lo que
+    // el usuario escribiÃ³ ($_POST), no con la config guardada. $fv prioriza $_POST.
     $isPost = (($_SERVER['REQUEST_METHOD'] ?? 'GET') === 'POST');
     $fv = function ($postKey, $cfgPath, $def = '') use ($g) {
         return isset($_POST[$postKey]) ? (string) $_POST[$postKey] : $g($cfgPath, $def);
@@ -4611,7 +4626,7 @@ if ($paso === 'config') {
 <?php if (!empty($GLOBALS['formError']) && ($GLOBALS['formMode'] ?? 'full') !== 'simple') {
         echo '<div class="msg err"><b>' . di_h(di_t('cf_review')) . '</b><br>';
         foreach ($GLOBALS['formError'] as $e) {
-            echo '· ' . di_h($e) . '<br>';
+            echo 'Â· ' . di_h($e) . '<br>';
         }
         echo '</div>';
     } ?>
@@ -4621,7 +4636,7 @@ if ($paso === 'config') {
         : ($g('zip', '') ? di_h(basename($g('zip', ''))) : di_h(di_t('cf_undef')));
     ?>
 <div class="win"><div class="t"><?php echo di_h(di_t('cf_chosen')); ?></div><div class="b">
-    <div>· <span class="amber"><?php echo $pkgLabel; ?></span> <?php echo di_h(di_t('cf_destarrow')); ?> <span class="dim"><?php echo di_h($g('target', DI_DIR)); ?></span></div>
+    <div>Â· <span class="amber"><?php echo $pkgLabel; ?></span> <?php echo di_h(di_t('cf_destarrow')); ?> <span class="dim"><?php echo di_h($g('target', DI_DIR)); ?></span></div>
     <div class="hint"><a href="?paso=paquete&modo=full"><?php echo di_h(di_t('cf_change')); ?></a></div>
 </div></div>
 
@@ -4665,7 +4680,7 @@ if ($paso === 'config') {
     <div><label class="f"><?php echo di_h(di_t('cf_deflang')); ?></label>
         <select name="lang">
         <?php
-        $langs = array('es_ES' => 'Español', 'en_US' => 'English', 'fr_FR' => 'Français', 'ca_ES' => 'Català', 'pt_PT' => 'Português', 'de_DE' => 'Deutsch', 'it_IT' => 'Italiano');
+        $langs = array('es_ES' => 'EspaÃ±ol', 'en_US' => 'English', 'fr_FR' => 'FranÃ§ais', 'ca_ES' => 'CatalÃ ', 'pt_PT' => 'PortuguÃªs', 'de_DE' => 'Deutsch', 'it_IT' => 'Italiano');
         $sel = $fv('lang', 'lang', 'es_ES');
         foreach ($langs as $k => $v) {
             echo '<option value="' . $k . '"' . ($sel === $k ? ' selected' : '') . '>' . $v . '</option>';
@@ -4687,7 +4702,7 @@ if ($paso === 'config') {
   var cb=document.getElementById('db_create'),rb=document.getElementById('rootbox');
   function tog(){rb.style.display=cb.checked?'block':'none';}
   cb.addEventListener('change',tog);tog();
-  // Ajusta el puerto por defecto al cambiar de motor (solo si está en el otro valor por defecto).
+  // Ajusta el puerto por defecto al cambiar de motor (solo si estÃ¡ en el otro valor por defecto).
   var dt=document.getElementById('db_type'),dp=document.getElementById('db_port');
   dt.addEventListener('change',function(){
     if(dt.value==='pgsql' && (dp.value===''||dp.value==='3306')) dp.value='5432';
@@ -4884,8 +4899,8 @@ if ($paso === 'migrar') {
         header('Location: ' . DI_SELF . '?paso=bienvenida');
         exit;
     }
-    // Calcula la cadena de migración una sola vez (a partir de la versión en BD y la
-    // versión de los ficheros ya sustituidos), y la persiste para reanudar tras F5.
+    // Calcula la cadena de migraciÃ³n una sola vez (a partir de la versiÃ³n en BD y la
+    // versiÃ³n de los ficheros ya sustituidos), y la persiste para reanudar tras F5.
     if (empty($cfg['upchain'])) {
         $fromVer = di_db_version($cfg);
         $toVer = di_fs_version($cfg['target']);

